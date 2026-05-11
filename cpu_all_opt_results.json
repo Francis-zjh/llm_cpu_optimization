@@ -1,0 +1,43 @@
+{
+  "model_name": "EleutherAI/pythia-70m",
+  "dataset": {
+    "name": "wikitext",
+    "config": "wikitext-2-raw-v1",
+    "fallback_used": false
+  },
+  "baseline": {
+    "ppl": 63.51248711959022,
+    "ttft_s": 0.021119899989571422,
+    "tpot_s": 0.010534400003962219,
+    "throughput_tok_s": 84.29366650227753,
+    "ram_rss_mb": 738.4453125,
+    "flops": 1969209120.0,
+    "generated_tokens": 8,
+    "notes": [
+      "baseline_eager"
+    ]
+  },
+  "optimized": {
+    "ppl": 415759.56202114775,
+    "ttft_s": 0.022800700011430308,
+    "tpot_s": 0.010509014291788585,
+    "throughput_tok_s": 82.98445285607524,
+    "ram_rss_mb": 744.28515625,
+    "flops": 1968837600.0,
+    "generated_tokens": 8,
+    "notes": [
+      "ipex_skipped:ModuleNotFoundError",
+      "torch_compile_skipped:no_cl_compiler",
+      "kvpress_hooks=6",
+      "cross_layer_shared_layers=4",
+      "snapkv_avg_tokens_before=55.33",
+      "snapkv_avg_tokens_after=27.33",
+      "snapkv_effective_ratio=0.5060"
+    ]
+  },
+  "environment": {
+    "torch": "2.11.0+cpu",
+    "python": "3.10.20",
+    "cpu_count": 18
+  }
+}
