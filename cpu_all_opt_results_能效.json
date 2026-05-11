@@ -1,0 +1,4203 @@
+{
+  "model_name": "EleutherAI/pythia-70m",
+  "generation_tokens": 1024,
+  "repeats": 3,
+  "seqlen_sweep_lengths": [
+    128,
+    256,
+    512,
+    1024
+  ],
+  "results": {
+    "wikitext": {
+      "experiments": [
+        "core_ablation",
+        "seqlen_sweep"
+      ],
+      "fallback_used": false,
+      "Baseline": {
+        "ppl": 69.3032906974472,
+        "ppl_std": 9.335610363591316,
+        "ttft_s": 0.03907927933323663,
+        "ttft_s_std": 0.003243172293427808,
+        "tpot_s": 0.016640097591403235,
+        "tpot_s_std": 0.00013934327016017597,
+        "throughput_tok_s": 60.00905738124856,
+        "throughput_tok_s_std": 0.49134611993375704,
+        "ram_rss_mb": 1111.5234375,
+        "ram_rss_mb_std": 19.136384521771717,
+        "flops": 1969209120.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Baseline",
+          "fp32_model_size_mb=268.7",
+          "ablation:Baseline",
+          "fp32_model_size_mb=268.7",
+          "ablation:Baseline",
+          "fp32_model_size_mb=268.7"
+        ],
+        "runs": [
+          {
+            "ppl": 56.39532714022962,
+            "ttft_s": 0.04365980900001887,
+            "tpot_s": 0.01646480666666424,
+            "throughput_tok_s": 60.62616709353521,
+            "ram_rss_mb": 1097.859375,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Baseline",
+              "fp32_model_size_mb=268.7"
+            ]
+          },
+          {
+            "ppl": 73.35544215412492,
+            "ttft_s": 0.03658576399902813,
+            "tpot_s": 0.01680571509482918,
+            "throughput_tok_s": 59.423892300037444,
+            "ram_rss_mb": 1138.5859375,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Baseline",
+              "fp32_model_size_mb=268.7"
+            ]
+          },
+          {
+            "ppl": 78.15910279798706,
+            "ttft_s": 0.03699226500066288,
+            "tpot_s": 0.016649771012716287,
+            "throughput_tok_s": 59.97711275017303,
+            "ram_rss_mb": 1098.125,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Baseline",
+              "fp32_model_size_mb=268.7"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Baseline_opt": {
+        "ppl": 69.30403611409886,
+        "ppl_std": 9.33621083591341,
+        "ttft_s": 0.017960789667389083,
+        "ttft_s_std": 0.0015260094807810721,
+        "tpot_s": 0.009444875955363427,
+        "tpot_s_std": 0.00012057065610133542,
+        "throughput_tok_s": 105.77180489456536,
+        "throughput_tok_s_std": 1.3668051063724749,
+        "ram_rss_mb": 1136.5716145833333,
+        "ram_rss_mb_std": 23.86396645556653,
+        "flops": 1969209120.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Baseline_opt",
+          "fp32_model_size_mb=268.7",
+          "ablation:Baseline_opt",
+          "fp32_model_size_mb=268.7",
+          "ablation:Baseline_opt",
+          "fp32_model_size_mb=268.7"
+        ],
+        "runs": [
+          {
+            "ppl": 56.394869988494506,
+            "ttft_s": 0.01992335000068124,
+            "tpot_s": 0.0095869361769261,
+            "throughput_tok_s": 104.1689011735243,
+            "ram_rss_mb": 1170.3203125,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Baseline_opt",
+              "fp32_model_size_mb=268.7"
+            ]
+          },
+          {
+            "ppl": 73.35813555581501,
+            "ttft_s": 0.01620212600028026,
+            "tpot_s": 0.009292175196511729,
+            "throughput_tok_s": 107.50880955638219,
+            "ram_rss_mb": 1119.74609375,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Baseline_opt",
+              "fp32_model_size_mb=268.7"
+            ]
+          },
+          {
+            "ppl": 78.15910279798706,
+            "ttft_s": 0.017756893001205754,
+            "tpot_s": 0.00945551649265246,
+            "throughput_tok_s": 105.63770395378955,
+            "ram_rss_mb": 1119.6484375,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Baseline_opt",
+              "fp32_model_size_mb=268.7"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Quant_INT8_only": {
+        "ppl": 302.38960350779735,
+        "ppl_std": 78.62424307510665,
+        "ttft_s": 0.012418254000901166,
+        "ttft_s_std": 0.0009752283468751627,
+        "tpot_s": 0.006928466002943363,
+        "tpot_s_std": 7.917049314003074e-05,
+        "throughput_tok_s": 144.18976164788623,
+        "throughput_tok_s_std": 1.6488359040596563,
+        "ram_rss_mb": 1354.8294270833333,
+        "ram_rss_mb_std": 46.944595723908485,
+        "flops": 5488416.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": 98.30081176757812,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Quant_INT8_only",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "ablation:Quant_INT8_only",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "ablation:Quant_INT8_only",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied"
+        ],
+        "runs": [
+          {
+            "ppl": 206.82271412742526,
+            "ttft_s": 0.012668118000874529,
+            "tpot_s": 0.00688019632067057,
+            "throughput_tok_s": 145.17712212005466,
+            "ram_rss_mb": 1395.546875,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Quant_INT8_only",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied"
+            ]
+          },
+          {
+            "ppl": 300.95024210852955,
+            "ttft_s": 0.013467963000948657,
+            "tpot_s": 0.00704009072238586,
+            "throughput_tok_s": 141.8666472830961,
+            "ram_rss_mb": 1289.05859375,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Quant_INT8_only",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied"
+            ]
+          },
+          {
+            "ppl": 399.39585428743726,
+            "ttft_s": 0.011118681000880315,
+            "tpot_s": 0.0068651109657736605,
+            "throughput_tok_s": 145.52551554050785,
+            "ram_rss_mb": 1379.8828125,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Quant_INT8_only",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "SnapKV_only": {
+        "ppl": 69.30401604405738,
+        "ppl_std": 9.338478517529156,
+        "ttft_s": 0.02038746366633859,
+        "ttft_s_std": 0.003347969287266478,
+        "tpot_s": 0.008869339734775881,
+        "tpot_s_std": 0.0002584993466830942,
+        "throughput_tok_s": 112.67599128088655,
+        "throughput_tok_s_std": 3.312362869424458,
+        "ram_rss_mb": 1194.6041666666667,
+        "ram_rss_mb_std": 0.3903688396198915,
+        "flops": 1969060512.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:SnapKV_only",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "snapkv_effective_ratio=0.2018",
+          "ablation:SnapKV_only",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "snapkv_effective_ratio=0.2018",
+          "ablation:SnapKV_only",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "snapkv_effective_ratio=0.2018"
+        ],
+        "runs": [
+          {
+            "ppl": 56.391965816964664,
+            "ttft_s": 0.024999437999213114,
+            "tpot_s": 0.009180786086046428,
+            "throughput_tok_s": 108.71484664282943,
+            "ram_rss_mb": 1194.10546875,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:SnapKV_only",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          },
+          {
+            "ppl": 73.35796065659906,
+            "ttft_s": 0.017153781998786144,
+            "tpot_s": 0.008879398783952488,
+            "throughput_tok_s": 112.49101019826317,
+            "ram_rss_mb": 1194.6484375,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:SnapKV_only",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          },
+          {
+            "ppl": 78.16212165860837,
+            "ttft_s": 0.01900917100101651,
+            "tpot_s": 0.008547834334328727,
+            "throughput_tok_s": 116.82211700156704,
+            "ram_rss_mb": 1195.05859375,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:SnapKV_only",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Crosslayer_only": {
+        "ppl": 69.30401604405738,
+        "ppl_std": 9.338478517529156,
+        "ttft_s": 0.018960829666563466,
+        "ttft_s_std": 0.003756010994103176,
+        "tpot_s": 0.009146712162610428,
+        "tpot_s_std": 0.0004728801042571004,
+        "throughput_tok_s": 109.46756229398835,
+        "throughput_tok_s_std": 5.458378080872416,
+        "ram_rss_mb": 1155.7109375,
+        "ram_rss_mb_std": 20.405394804454314,
+        "flops": 1969209120.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Crosslayer_only",
+          "fp32_model_size_mb=268.7",
+          "cross_layer_shared_layers=1",
+          "ablation:Crosslayer_only",
+          "fp32_model_size_mb=268.7",
+          "cross_layer_shared_layers=1",
+          "ablation:Crosslayer_only",
+          "fp32_model_size_mb=268.7",
+          "cross_layer_shared_layers=1"
+        ],
+        "runs": [
+          {
+            "ppl": 56.391965816964664,
+            "ttft_s": 0.02357584399942425,
+            "tpot_s": 0.008688393936480895,
+            "throughput_tok_s": 114.87579996133954,
+            "ram_rss_mb": 1141.5859375,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Crosslayer_only",
+              "fp32_model_size_mb=268.7",
+              "cross_layer_shared_layers=1"
+            ]
+          },
+          {
+            "ppl": 73.35796065659906,
+            "ttft_s": 0.018930965999970795,
+            "tpot_s": 0.008954111044973652,
+            "throughput_tok_s": 111.53356514751376,
+            "ram_rss_mb": 1184.56640625,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Crosslayer_only",
+              "fp32_model_size_mb=268.7",
+              "cross_layer_shared_layers=1"
+            ]
+          },
+          {
+            "ppl": 78.16212165860837,
+            "ttft_s": 0.01437567900029535,
+            "tpot_s": 0.009797631506376737,
+            "throughput_tok_s": 101.99332177311173,
+            "ram_rss_mb": 1140.98046875,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Crosslayer_only",
+              "fp32_model_size_mb=268.7",
+              "cross_layer_shared_layers=1"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Quant_FP16_only": {
+        "ppl": 69.30383272966007,
+        "ppl_std": 9.334897826847302,
+        "ttft_s": 0.04742802466656334,
+        "ttft_s_std": 0.0027113045039368583,
+        "tpot_s": 0.008495736273066809,
+        "tpot_s_std": 0.0006492465280921706,
+        "throughput_tok_s": 117.80980661148624,
+        "throughput_tok_s_std": 8.762477776825023,
+        "ram_rss_mb": 1078.9934895833333,
+        "ram_rss_mb_std": 7.820814152380581,
+        "flops": 1969209120.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Quant_FP16_only",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "ablation:Quant_FP16_only",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "ablation:Quant_FP16_only",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied"
+        ],
+        "runs": [
+          {
+            "ppl": 56.39608010410701,
+            "ttft_s": 0.05045242599953781,
+            "tpot_s": 0.009363978762495161,
+            "throughput_tok_s": 106.29857355230527,
+            "ram_rss_mb": 1067.93359375,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Quant_FP16_only",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied"
+            ]
+          },
+          {
+            "ppl": 73.3591849598676,
+            "ttft_s": 0.04387462200065784,
+            "tpot_s": 0.007802968907130894,
+            "throughput_tok_s": 127.53910660569025,
+            "ram_rss_mb": 1084.60546875,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Quant_FP16_only",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied"
+            ]
+          },
+          {
+            "ppl": 78.15623312500563,
+            "ttft_s": 0.04795702599949436,
+            "tpot_s": 0.008320261149574373,
+            "throughput_tok_s": 119.59173967646319,
+            "ram_rss_mb": 1084.44140625,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Quant_FP16_only",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Compile_only": {
+        "ppl": 69.30321319131146,
+        "ppl_std": 9.3358540963226,
+        "ttft_s": 0.02760848566686036,
+        "ttft_s_std": 0.0014679916432147769,
+        "tpot_s": 0.01196964832029391,
+        "tpot_s_std": 0.0008339975928565868,
+        "throughput_tok_s": 83.80104772124531,
+        "throughput_tok_s_std": 5.572260742233167,
+        "ram_rss_mb": 1234.6328125,
+        "ram_rss_mb_std": 17.881564128827193,
+        "flops": 5249920688.0,
+        "flops_std": 4641114750.014272,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Compile_only",
+          "fp32_model_size_mb=268.7",
+          "torch_compile_applied",
+          "ablation:Compile_only",
+          "fp32_model_size_mb=268.7",
+          "torch_compile_applied",
+          "ablation:Compile_only",
+          "fp32_model_size_mb=268.7",
+          "torch_compile_applied"
+        ],
+        "runs": [
+          {
+            "ppl": 56.39427838586765,
+            "ttft_s": 0.025596560000849422,
+            "tpot_s": 0.011273728613850516,
+            "throughput_tok_s": 88.56590932929986,
+            "ram_rss_mb": 1252.02734375,
+            "flops": 11813448112.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_only",
+              "fp32_model_size_mb=268.7",
+              "torch_compile_applied"
+            ]
+          },
+          {
+            "ppl": 73.35834543542458,
+            "ttft_s": 0.02817103499910445,
+            "tpot_s": 0.013142289808435216,
+            "throughput_tok_s": 75.98288283052696,
+            "ram_rss_mb": 1241.83203125,
+            "flops": 1968156976.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_only",
+              "fp32_model_size_mb=268.7",
+              "torch_compile_applied"
+            ]
+          },
+          {
+            "ppl": 78.15701575264215,
+            "ttft_s": 0.02905786200062721,
+            "tpot_s": 0.011492926538596003,
+            "throughput_tok_s": 86.85435100390912,
+            "ram_rss_mb": 1210.0390625,
+            "flops": 1968156976.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_only",
+              "fp32_model_size_mb=268.7",
+              "torch_compile_applied"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Compile_SnapKV": {
+        "ppl": 69.30321319131146,
+        "ppl_std": 9.3358540963226,
+        "ttft_s": 0.022783246666222112,
+        "ttft_s_std": 0.0013130413222709539,
+        "tpot_s": 0.010622451324211279,
+        "tpot_s_std": 0.00040238680416590647,
+        "throughput_tok_s": 94.13519692550977,
+        "throughput_tok_s_std": 3.4644057632685845,
+        "ram_rss_mb": 1223.9947916666667,
+        "ram_rss_mb_std": 13.362790565039655,
+        "flops": 1968156976.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Compile_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "torch_compile_applied",
+          "snapkv_effective_ratio=0.0000",
+          "ablation:Compile_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "torch_compile_applied",
+          "snapkv_effective_ratio=0.0000",
+          "ablation:Compile_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "torch_compile_applied",
+          "snapkv_effective_ratio=0.0000"
+        ],
+        "runs": [
+          {
+            "ppl": 56.39427838586765,
+            "ttft_s": 0.022512376999657135,
+            "tpot_s": 0.011189356093791191,
+            "throughput_tok_s": 89.25579722707694,
+            "ram_rss_mb": 1230.55078125,
+            "flops": 1968156976.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "torch_compile_applied",
+              "snapkv_effective_ratio=0.0000"
+            ]
+          },
+          {
+            "ppl": 73.35834543542458,
+            "ttft_s": 0.021327742000721628,
+            "tpot_s": 0.01038185855818932,
+            "throughput_tok_s": 96.19181078431004,
+            "ram_rss_mb": 1236.06640625,
+            "flops": 1968156976.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "torch_compile_applied",
+              "snapkv_effective_ratio=0.0000"
+            ]
+          },
+          {
+            "ppl": 78.15701575264215,
+            "ttft_s": 0.024509620998287573,
+            "tpot_s": 0.010296139320653328,
+            "throughput_tok_s": 96.95798276514232,
+            "ram_rss_mb": 1205.3671875,
+            "flops": 1968156976.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "torch_compile_applied",
+              "snapkv_effective_ratio=0.0000"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Compile_Quant_INT8": {
+        "ppl": 313.83461597252085,
+        "ppl_std": 64.2418034116777,
+        "ttft_s": 0.015259195666052014,
+        "ttft_s_std": 0.0026025203829176313,
+        "tpot_s": 0.008421901145630883,
+        "tpot_s_std": 0.00017947910516767103,
+        "throughput_tok_s": 118.66592961428813,
+        "throughput_tok_s_std": 2.5173836658590454,
+        "ram_rss_mb": 1493.3424479166667,
+        "ram_rss_mb_std": 43.487667903178234,
+        "flops": 5146192.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": 98.30081176757812,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Compile_Quant_INT8",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "torch_compile_applied",
+          "ablation:Compile_Quant_INT8",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "torch_compile_applied",
+          "ablation:Compile_Quant_INT8",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "torch_compile_applied"
+        ],
+        "runs": [
+          {
+            "ppl": 224.75650244332718,
+            "ttft_s": 0.01778225599991856,
+            "tpot_s": 0.00866367640269421,
+            "throughput_tok_s": 115.27383925571688,
+            "ram_rss_mb": 1432.26171875,
+            "flops": 5146192.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_Quant_INT8",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "torch_compile_applied"
+            ]
+          },
+          {
+            "ppl": 342.90333900002474,
+            "ttft_s": 0.01631828899917309,
+            "tpot_s": 0.008234098140752271,
+            "throughput_tok_s": 121.29798923318826,
+            "ram_rss_mb": 1517.66796875,
+            "flops": 5146192.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_Quant_INT8",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "torch_compile_applied"
+            ]
+          },
+          {
+            "ppl": 373.8440064742105,
+            "ttft_s": 0.011677041999064386,
+            "tpot_s": 0.008367928893446171,
+            "throughput_tok_s": 119.42596035395925,
+            "ram_rss_mb": 1530.09765625,
+            "flops": 5146192.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_Quant_INT8",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "torch_compile_applied"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Compile_Quant_FP16": {
+        "ppl": 69.30678331090895,
+        "ppl_std": 9.335962645542034,
+        "ttft_s": 0.04552415699981793,
+        "ttft_s_std": 0.004422320078568211,
+        "tpot_s": 0.010675339338195282,
+        "tpot_s_std": 0.0003000533321241097,
+        "throughput_tok_s": 93.42280579775712,
+        "throughput_tok_s_std": 2.5597275406215116,
+        "ram_rss_mb": 1242.9453125,
+        "ram_rss_mb_std": 0.07967217989988726,
+        "flops": 1969209120.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Compile_Quant_FP16",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "torch_compile_applied",
+          "ablation:Compile_Quant_FP16",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "torch_compile_applied",
+          "ablation:Compile_Quant_FP16",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "torch_compile_applied"
+        ],
+        "runs": [
+          {
+            "ppl": 56.39763984697656,
+            "ttft_s": 0.040512241001124494,
+            "tpot_s": 0.010476016782002684,
+            "throughput_tok_s": 95.1640995834892,
+            "ram_rss_mb": 1242.8359375,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_Quant_FP16",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied",
+              "torch_compile_applied"
+            ]
+          },
+          {
+            "ppl": 73.36222831651348,
+            "ttft_s": 0.051269851999677485,
+            "tpot_s": 0.010450576677404807,
+            "throughput_tok_s": 95.30065478212147,
+            "ram_rss_mb": 1242.9765625,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_Quant_FP16",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied",
+              "torch_compile_applied"
+            ]
+          },
+          {
+            "ppl": 78.16048176923684,
+            "ttft_s": 0.04479037799865182,
+            "tpot_s": 0.011099424555178353,
+            "throughput_tok_s": 89.80366302766068,
+            "ram_rss_mb": 1243.0234375,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_Quant_FP16",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied",
+              "torch_compile_applied"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "SnapKV_CrossLayer": {
+        "ppl": 69.30401604405738,
+        "ppl_std": 9.338478517529156,
+        "ttft_s": 0.024371305999617714,
+        "ttft_s_std": 0.004365459649660531,
+        "tpot_s": 0.010954088194873488,
+        "tpot_s_std": 0.00019695274019725898,
+        "throughput_tok_s": 91.18529802697493,
+        "throughput_tok_s_std": 1.6148319179156017,
+        "ram_rss_mb": 1336.1510416666667,
+        "ram_rss_mb_std": 0.21717095010884988,
+        "flops": 1969060512.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:SnapKV_CrossLayer",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2018",
+          "ablation:SnapKV_CrossLayer",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2018",
+          "ablation:SnapKV_CrossLayer",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2018"
+        ],
+        "runs": [
+          {
+            "ppl": 56.391965816964664,
+            "ttft_s": 0.02957812299973739,
+            "tpot_s": 0.010746051539627377,
+            "throughput_tok_s": 92.87359549037174,
+            "ram_rss_mb": 1335.85546875,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:SnapKV_CrossLayer",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          },
+          {
+            "ppl": 73.35796065659906,
+            "ttft_s": 0.01889515499897243,
+            "tpot_s": 0.010897712833835418,
+            "throughput_tok_s": 91.67297583840985,
+            "ram_rss_mb": 1336.37109375,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:SnapKV_CrossLayer",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          },
+          {
+            "ppl": 78.16212165860837,
+            "ttft_s": 0.02464064000014332,
+            "tpot_s": 0.011218500211157667,
+            "throughput_tok_s": 89.00932275214323,
+            "ram_rss_mb": 1336.2265625,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:SnapKV_CrossLayer",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Quant_FP16_SnapKV": {
+        "ppl": 69.30452022173735,
+        "ppl_std": 9.33694418994692,
+        "ttft_s": 0.053153413333954326,
+        "ttft_s_std": 0.010380002514428116,
+        "tpot_s": 0.010272279317700353,
+        "tpot_s_std": 0.00015505172343672902,
+        "throughput_tok_s": 96.94860891217685,
+        "throughput_tok_s_std": 1.5207082249852086,
+        "ram_rss_mb": 1243.5833333333333,
+        "ram_rss_mb_std": 0.12146420708352956,
+        "flops": 1969060512.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Quant_FP16_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "kvpress_hooks=6",
+          "snapkv_effective_ratio=0.2018",
+          "ablation:Quant_FP16_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "kvpress_hooks=6",
+          "snapkv_effective_ratio=0.2018",
+          "ablation:Quant_FP16_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "kvpress_hooks=6",
+          "snapkv_effective_ratio=0.2018"
+        ],
+        "runs": [
+          {
+            "ppl": 56.394385949520014,
+            "ttft_s": 0.041602186000091024,
+            "tpot_s": 0.010201709812306906,
+            "throughput_tok_s": 97.69861497485769,
+            "ram_rss_mb": 1243.421875,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Quant_FP16_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied",
+              "kvpress_hooks=6",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          },
+          {
+            "ppl": 73.35873021626836,
+            "ttft_s": 0.06677399600084755,
+            "tpot_s": 0.01048735982700007,
+            "throughput_tok_s": 94.82805483954232,
+            "ram_rss_mb": 1243.61328125,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Quant_FP16_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied",
+              "kvpress_hooks=6",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          },
+          {
+            "ppl": 78.16044449942372,
+            "ttft_s": 0.051084058000924415,
+            "tpot_s": 0.010127768313794083,
+            "throughput_tok_s": 98.31915692213056,
+            "ram_rss_mb": 1243.71484375,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Quant_FP16_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied",
+              "kvpress_hooks=6",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "IPEX_only": {
+        "ppl": 69.30401604405738,
+        "ppl_std": 9.338478517529156,
+        "ttft_s": 0.019989979666812967,
+        "ttft_s_std": 0.002528551864581155,
+        "tpot_s": 0.011505539833825707,
+        "tpot_s_std": 0.0005178783671189031,
+        "throughput_tok_s": 87.00251790717935,
+        "throughput_tok_s_std": 3.9080551211974783,
+        "ram_rss_mb": 1766.7903645833333,
+        "ram_rss_mb_std": 1.9052473811949848,
+        "flops": 5488416.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:IPEX_only",
+          "fp32_model_size_mb=268.7",
+          "ipex_applied",
+          "ablation:IPEX_only",
+          "fp32_model_size_mb=268.7",
+          "ipex_applied",
+          "ablation:IPEX_only",
+          "fp32_model_size_mb=268.7",
+          "ipex_applied"
+        ],
+        "runs": [
+          {
+            "ppl": 56.391965816964664,
+            "ttft_s": 0.01791508800124575,
+            "tpot_s": 0.0115268870039199,
+            "throughput_tok_s": 86.68230471933173,
+            "ram_rss_mb": 1765.40234375,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_only",
+              "fp32_model_size_mb=268.7",
+              "ipex_applied"
+            ]
+          },
+          {
+            "ppl": 73.35796065659906,
+            "ttft_s": 0.023549622999780695,
+            "tpot_s": 0.010860866857263653,
+            "throughput_tok_s": 91.9409547409697,
+            "ram_rss_mb": 1765.484375,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_only",
+              "fp32_model_size_mb=268.7",
+              "ipex_applied"
+            ]
+          },
+          {
+            "ppl": 78.16212165860837,
+            "ttft_s": 0.018505227999412455,
+            "tpot_s": 0.012128865640293572,
+            "throughput_tok_s": 82.3842942612366,
+            "ram_rss_mb": 1769.484375,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_only",
+              "fp32_model_size_mb=268.7",
+              "ipex_applied"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "IPEX_Compile": {
+        "ppl": 69.30444345364292,
+        "ppl_std": 9.33679397343973,
+        "ttft_s": 0.028392420666326263,
+        "ttft_s_std": 0.0034753438362642034,
+        "tpot_s": 0.013800217941679377,
+        "tpot_s_std": 0.0007982471588060693,
+        "throughput_tok_s": 72.61730536866303,
+        "throughput_tok_s_std": 4.245979659407232,
+        "ram_rss_mb": 1799.3854166666667,
+        "ram_rss_mb_std": 15.805197361777811,
+        "flops": 5487664.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:IPEX_Compile",
+          "fp32_model_size_mb=268.7",
+          "ipex_applied",
+          "torch_compile_applied",
+          "ablation:IPEX_Compile",
+          "fp32_model_size_mb=268.7",
+          "ipex_applied",
+          "torch_compile_applied",
+          "ablation:IPEX_Compile",
+          "fp32_model_size_mb=268.7",
+          "ipex_applied",
+          "torch_compile_applied"
+        ],
+        "runs": [
+          {
+            "ppl": 56.39454729538323,
+            "ttft_s": 0.03300766999927873,
+            "tpot_s": 0.014737184675465682,
+            "throughput_tok_s": 67.75880437249482,
+            "ram_rss_mb": 1779.65234375,
+            "flops": 5487664.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Compile",
+              "fp32_model_size_mb=268.7",
+              "ipex_applied",
+              "torch_compile_applied"
+            ]
+          },
+          {
+            "ppl": 73.35845037545455,
+            "ttft_s": 0.027548226000362774,
+            "tpot_s": 0.012786420174970567,
+            "throughput_tok_s": 78.10249123170895,
+            "ram_rss_mb": 1800.16015625,
+            "flops": 5487664.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Compile",
+              "fp32_model_size_mb=268.7",
+              "ipex_applied",
+              "torch_compile_applied"
+            ]
+          },
+          {
+            "ppl": 78.16033269009097,
+            "ttft_s": 0.024621365999337286,
+            "tpot_s": 0.013877048974601883,
+            "throughput_tok_s": 71.9906205017853,
+            "ram_rss_mb": 1818.34375,
+            "flops": 5487664.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Compile",
+              "fp32_model_size_mb=268.7",
+              "ipex_applied",
+              "torch_compile_applied"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "IPEX_SnapKV": {
+        "ppl": 69.30401604405738,
+        "ppl_std": 9.338478517529156,
+        "ttft_s": 0.024854120000478968,
+        "ttft_s_std": 0.003674673810855773,
+        "tpot_s": 0.01279250778886052,
+        "tpot_s_std": 0.00087666468253178,
+        "throughput_tok_s": 78.43008055430391,
+        "throughput_tok_s_std": 5.129740538103736,
+        "ram_rss_mb": 1825.5026041666667,
+        "ram_rss_mb_std": 8.917838046415286,
+        "flops": 5339808.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:IPEX_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "snapkv_effective_ratio=0.2021",
+          "ablation:IPEX_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "snapkv_effective_ratio=0.2021",
+          "ablation:IPEX_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "snapkv_effective_ratio=0.2021"
+        ],
+        "runs": [
+          {
+            "ppl": 56.391965816964664,
+            "ttft_s": 0.019675932000609464,
+            "tpot_s": 0.012144515590418846,
+            "throughput_tok_s": 82.27048333590199,
+            "ram_rss_mb": 1817.30859375,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          },
+          {
+            "ppl": 73.35796065659906,
+            "ttft_s": 0.027823501000966644,
+            "tpot_s": 0.01403186776734843,
+            "throughput_tok_s": 71.1797912806724,
+            "ram_rss_mb": 1821.296875,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          },
+          {
+            "ppl": 78.16212165860837,
+            "ttft_s": 0.027062926999860792,
+            "tpot_s": 0.012201140008814284,
+            "throughput_tok_s": 81.83996704633735,
+            "ram_rss_mb": 1837.90234375,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "IPEX_CrossLayer": {
+        "ppl": 69.30401604405738,
+        "ppl_std": 9.338478517529156,
+        "ttft_s": 0.02221556066676082,
+        "ttft_s_std": 0.0012210813314885124,
+        "tpot_s": 0.014106788561432286,
+        "tpot_s_std": 0.0005691210222278432,
+        "throughput_tok_s": 70.94639337461973,
+        "throughput_tok_s_std": 2.9254112841854365,
+        "ram_rss_mb": 1811.5625,
+        "ram_rss_mb_std": 3.937364363983301,
+        "flops": 5488416.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:IPEX_CrossLayer",
+          "fp32_model_size_mb=268.7",
+          "ipex_applied",
+          "cross_layer_shared_layers=1",
+          "ablation:IPEX_CrossLayer",
+          "fp32_model_size_mb=268.7",
+          "ipex_applied",
+          "cross_layer_shared_layers=1",
+          "ablation:IPEX_CrossLayer",
+          "fp32_model_size_mb=268.7",
+          "ipex_applied",
+          "cross_layer_shared_layers=1"
+        ],
+        "runs": [
+          {
+            "ppl": 56.391965816964664,
+            "ttft_s": 0.02345554000021366,
+            "tpot_s": 0.013315227790834168,
+            "throughput_tok_s": 75.0245287091752,
+            "ram_rss_mb": 1807.83203125,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_CrossLayer",
+              "fp32_model_size_mb=268.7",
+              "ipex_applied",
+              "cross_layer_shared_layers=1"
+            ]
+          },
+          {
+            "ppl": 73.35796065659906,
+            "ttft_s": 0.022636435000094934,
+            "tpot_s": 0.014628750430119686,
+            "throughput_tok_s": 68.30428680540709,
+            "ram_rss_mb": 1809.84765625,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_CrossLayer",
+              "fp32_model_size_mb=268.7",
+              "ipex_applied",
+              "cross_layer_shared_layers=1"
+            ]
+          },
+          {
+            "ppl": 78.16212165860837,
+            "ttft_s": 0.02055470699997386,
+            "tpot_s": 0.014376387463343007,
+            "throughput_tok_s": 69.51036460927692,
+            "ram_rss_mb": 1817.0078125,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_CrossLayer",
+              "fp32_model_size_mb=268.7",
+              "ipex_applied",
+              "cross_layer_shared_layers=1"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "IPEX_Quant_INT8": {
+        "ppl": 302.38960350779735,
+        "ppl_std": 78.62424307510665,
+        "ttft_s": 0.016761893333750777,
+        "ttft_s_std": 0.004232056937903019,
+        "tpot_s": 0.008458971543181171,
+        "tpot_s_std": 0.0007585798713118264,
+        "throughput_tok_s": 118.97756643369185,
+        "throughput_tok_s_std": 10.142188117580758,
+        "ram_rss_mb": 1658.2486979166667,
+        "ram_rss_mb_std": 6.075109488325202,
+        "flops": 5488416.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": 98.30081176757812,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:IPEX_Quant_INT8",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "ipex_applied",
+          "ablation:IPEX_Quant_INT8",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "ipex_applied",
+          "ablation:IPEX_Quant_INT8",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "ipex_applied"
+        ],
+        "runs": [
+          {
+            "ppl": 206.82271412742526,
+            "ttft_s": 0.022700780000377563,
+            "tpot_s": 0.009519096171084507,
+            "throughput_tok_s": 104.87566256789894,
+            "ram_rss_mb": 1649.66015625,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Quant_INT8",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "ipex_applied"
+            ]
+          },
+          {
+            "ppl": 300.95024210852955,
+            "ttft_s": 0.013150050001058844,
+            "tpot_s": 0.0077865471495741035,
+            "throughput_tok_s": 128.29748294069378,
+            "ram_rss_mb": 1662.34765625,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Quant_INT8",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "ipex_applied"
+            ]
+          },
+          {
+            "ppl": 399.39585428743726,
+            "ttft_s": 0.014434849999815924,
+            "tpot_s": 0.008071271308884902,
+            "throughput_tok_s": 123.75955379248285,
+            "ram_rss_mb": 1662.73828125,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Quant_INT8",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "ipex_applied"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Compile_SnapKV_CrossLayer": {
+        "ppl": 69.30435569009792,
+        "ppl_std": 9.336622720691361,
+        "ttft_s": 0.027253404667135328,
+        "ttft_s_std": 0.005793523219498522,
+        "tpot_s": 0.01200514529030909,
+        "tpot_s_std": 0.00030686077171324826,
+        "throughput_tok_s": 83.23072509218292,
+        "throughput_tok_s_std": 2.121795393142976,
+        "ram_rss_mb": 1564.4869791666667,
+        "ram_rss_mb_std": 0.13837660514852412,
+        "flops": 1968950992.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Compile_SnapKV_CrossLayer",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "torch_compile_applied",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2018",
+          "ablation:Compile_SnapKV_CrossLayer",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "torch_compile_applied",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2018",
+          "ablation:Compile_SnapKV_CrossLayer",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "torch_compile_applied",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2018"
+        ],
+        "runs": [
+          {
+            "ppl": 56.394197713263026,
+            "ttft_s": 0.024789741000859067,
+            "tpot_s": 0.012253849584518759,
+            "throughput_tok_s": 81.50904265517471,
+            "ram_rss_mb": 1564.33203125,
+            "flops": 1968950992.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_SnapKV_CrossLayer",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "torch_compile_applied",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          },
+          {
+            "ppl": 73.36054920757887,
+            "ttft_s": 0.02171802600059891,
+            "tpot_s": 0.012188778419404151,
+            "throughput_tok_s": 81.96321466560644,
+            "ram_rss_mb": 1564.4609375,
+            "flops": 1968950992.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_SnapKV_CrossLayer",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "torch_compile_applied",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          },
+          {
+            "ppl": 78.15832014945184,
+            "ttft_s": 0.035252446999948006,
+            "tpot_s": 0.011572807867004355,
+            "throughput_tok_s": 86.21991795576761,
+            "ram_rss_mb": 1564.66796875,
+            "flops": 1968950992.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_SnapKV_CrossLayer",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "torch_compile_applied",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Compile_Quant_FP16_SnapKV": {
+        "ppl": 69.30678331090895,
+        "ppl_std": 9.335962645542034,
+        "ttft_s": 0.0524927836668212,
+        "ttft_s_std": 0.0028798640454633226,
+        "tpot_s": 0.010897880205934032,
+        "tpot_s_std": 0.0002203511495324373,
+        "throughput_tok_s": 91.43190333083714,
+        "throughput_tok_s_std": 1.8023071395868318,
+        "ram_rss_mb": 1423.49609375,
+        "ram_rss_mb_std": 40.14869213895703,
+        "flops": 1969060512.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Compile_Quant_FP16_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "kvpress_hooks=6",
+          "torch_compile_applied",
+          "snapkv_effective_ratio=0.2021",
+          "ablation:Compile_Quant_FP16_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "kvpress_hooks=6",
+          "torch_compile_applied",
+          "snapkv_effective_ratio=0.2021",
+          "ablation:Compile_Quant_FP16_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "kvpress_hooks=6",
+          "torch_compile_applied",
+          "snapkv_effective_ratio=0.2021"
+        ],
+        "runs": [
+          {
+            "ppl": 56.39763984697656,
+            "ttft_s": 0.050854048000473995,
+            "tpot_s": 0.010727457221863109,
+            "throughput_tok_s": 92.85456753350894,
+            "ram_rss_mb": 1374.35546875,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_Quant_FP16_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied",
+              "kvpress_hooks=6",
+              "torch_compile_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          },
+          {
+            "ppl": 73.36222831651348,
+            "ttft_s": 0.05654113499986124,
+            "tpot_s": 0.010757151554290526,
+            "throughput_tok_s": 92.55209694947783,
+            "ram_rss_mb": 1423.43359375,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_Quant_FP16_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied",
+              "kvpress_hooks=6",
+              "torch_compile_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          },
+          {
+            "ppl": 78.16048176923684,
+            "ttft_s": 0.05008316800012835,
+            "tpot_s": 0.011209031841648457,
+            "throughput_tok_s": 88.88904550952469,
+            "ram_rss_mb": 1472.69921875,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_Quant_FP16_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied",
+              "kvpress_hooks=6",
+              "torch_compile_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "IPEX_Compile_SnapKV": {
+        "ppl": 69.30444345364292,
+        "ppl_std": 9.33679397343973,
+        "ttft_s": 0.0259935156670205,
+        "ttft_s_std": 0.00476850129389498,
+        "tpot_s": 0.012811504487461357,
+        "tpot_s_std": 0.00030895152786356673,
+        "throughput_tok_s": 78.0040092288379,
+        "throughput_tok_s_std": 1.8643690560115238,
+        "ram_rss_mb": 1872.5065104166667,
+        "ram_rss_mb_std": 13.805941382956037,
+        "flops": 5339056.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:IPEX_Compile_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "torch_compile_applied",
+          "snapkv_effective_ratio=0.2021",
+          "ablation:IPEX_Compile_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "torch_compile_applied",
+          "snapkv_effective_ratio=0.2021",
+          "ablation:IPEX_Compile_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "torch_compile_applied",
+          "snapkv_effective_ratio=0.2021"
+        ],
+        "runs": [
+          {
+            "ppl": 56.39454729538323,
+            "ttft_s": 0.0192588860008982,
+            "tpot_s": 0.012740792294258277,
+            "throughput_tok_s": 78.43199552349128,
+            "ram_rss_mb": 1891.58203125,
+            "flops": 5339056.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Compile_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "torch_compile_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          },
+          {
+            "ppl": 73.35845037545455,
+            "ttft_s": 0.02966328600086854,
+            "tpot_s": 0.01247346212510363,
+            "throughput_tok_s": 80.04310923631232,
+            "ram_rss_mb": 1866.57421875,
+            "flops": 5339056.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Compile_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "torch_compile_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          },
+          {
+            "ppl": 78.16033269009097,
+            "ttft_s": 0.029058374999294756,
+            "tpot_s": 0.013220259043022166,
+            "throughput_tok_s": 75.5369229267101,
+            "ram_rss_mb": 1859.36328125,
+            "flops": 5339056.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Compile_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "torch_compile_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "IPEX_Quant_INT8_SnapKV": {
+        "ppl": 302.38960350779735,
+        "ppl_std": 78.62424307510665,
+        "ttft_s": 0.018665868999960367,
+        "ttft_s_std": 0.0041070529886791255,
+        "tpot_s": 0.009050825773205252,
+        "tpot_s_std": 0.00028180214197554276,
+        "throughput_tok_s": 110.44416350402815,
+        "throughput_tok_s_std": 3.4767334528170877,
+        "ram_rss_mb": 1662.8541666666667,
+        "ram_rss_mb_std": 0.06692758997862706,
+        "flops": 5339808.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": 98.30081176757812,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:IPEX_Quant_INT8_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "snapkv_effective_ratio=0.2021",
+          "ablation:IPEX_Quant_INT8_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "snapkv_effective_ratio=0.2021",
+          "ablation:IPEX_Quant_INT8_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "snapkv_effective_ratio=0.2021"
+        ],
+        "runs": [
+          {
+            "ppl": 206.82271412742526,
+            "ttft_s": 0.014675084999907995,
+            "tpot_s": 0.00870991926683373,
+            "throughput_tok_s": 114.69654213049627,
+            "ram_rss_mb": 1662.8828125,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Quant_INT8_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          },
+          {
+            "ppl": 300.95024210852955,
+            "ttft_s": 0.017006530000799103,
+            "tpot_s": 0.009042517351896229,
+            "throughput_tok_s": 110.45560612023705,
+            "ram_rss_mb": 1662.76171875,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Quant_INT8_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          },
+          {
+            "ppl": 399.39585428743726,
+            "ttft_s": 0.024315991999174003,
+            "tpot_s": 0.009400040700885796,
+            "throughput_tok_s": 106.18034226135114,
+            "ram_rss_mb": 1662.91796875,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Quant_INT8_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "All_In_One": {
+        "ppl": 299.18890401204845,
+        "ppl_std": 72.77642459609737,
+        "ttft_s": 0.01303600900003706,
+        "ttft_s_std": 0.0009176272497292711,
+        "tpot_s": 0.009646840690762793,
+        "tpot_s_std": 0.00019861329764980798,
+        "throughput_tok_s": 103.64306823327486,
+        "throughput_tok_s_std": 2.153190890540545,
+        "ram_rss_mb": 1662.8072916666667,
+        "ram_rss_mb_std": 0.020255663002739642,
+        "flops": 5216848.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": 98.30081176757812,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:All_In_One",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "torch_compile_applied",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2021",
+          "ablation:All_In_One",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "torch_compile_applied",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2021",
+          "ablation:All_In_One",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "torch_compile_applied",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2021"
+        ],
+        "runs": [
+          {
+            "ppl": 204.60975412876266,
+            "ttft_s": 0.014147820000289357,
+            "tpot_s": 0.009727557729211194,
+            "throughput_tok_s": 102.72990934775518,
+            "ram_rss_mb": 1662.79296875,
+            "flops": 5216848.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:All_In_One",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "torch_compile_applied",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          },
+          {
+            "ppl": 311.3259502963758,
+            "ttft_s": 0.013059729999440606,
+            "tpot_s": 0.009373491972639397,
+            "throughput_tok_s": 106.61538855180221,
+            "ram_rss_mb": 1662.8359375,
+            "flops": 5216848.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:All_In_One",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "torch_compile_applied",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          },
+          {
+            "ppl": 381.6310076110069,
+            "ttft_s": 0.011900477000381215,
+            "tpot_s": 0.009839472370437786,
+            "throughput_tok_s": 101.58390680026717,
+            "ram_rss_mb": 1662.79296875,
+            "flops": 5216848.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:All_In_One",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "torch_compile_applied",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "seqlen_sweep": {
+        "128": {
+          "baseline": {
+            "ttft_s": 0.02143931899991003,
+            "tpot_s": 0.010897197236228362,
+            "throughput_tok_s": 91.04829495761653
+          },
+          "snapkv": {
+            "ttft_s": 0.023399850999339833,
+            "tpot_s": 0.011451154992053804,
+            "throughput_tok_s": 86.59596086621147
+          }
+        },
+        "256": {
+          "baseline": {
+            "ttft_s": 0.021870500000659376,
+            "tpot_s": 0.01114991333336494,
+            "throughput_tok_s": 89.32523967620186
+          },
+          "snapkv": {
+            "ttft_s": 0.01868045599985635,
+            "tpot_s": 0.010671271925478804,
+            "throughput_tok_s": 93.4086978789936
+          }
+        },
+        "512": {
+          "baseline": {
+            "ttft_s": 0.018003163000685163,
+            "tpot_s": 0.011206209972567181,
+            "throughput_tok_s": 89.1039533309391
+          },
+          "snapkv": {
+            "ttft_s": 0.020639618000132032,
+            "tpot_s": 0.011146586686891615,
+            "throughput_tok_s": 89.53756667245717
+          }
+        },
+        "1024": {
+          "baseline": {
+            "ttft_s": 0.01558772200041858,
+            "tpot_s": 0.011872774692111624,
+            "throughput_tok_s": 84.17380368032849
+          },
+          "snapkv": {
+            "ttft_s": 0.020232806000421988,
+            "tpot_s": 0.01195079488659354,
+            "throughput_tok_s": 83.59393665533179
+          }
+        }
+      }
+    },
+    "pg19": {
+      "experiments": [
+        "core_ablation",
+        "seqlen_sweep"
+      ],
+      "fallback_used": false,
+      "Baseline": {
+        "ppl": 34.609579875621456,
+        "ppl_std": 7.787352287074324,
+        "ttft_s": 0.04401066433335169,
+        "ttft_s_std": 0.0012760256920252495,
+        "tpot_s": 0.021530879439550815,
+        "tpot_s_std": 0.0006339047128906907,
+        "throughput_tok_s": 46.42923962708455,
+        "throughput_tok_s_std": 1.382601238613875,
+        "ram_rss_mb": 4079.14453125,
+        "ram_rss_mb_std": 17.90974460518398,
+        "flops": 1969209120.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Baseline",
+          "fp32_model_size_mb=268.7",
+          "ablation:Baseline",
+          "fp32_model_size_mb=268.7",
+          "ablation:Baseline",
+          "fp32_model_size_mb=268.7"
+        ],
+        "runs": [
+          {
+            "ppl": 45.20443199945471,
+            "ttft_s": 0.04519670599984238,
+            "tpot_s": 0.02221041185039781,
+            "throughput_tok_s": 44.970073492691505,
+            "ram_rss_mb": 4053.81640625,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Baseline",
+              "fp32_model_size_mb=268.7"
+            ]
+          },
+          {
+            "ppl": 31.91525097287541,
+            "ttft_s": 0.0445954980004899,
+            "tpot_s": 0.02169750197264141,
+            "throughput_tok_s": 46.031655926803765,
+            "ram_rss_mb": 4091.75390625,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Baseline",
+              "fp32_model_size_mb=268.7"
+            ]
+          },
+          {
+            "ppl": 26.70905665453424,
+            "ttft_s": 0.042239788999722805,
+            "tpot_s": 0.020684724495613222,
+            "throughput_tok_s": 48.2859894617584,
+            "ram_rss_mb": 4091.86328125,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Baseline",
+              "fp32_model_size_mb=268.7"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Baseline_opt": {
+        "ppl": 34.60981667766352,
+        "ppl_std": 7.787823310910956,
+        "ttft_s": 0.02209843966617579,
+        "ttft_s_std": 0.004304293405433139,
+        "tpot_s": 0.012635398428153389,
+        "tpot_s_std": 0.000740480333496795,
+        "throughput_tok_s": 79.34379198332147,
+        "throughput_tok_s_std": 4.813544557724833,
+        "ram_rss_mb": 4088.1197916666665,
+        "ram_rss_mb_std": 7.213782571563988,
+        "flops": 1969209120.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Baseline_opt",
+          "fp32_model_size_mb=268.7",
+          "ablation:Baseline_opt",
+          "fp32_model_size_mb=268.7",
+          "ablation:Baseline_opt",
+          "fp32_model_size_mb=268.7"
+        ],
+        "runs": [
+          {
+            "ppl": 45.205261880458636,
+            "ttft_s": 0.020424329999514157,
+            "tpot_s": 0.012916811807461046,
+            "throughput_tok_s": 77.353471756145,
+            "ram_rss_mb": 4093.2109375,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Baseline_opt",
+              "fp32_model_size_mb=268.7"
+            ]
+          },
+          {
+            "ppl": 31.9154944678455,
+            "ttft_s": 0.017867119000584353,
+            "tpot_s": 0.011621152060578017,
+            "throughput_tok_s": 85.97670748879862,
+            "ram_rss_mb": 4077.91796875,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Baseline_opt",
+              "fp32_model_size_mb=268.7"
+            ]
+          },
+          {
+            "ppl": 26.70869368468641,
+            "ttft_s": 0.028003869998428854,
+            "tpot_s": 0.0133682314164211,
+            "throughput_tok_s": 74.70119670502076,
+            "ram_rss_mb": 4093.23046875,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Baseline_opt",
+              "fp32_model_size_mb=268.7"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Quant_INT8_only": {
+        "ppl": 91.970329717095,
+        "ppl_std": 27.6941525229606,
+        "ttft_s": 0.025118676666049094,
+        "ttft_s_std": 0.005734391415796814,
+        "tpot_s": 0.01032933379179402,
+        "tpot_s_std": 0.0002935444730795401,
+        "throughput_tok_s": 96.72121302723788,
+        "throughput_tok_s_std": 2.7263477537789926,
+        "ram_rss_mb": 4400.338541666667,
+        "ram_rss_mb_std": 5.9831631692050316,
+        "flops": 5488416.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": 98.30081176757812,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Quant_INT8_only",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "ablation:Quant_INT8_only",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "ablation:Quant_INT8_only",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied"
+        ],
+        "runs": [
+          {
+            "ppl": 131.13375621478198,
+            "ttft_s": 0.020102873999348958,
+            "tpot_s": 0.010628866731157583,
+            "throughput_tok_s": 93.97181068568905,
+            "ram_rss_mb": 4405.578125,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Quant_INT8_only",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied"
+            ]
+          },
+          {
+            "ppl": 72.73306482099657,
+            "ttft_s": 0.02210786799878406,
+            "tpot_s": 0.010428490101685516,
+            "throughput_tok_s": 95.75496392408124,
+            "ram_rss_mb": 4403.47265625,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Quant_INT8_only",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied"
+            ]
+          },
+          {
+            "ppl": 72.04416811550641,
+            "ttft_s": 0.03314528800001426,
+            "tpot_s": 0.009930644542538964,
+            "throughput_tok_s": 100.43686447194338,
+            "ram_rss_mb": 4391.96484375,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Quant_INT8_only",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "SnapKV_only": {
+        "ppl": 34.60989170247063,
+        "ppl_std": 7.78714535929202,
+        "ttft_s": 0.02637012400009553,
+        "ttft_s_std": 0.0029218427019462017,
+        "tpot_s": 0.013247348660478706,
+        "tpot_s_std": 0.0003195359773580911,
+        "throughput_tok_s": 75.43558565772013,
+        "throughput_tok_s_std": 1.7801305482597483,
+        "ram_rss_mb": 4403.893229166667,
+        "ram_rss_mb_std": 20.85846116456971,
+        "flops": 1969060512.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:SnapKV_only",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "snapkv_effective_ratio=0.2018",
+          "ablation:SnapKV_only",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "snapkv_effective_ratio=0.2018",
+          "ablation:SnapKV_only",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "snapkv_effective_ratio=0.2018"
+        ],
+        "runs": [
+          {
+            "ppl": 45.20427033609709,
+            "ttft_s": 0.026434281000547344,
+            "tpot_s": 0.013133774208198277,
+            "throughput_tok_s": 76.04472004210645,
+            "ram_rss_mb": 4375.44140625,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:SnapKV_only",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          },
+          {
+            "ppl": 31.9163162770849,
+            "ttft_s": 0.029916126000898657,
+            "tpot_s": 0.01292534769503794,
+            "throughput_tok_s": 77.24644126714136,
+            "ram_rss_mb": 4424.86328125,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:SnapKV_only",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          },
+          {
+            "ppl": 26.709088494229903,
+            "ttft_s": 0.022759964998840587,
+            "tpot_s": 0.013682924078199894,
+            "throughput_tok_s": 73.01559566391259,
+            "ram_rss_mb": 4411.375,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:SnapKV_only",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Crosslayer_only": {
+        "ppl": 34.60989170247063,
+        "ppl_std": 7.78714535929202,
+        "ttft_s": 0.02759703433245401,
+        "ttft_s_std": 0.007163855528021954,
+        "tpot_s": 0.012490379099704295,
+        "tpot_s_std": 0.0003329421638512295,
+        "throughput_tok_s": 79.99937263933693,
+        "throughput_tok_s_std": 2.090703705578518,
+        "ram_rss_mb": 4316.766927083333,
+        "ram_rss_mb_std": 5.890801429073935,
+        "flops": 1969209120.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Crosslayer_only",
+          "fp32_model_size_mb=268.7",
+          "cross_layer_shared_layers=1",
+          "ablation:Crosslayer_only",
+          "fp32_model_size_mb=268.7",
+          "cross_layer_shared_layers=1",
+          "ablation:Crosslayer_only",
+          "fp32_model_size_mb=268.7",
+          "cross_layer_shared_layers=1"
+        ],
+        "runs": [
+          {
+            "ppl": 45.20427033609709,
+            "ttft_s": 0.024351377998755197,
+            "tpot_s": 0.012907749755632683,
+            "throughput_tok_s": 77.38350156079754,
+            "ram_rss_mb": 4312.640625,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Crosslayer_only",
+              "fp32_model_size_mb=268.7",
+              "cross_layer_shared_layers=1"
+            ]
+          },
+          {
+            "ppl": 31.9163162770849,
+            "ttft_s": 0.037531332000071416,
+            "tpot_s": 0.012092942537618735,
+            "throughput_tok_s": 82.50082267459128,
+            "ram_rss_mb": 4325.09765625,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Crosslayer_only",
+              "fp32_model_size_mb=268.7",
+              "cross_layer_shared_layers=1"
+            ]
+          },
+          {
+            "ppl": 26.709088494229903,
+            "ttft_s": 0.02090839299853542,
+            "tpot_s": 0.012470445005861462,
+            "throughput_tok_s": 80.11379368262199,
+            "ram_rss_mb": 4312.5625,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Crosslayer_only",
+              "fp32_model_size_mb=268.7",
+              "cross_layer_shared_layers=1"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Quant_FP16_only": {
+        "ppl": 34.610248193339565,
+        "ppl_std": 7.7868613264526925,
+        "ttft_s": 0.04658446100014165,
+        "ttft_s_std": 0.001958913269428299,
+        "tpot_s": 0.010497985135876957,
+        "tpot_s_std": 0.0003971778207611935,
+        "throughput_tok_s": 95.04117874761528,
+        "throughput_tok_s_std": 3.5959854343092785,
+        "ram_rss_mb": 4479.40234375,
+        "ram_rss_mb_std": 117.1895942955222,
+        "flops": 1969209120.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Quant_FP16_only",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "ablation:Quant_FP16_only",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "ablation:Quant_FP16_only",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied"
+        ],
+        "runs": [
+          {
+            "ppl": 45.20419489339473,
+            "ttft_s": 0.04696626600161835,
+            "tpot_s": 0.010555216194578446,
+            "throughput_tok_s": 94.39169859832344,
+            "ram_rss_mb": 4561.8671875,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Quant_FP16_only",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied"
+            ]
+          },
+          {
+            "ppl": 31.916932647901458,
+            "ttft_s": 0.04876983299982385,
+            "tpot_s": 0.009985459711611005,
+            "throughput_tok_s": 99.73401892612826,
+            "ram_rss_mb": 4313.671875,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Quant_FP16_only",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied"
+            ]
+          },
+          {
+            "ppl": 26.709617038722516,
+            "ttft_s": 0.04401728399898275,
+            "tpot_s": 0.010953279501441418,
+            "throughput_tok_s": 90.99781871839409,
+            "ram_rss_mb": 4562.66796875,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Quant_FP16_only",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Compile_only": {
+        "ppl": 34.60933848835925,
+        "ppl_std": 7.787503920270134,
+        "ttft_s": 0.027071702333463083,
+        "ttft_s_std": 0.0024216785862256514,
+        "tpot_s": 0.013228791321262964,
+        "tpot_s_std": 0.00018825062662942117,
+        "throughput_tok_s": 75.5127873798727,
+        "throughput_tok_s_std": 1.0684598750811254,
+        "ram_rss_mb": 4323.473958333333,
+        "ram_rss_mb_std": 5.8430896370051,
+        "flops": 1968950992.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Compile_only",
+          "fp32_model_size_mb=268.7",
+          "torch_compile_applied",
+          "ablation:Compile_only",
+          "fp32_model_size_mb=268.7",
+          "torch_compile_applied",
+          "ablation:Compile_only",
+          "fp32_model_size_mb=268.7",
+          "torch_compile_applied"
+        ],
+        "runs": [
+          {
+            "ppl": 45.20443199945471,
+            "ttft_s": 0.023809295998944435,
+            "tpot_s": 0.013445981954996697,
+            "throughput_tok_s": 74.29785667082676,
+            "ram_rss_mb": 4327.5390625,
+            "flops": 1968950992.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_only",
+              "fp32_model_size_mb=268.7",
+              "torch_compile_applied"
+            ]
+          },
+          {
+            "ppl": 31.914832470235957,
+            "ttft_s": 0.02960530200107314,
+            "tpot_s": 0.013253532492662846,
+            "throughput_tok_s": 75.3421992104332,
+            "ram_rss_mb": 4315.2109375,
+            "flops": 1968950992.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_only",
+              "fp32_model_size_mb=268.7",
+              "torch_compile_applied"
+            ]
+          },
+          {
+            "ppl": 26.708750995387078,
+            "ttft_s": 0.027800509000371676,
+            "tpot_s": 0.012986859516129347,
+            "throughput_tok_s": 76.89830625835813,
+            "ram_rss_mb": 4327.671875,
+            "flops": 1968950992.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_only",
+              "fp32_model_size_mb=268.7",
+              "torch_compile_applied"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Compile_SnapKV": {
+        "ppl": 34.60933848835925,
+        "ppl_std": 7.787503920270134,
+        "ttft_s": 0.02754384800027765,
+        "ttft_s_std": 0.0042324278814077545,
+        "tpot_s": 0.012889104561112344,
+        "tpot_s_std": 0.0006555478614856845,
+        "throughput_tok_s": 77.67928914896105,
+        "throughput_tok_s_std": 3.8468887830392102,
+        "ram_rss_mb": 4363.82421875,
+        "ram_rss_mb_std": 0.4290122535218254,
+        "flops": 1968950992.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Compile_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "torch_compile_applied",
+          "snapkv_effective_ratio=0.2018",
+          "ablation:Compile_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "torch_compile_applied",
+          "snapkv_effective_ratio=0.2018",
+          "ablation:Compile_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "torch_compile_applied",
+          "snapkv_effective_ratio=0.2018"
+        ],
+        "runs": [
+          {
+            "ppl": 45.20443199945471,
+            "ttft_s": 0.027606375000686967,
+            "tpot_s": 0.012568439092873626,
+            "throughput_tok_s": 79.45455911353619,
+            "ram_rss_mb": 4364.2421875,
+            "flops": 1968950992.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "torch_compile_applied",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          },
+          {
+            "ppl": 31.914832470235957,
+            "ttft_s": 0.02232922300026985,
+            "tpot_s": 0.01229611482699044,
+            "throughput_tok_s": 81.24520807094672,
+            "ram_rss_mb": 4363.99609375,
+            "flops": 1968950992.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "torch_compile_applied",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          },
+          {
+            "ppl": 26.708750995387078,
+            "ttft_s": 0.03269594599987613,
+            "tpot_s": 0.013802759763472972,
+            "throughput_tok_s": 72.33810026240025,
+            "ram_rss_mb": 4363.234375,
+            "flops": 1968950992.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "torch_compile_applied",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Compile_Quant_INT8": {
+        "ppl": 91.3120621191771,
+        "ppl_std": 27.09637888400628,
+        "ttft_s": 0.019202292667008198,
+        "ttft_s_std": 0.004147175983703512,
+        "tpot_s": 0.010463240639310048,
+        "tpot_s_std": 0.0005124648553185115,
+        "throughput_tok_s": 95.70784614206069,
+        "throughput_tok_s_std": 4.850678140917618,
+        "ram_rss_mb": 4402.700520833333,
+        "ram_rss_mb_std": 5.533501827018588,
+        "flops": 5146192.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": 98.30081176757812,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Compile_Quant_INT8",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "torch_compile_applied",
+          "ablation:Compile_Quant_INT8",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "torch_compile_applied",
+          "ablation:Compile_Quant_INT8",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "torch_compile_applied"
+        ],
+        "runs": [
+          {
+            "ppl": 129.63090985864426,
+            "ttft_s": 0.015272823000486824,
+            "tpot_s": 0.010883096900320513,
+            "throughput_tok_s": 91.82415999408906,
+            "ram_rss_mb": 4406.59375,
+            "flops": 5146192.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_Quant_INT8",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "torch_compile_applied"
+            ]
+          },
+          {
+            "ppl": 72.4173151809685,
+            "ttft_s": 0.01739634399928036,
+            "tpot_s": 0.0097417258768717,
+            "throughput_tok_s": 102.54676528939925,
+            "ram_rss_mb": 4406.6328125,
+            "flops": 5146192.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_Quant_INT8",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "torch_compile_applied"
+            ]
+          },
+          {
+            "ppl": 71.88796131791854,
+            "ttft_s": 0.024937711001257412,
+            "tpot_s": 0.01076489914073793,
+            "throughput_tok_s": 92.75261314269375,
+            "ram_rss_mb": 4394.875,
+            "flops": 5146192.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_Quant_INT8",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "torch_compile_applied"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Compile_Quant_FP16": {
+        "ppl": 34.610645809700465,
+        "ppl_std": 7.787585965800182,
+        "ttft_s": 0.05528815800062148,
+        "ttft_s_std": 0.00928955261182603,
+        "tpot_s": 0.012225102436967755,
+        "tpot_s_std": 0.00029949569126177313,
+        "throughput_tok_s": 81.54232446684881,
+        "throughput_tok_s_std": 1.972110114907866,
+        "ram_rss_mb": 4865.772135416667,
+        "ram_rss_mb_std": 10.67621614237491,
+        "flops": 1969209120.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Compile_Quant_FP16",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "torch_compile_applied",
+          "ablation:Compile_Quant_FP16",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "torch_compile_applied",
+          "ablation:Compile_Quant_FP16",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "torch_compile_applied"
+        ],
+        "runs": [
+          {
+            "ppl": 45.205628326270265,
+            "ttft_s": 0.0627374220002821,
+            "tpot_s": 0.01181156753080115,
+            "throughput_tok_s": 84.28207595535993,
+            "ram_rss_mb": 4880.26171875,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_Quant_FP16",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied",
+              "torch_compile_applied"
+            ]
+          },
+          {
+            "ppl": 31.916902209557048,
+            "ttft_s": 0.04219202500098618,
+            "tpot_s": 0.01251116783871862,
+            "throughput_tok_s": 79.72062044339448,
+            "ram_rss_mb": 4862.203125,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_Quant_FP16",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied",
+              "torch_compile_applied"
+            ]
+          },
+          {
+            "ppl": 26.7094068932741,
+            "ttft_s": 0.060935027000596165,
+            "tpot_s": 0.012352571941383497,
+            "throughput_tok_s": 80.62427700179204,
+            "ram_rss_mb": 4854.8515625,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_Quant_FP16",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied",
+              "torch_compile_applied"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "SnapKV_CrossLayer": {
+        "ppl": 34.60989170247063,
+        "ppl_std": 7.78714535929202,
+        "ttft_s": 0.024601446000209155,
+        "ttft_s_std": 0.0013988387760418143,
+        "tpot_s": 0.013241111098368561,
+        "tpot_s_std": 0.00018379167721011024,
+        "throughput_tok_s": 75.45229800948512,
+        "throughput_tok_s_std": 1.0492776504618362,
+        "ram_rss_mb": 4429.481770833333,
+        "ram_rss_mb_std": 0.8599686238876281,
+        "flops": 1969060512.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:SnapKV_CrossLayer",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2018",
+          "ablation:SnapKV_CrossLayer",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2018",
+          "ablation:SnapKV_CrossLayer",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2018"
+        ],
+        "runs": [
+          {
+            "ppl": 45.20427033609709,
+            "ttft_s": 0.023249084000781295,
+            "tpot_s": 0.01336129704494223,
+            "throughput_tok_s": 74.76757684982131,
+            "ram_rss_mb": 4430.65625,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:SnapKV_CrossLayer",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          },
+          {
+            "ppl": 31.9163162770849,
+            "ttft_s": 0.02402724199964723,
+            "tpot_s": 0.013380606638283768,
+            "throughput_tok_s": 74.65455197949076,
+            "ram_rss_mb": 4429.16796875,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:SnapKV_CrossLayer",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          },
+          {
+            "ppl": 26.709088494229903,
+            "ttft_s": 0.02652801200019894,
+            "tpot_s": 0.012981429611879685,
+            "throughput_tok_s": 76.9347651991433,
+            "ram_rss_mb": 4428.62109375,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:SnapKV_CrossLayer",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Quant_FP16_SnapKV": {
+        "ppl": 34.609708600359795,
+        "ppl_std": 7.787524879431594,
+        "ttft_s": 0.04305742933320289,
+        "ttft_s_std": 0.002808788419321653,
+        "tpot_s": 0.010505453262953608,
+        "tpot_s_std": 0.0003955578430225704,
+        "throughput_tok_s": 95.00314457164266,
+        "throughput_tok_s_std": 3.494857581119226,
+        "ram_rss_mb": 4378.986979166667,
+        "ram_rss_mb_std": 0.5835570859931761,
+        "flops": 1969060512.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Quant_FP16_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "kvpress_hooks=6",
+          "snapkv_effective_ratio=0.2018",
+          "ablation:Quant_FP16_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "kvpress_hooks=6",
+          "snapkv_effective_ratio=0.2018",
+          "ablation:Quant_FP16_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "kvpress_hooks=6",
+          "snapkv_effective_ratio=0.2018"
+        ],
+        "runs": [
+          {
+            "ppl": 45.20470143966887,
+            "ttft_s": 0.04184563899980276,
+            "tpot_s": 0.010099612566960486,
+            "throughput_tok_s": 98.67819131704815,
+            "ram_rss_mb": 4379.484375,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Quant_FP16_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied",
+              "kvpress_hooks=6",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          },
+          {
+            "ppl": 31.91565426242922,
+            "ttft_s": 0.046939391000705655,
+            "tpot_s": 0.010374953443785875,
+            "throughput_tok_s": 96.02771271263637,
+            "ram_rss_mb": 4379.30859375,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Quant_FP16_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied",
+              "kvpress_hooks=6",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          },
+          {
+            "ppl": 26.708770098981294,
+            "ttft_s": 0.04038725799910026,
+            "tpot_s": 0.011041793778114465,
+            "throughput_tok_s": 90.30352968524348,
+            "ram_rss_mb": 4378.16796875,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Quant_FP16_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied",
+              "kvpress_hooks=6",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "IPEX_only": {
+        "ppl": 34.60989170247063,
+        "ppl_std": 7.78714535929202,
+        "ttft_s": 0.024783776666784735,
+        "ttft_s_std": 0.0030600498836320586,
+        "tpot_s": 0.013365335838050168,
+        "tpot_s_std": 0.00017754897619659288,
+        "throughput_tok_s": 74.75228279860302,
+        "throughput_tok_s_std": 0.9779270188952771,
+        "ram_rss_mb": 4732.19921875,
+        "ram_rss_mb_std": 6.065718278359281,
+        "flops": 5488416.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:IPEX_only",
+          "fp32_model_size_mb=268.7",
+          "ipex_applied",
+          "ablation:IPEX_only",
+          "fp32_model_size_mb=268.7",
+          "ipex_applied",
+          "ablation:IPEX_only",
+          "fp32_model_size_mb=268.7",
+          "ipex_applied"
+        ],
+        "runs": [
+          {
+            "ppl": 45.20427033609709,
+            "ttft_s": 0.022163265999552095,
+            "tpot_s": 0.013215198089894645,
+            "throughput_tok_s": 75.60106282617025,
+            "ram_rss_mb": 4736.5234375,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_only",
+              "fp32_model_size_mb=268.7",
+              "ipex_applied"
+            ]
+          },
+          {
+            "ppl": 31.9163162770849,
+            "ttft_s": 0.02311149100023613,
+            "tpot_s": 0.01361470173119819,
+            "throughput_tok_s": 73.38227593321918,
+            "ram_rss_mb": 4736.453125,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_only",
+              "fp32_model_size_mb=268.7",
+              "ipex_applied"
+            ]
+          },
+          {
+            "ppl": 26.709088494229903,
+            "ttft_s": 0.029076573000565986,
+            "tpot_s": 0.013266107693057668,
+            "throughput_tok_s": 75.27350963641965,
+            "ram_rss_mb": 4723.62109375,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_only",
+              "fp32_model_size_mb=268.7",
+              "ipex_applied"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "IPEX_Compile": {
+        "ppl": 34.61041488666182,
+        "ppl_std": 7.787969439886566,
+        "ttft_s": 0.023842940333755298,
+        "ttft_s_std": 0.0023616629032060877,
+        "tpot_s": 0.014730567706110942,
+        "tpot_s_std": 0.0002787103367811378,
+        "throughput_tok_s": 67.85395478214501,
+        "throughput_tok_s_std": 1.2920724816778302,
+        "ram_rss_mb": 4736.174479166667,
+        "ram_rss_mb_std": 0.11518838830518996,
+        "flops": 5487664.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:IPEX_Compile",
+          "fp32_model_size_mb=268.7",
+          "ipex_applied",
+          "torch_compile_applied",
+          "ablation:IPEX_Compile",
+          "fp32_model_size_mb=268.7",
+          "ipex_applied",
+          "torch_compile_applied",
+          "ablation:IPEX_Compile",
+          "fp32_model_size_mb=268.7",
+          "ipex_applied",
+          "torch_compile_applied"
+        ],
+        "runs": [
+          {
+            "ppl": 45.20596244121684,
+            "ttft_s": 0.025332246999823838,
+            "tpot_s": 0.014339424200416647,
+            "throughput_tok_s": 69.6696828494415,
+            "ram_rss_mb": 4736.22265625,
+            "flops": 5487664.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Compile",
+              "fp32_model_size_mb=268.7",
+              "ipex_applied",
+              "torch_compile_applied"
+            ]
+          },
+          {
+            "ppl": 31.91638476214337,
+            "ttft_s": 0.025687235000077635,
+            "tpot_s": 0.014884017656908983,
+            "throughput_tok_s": 67.12364534879602,
+            "ram_rss_mb": 4736.28515625,
+            "flops": 5487664.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Compile",
+              "fp32_model_size_mb=268.7",
+              "ipex_applied",
+              "torch_compile_applied"
+            ]
+          },
+          {
+            "ppl": 26.70889745662527,
+            "ttft_s": 0.020509339001364424,
+            "tpot_s": 0.014968261261007202,
+            "throughput_tok_s": 66.76853614819747,
+            "ram_rss_mb": 4736.015625,
+            "flops": 5487664.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Compile",
+              "fp32_model_size_mb=268.7",
+              "ipex_applied",
+              "torch_compile_applied"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "IPEX_SnapKV": {
+        "ppl": 34.60989170247063,
+        "ppl_std": 7.78714535929202,
+        "ttft_s": 0.025849689332972048,
+        "ttft_s_std": 0.0019774220476212285,
+        "tpot_s": 0.013501317317357986,
+        "tpot_s_std": 0.00033549432479364384,
+        "throughput_tok_s": 74.02789948220614,
+        "throughput_tok_s_std": 1.8577627779148143,
+        "ram_rss_mb": 4756.50390625,
+        "ram_rss_mb_std": 23.47606007677855,
+        "flops": 5339808.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:IPEX_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "snapkv_effective_ratio=0.2021",
+          "ablation:IPEX_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "snapkv_effective_ratio=0.2021",
+          "ablation:IPEX_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "snapkv_effective_ratio=0.2021"
+        ],
+        "runs": [
+          {
+            "ppl": 45.20427033609709,
+            "ttft_s": 0.02458266800022102,
+            "tpot_s": 0.013049508143691876,
+            "throughput_tok_s": 76.54497967244168,
+            "ram_rss_mb": 4773.3203125,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          },
+          {
+            "ppl": 31.9163162770849,
+            "ttft_s": 0.02432419799879426,
+            "tpot_s": 0.013852665181796796,
+            "throughput_tok_s": 72.11732081809764,
+            "ram_rss_mb": 4723.3046875,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          },
+          {
+            "ppl": 26.709088494229903,
+            "ttft_s": 0.028642201999900863,
+            "tpot_s": 0.013601778626585284,
+            "throughput_tok_s": 73.42139795607906,
+            "ram_rss_mb": 4772.88671875,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "IPEX_CrossLayer": {
+        "ppl": 34.60989170247063,
+        "ppl_std": 7.78714535929202,
+        "ttft_s": 0.020771301333904073,
+        "ttft_s_std": 0.0015558652345657835,
+        "tpot_s": 0.013091126408270329,
+        "tpot_s_std": 0.0003726917269947707,
+        "throughput_tok_s": 76.38444289438786,
+        "throughput_tok_s_std": 2.1704843024868223,
+        "ram_rss_mb": 4727.583333333333,
+        "ram_rss_mb_std": 6.53581841364603,
+        "flops": 5488416.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:IPEX_CrossLayer",
+          "fp32_model_size_mb=268.7",
+          "ipex_applied",
+          "cross_layer_shared_layers=1",
+          "ablation:IPEX_CrossLayer",
+          "fp32_model_size_mb=268.7",
+          "ipex_applied",
+          "cross_layer_shared_layers=1",
+          "ablation:IPEX_CrossLayer",
+          "fp32_model_size_mb=268.7",
+          "ipex_applied",
+          "cross_layer_shared_layers=1"
+        ],
+        "runs": [
+          {
+            "ppl": 45.20427033609709,
+            "ttft_s": 0.018908689000454615,
+            "tpot_s": 0.013535484730202222,
+            "throughput_tok_s": 73.82904222282589,
+            "ram_rss_mb": 4724.0546875,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_CrossLayer",
+              "fp32_model_size_mb=268.7",
+              "ipex_applied",
+              "cross_layer_shared_layers=1"
+            ]
+          },
+          {
+            "ppl": 31.9163162770849,
+            "ttft_s": 0.02271704400118324,
+            "tpot_s": 0.01262347230692773,
+            "throughput_tok_s": 79.13487834445384,
+            "ram_rss_mb": 4736.74609375,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_CrossLayer",
+              "fp32_model_size_mb=268.7",
+              "ipex_applied",
+              "cross_layer_shared_layers=1"
+            ]
+          },
+          {
+            "ppl": 26.709088494229903,
+            "ttft_s": 0.020688171000074362,
+            "tpot_s": 0.013114422187681034,
+            "throughput_tok_s": 76.18940811588384,
+            "ram_rss_mb": 4721.94921875,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_CrossLayer",
+              "fp32_model_size_mb=268.7",
+              "ipex_applied",
+              "cross_layer_shared_layers=1"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "IPEX_Quant_INT8": {
+        "ppl": 91.970329717095,
+        "ppl_std": 27.6941525229606,
+        "ttft_s": 0.035903924332766714,
+        "ttft_s_std": 0.007520501464710185,
+        "tpot_s": 0.02017295122970141,
+        "tpot_s_std": 0.005511756008629545,
+        "throughput_tok_s": 54.55356995659903,
+        "throughput_tok_s_std": 18.437067158368713,
+        "ram_rss_mb": 4699.94921875,
+        "ram_rss_mb_std": 0.16594284556675432,
+        "flops": 5488416.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": 98.30081176757812,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:IPEX_Quant_INT8",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "ipex_applied",
+          "ablation:IPEX_Quant_INT8",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "ipex_applied",
+          "ablation:IPEX_Quant_INT8",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "ipex_applied"
+        ],
+        "runs": [
+          {
+            "ppl": 131.13375621478198,
+            "ttft_s": 0.027195025999390054,
+            "tpot_s": 0.012385920825971002,
+            "throughput_tok_s": 80.62038362724074,
+            "ram_rss_mb": 4700.15625,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Quant_INT8",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "ipex_applied"
+            ]
+          },
+          {
+            "ppl": 72.73306482099657,
+            "ttft_s": 0.04554545499922824,
+            "tpot_s": 0.024367796095770954,
+            "throughput_tok_s": 40.99187636360601,
+            "ram_rss_mb": 4699.94140625,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Quant_INT8",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "ipex_applied"
+            ]
+          },
+          {
+            "ppl": 72.04416811550641,
+            "ttft_s": 0.03497129199968185,
+            "tpot_s": 0.023765136767362274,
+            "throughput_tok_s": 42.04844987895031,
+            "ram_rss_mb": 4699.75,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Quant_INT8",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "ipex_applied"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Compile_SnapKV_CrossLayer": {
+        "ppl": 34.60933848835925,
+        "ppl_std": 7.787503920270134,
+        "ttft_s": 0.0620458966671625,
+        "ttft_s_std": 0.007900513522296749,
+        "tpot_s": 0.025896919497557108,
+        "tpot_s_std": 0.005503799015863913,
+        "throughput_tok_s": 40.62485034887232,
+        "throughput_tok_s_std": 9.798452845066617,
+        "ram_rss_mb": 4738.317708333333,
+        "ram_rss_mb_std": 3.254170146945162,
+        "flops": 1968950992.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Compile_SnapKV_CrossLayer",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "torch_compile_applied",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2018",
+          "ablation:Compile_SnapKV_CrossLayer",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "torch_compile_applied",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2018",
+          "ablation:Compile_SnapKV_CrossLayer",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "torch_compile_applied",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2018"
+        ],
+        "runs": [
+          {
+            "ppl": 45.20443199945471,
+            "ttft_s": 0.0635697359994083,
+            "tpot_s": 0.03141570359920295,
+            "throughput_tok_s": 31.79304499080313,
+            "ram_rss_mb": 4741.95703125,
+            "flops": 1968950992.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_SnapKV_CrossLayer",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "torch_compile_applied",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          },
+          {
+            "ppl": 31.914832470235957,
+            "ttft_s": 0.05169827900135715,
+            "tpot_s": 0.018384110576723445,
+            "throughput_tok_s": 54.288127132125716,
+            "ram_rss_mb": 4738.9375,
+            "flops": 1968950992.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_SnapKV_CrossLayer",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "torch_compile_applied",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          },
+          {
+            "ppl": 26.708750995387078,
+            "ttft_s": 0.07086967500072205,
+            "tpot_s": 0.027890944316744916,
+            "throughput_tok_s": 35.79337892368813,
+            "ram_rss_mb": 4734.05859375,
+            "flops": 1968950992.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_SnapKV_CrossLayer",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "torch_compile_applied",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2018"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "Compile_Quant_FP16_SnapKV": {
+        "ppl": 34.610645809700465,
+        "ppl_std": 7.787585965800182,
+        "ttft_s": 0.07380459866605331,
+        "ttft_s_std": 0.012756107408455628,
+        "tpot_s": 0.01407338002345595,
+        "tpot_s_std": 0.0004826887559993729,
+        "throughput_tok_s": 70.82204332909383,
+        "throughput_tok_s_std": 2.3072892665568188,
+        "ram_rss_mb": 4510.76171875,
+        "ram_rss_mb_std": 138.47558338129403,
+        "flops": 1969060512.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:Compile_Quant_FP16_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "kvpress_hooks=6",
+          "torch_compile_applied",
+          "snapkv_effective_ratio=0.2021",
+          "ablation:Compile_Quant_FP16_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "kvpress_hooks=6",
+          "torch_compile_applied",
+          "snapkv_effective_ratio=0.2021",
+          "ablation:Compile_Quant_FP16_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "fp16_model_size_mb=134.3",
+          "fp16_applied",
+          "kvpress_hooks=6",
+          "torch_compile_applied",
+          "snapkv_effective_ratio=0.2021"
+        ],
+        "runs": [
+          {
+            "ppl": 45.205628326270265,
+            "ttft_s": 0.05718373799936671,
+            "tpot_s": 0.014754715067467575,
+            "throughput_tok_s": 67.56919718758246,
+            "ram_rss_mb": 4697.125,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_Quant_FP16_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied",
+              "kvpress_hooks=6",
+              "torch_compile_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          },
+          {
+            "ppl": 31.916902209557048,
+            "ttft_s": 0.07604150799852505,
+            "tpot_s": 0.013696386600173055,
+            "throughput_tok_s": 72.6712210273961,
+            "ram_rss_mb": 4469.68359375,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_Quant_FP16_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied",
+              "kvpress_hooks=6",
+              "torch_compile_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          },
+          {
+            "ppl": 26.7094068932741,
+            "ttft_s": 0.08818855000026815,
+            "tpot_s": 0.013769038402727224,
+            "throughput_tok_s": 72.22571177230292,
+            "ram_rss_mb": 4365.4765625,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:Compile_Quant_FP16_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "fp16_model_size_mb=134.3",
+              "fp16_applied",
+              "kvpress_hooks=6",
+              "torch_compile_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "IPEX_Compile_SnapKV": {
+        "ppl": 34.61041488666182,
+        "ppl_std": 7.787969439886566,
+        "ttft_s": 0.04071257699979469,
+        "ttft_s_std": 0.004944803236441986,
+        "tpot_s": 0.016815043477682385,
+        "tpot_s_std": 0.00019885403651174135,
+        "throughput_tok_s": 59.38429100445532,
+        "throughput_tok_s_std": 0.7105268833935998,
+        "ram_rss_mb": 4773.658854166667,
+        "ram_rss_mb_std": 0.06220089016925097,
+        "flops": 5339056.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:IPEX_Compile_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "torch_compile_applied",
+          "snapkv_effective_ratio=0.2021",
+          "ablation:IPEX_Compile_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "torch_compile_applied",
+          "snapkv_effective_ratio=0.2021",
+          "ablation:IPEX_Compile_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "torch_compile_applied",
+          "snapkv_effective_ratio=0.2021"
+        ],
+        "runs": [
+          {
+            "ppl": 45.20596244121684,
+            "ttft_s": 0.0341094309987966,
+            "tpot_s": 0.016580086503420726,
+            "throughput_tok_s": 60.23855383131878,
+            "ram_rss_mb": 4773.66015625,
+            "flops": 5339056.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Compile_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "torch_compile_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          },
+          {
+            "ppl": 31.91638476214337,
+            "ttft_s": 0.04202029299995047,
+            "tpot_s": 0.017066353227752313,
+            "throughput_tok_s": 58.4989577304676,
+            "ram_rss_mb": 4773.58203125,
+            "flops": 5339056.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Compile_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "torch_compile_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          },
+          {
+            "ppl": 26.70889745662527,
+            "ttft_s": 0.04600800700063701,
+            "tpot_s": 0.01679869070187412,
+            "throughput_tok_s": 59.415361451579564,
+            "ram_rss_mb": 4773.734375,
+            "flops": 5339056.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Compile_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "torch_compile_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "IPEX_Quant_INT8_SnapKV": {
+        "ppl": 91.970329717095,
+        "ppl_std": 27.6941525229606,
+        "ttft_s": 0.02311345233344279,
+        "ttft_s_std": 0.002153413255387769,
+        "tpot_s": 0.011702603752029904,
+        "tpot_s_std": 0.00014111328509076732,
+        "throughput_tok_s": 85.35731938897044,
+        "throughput_tok_s_std": 1.03172912445952,
+        "ram_rss_mb": 4746.893229166667,
+        "ram_rss_mb_std": 38.260827398549175,
+        "flops": 5339808.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": 98.30081176757812,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:IPEX_Quant_INT8_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "snapkv_effective_ratio=0.2021",
+          "ablation:IPEX_Quant_INT8_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "snapkv_effective_ratio=0.2021",
+          "ablation:IPEX_Quant_INT8_SnapKV",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "snapkv_effective_ratio=0.2021"
+        ],
+        "runs": [
+          {
+            "ppl": 131.13375621478198,
+            "ttft_s": 0.023534563999419333,
+            "tpot_s": 0.011531475477039182,
+            "throughput_tok_s": 86.60512335588925,
+            "ram_rss_mb": 4774.21875,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Quant_INT8_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          },
+          {
+            "ppl": 72.73306482099657,
+            "ttft_s": 0.025514942000882,
+            "tpot_s": 0.01187708230887155,
+            "throughput_tok_s": 84.07848502389193,
+            "ram_rss_mb": 4773.67578125,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Quant_INT8_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          },
+          {
+            "ppl": 72.04416811550641,
+            "ttft_s": 0.020290851000027033,
+            "tpot_s": 0.01169925347017898,
+            "throughput_tok_s": 85.38834978713017,
+            "ram_rss_mb": 4692.78515625,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:IPEX_Quant_INT8_SnapKV",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "All_In_One": {
+        "ppl": 91.24060009332418,
+        "ppl_std": 27.767008292813376,
+        "ttft_s": 0.027378501667044475,
+        "ttft_s_std": 0.004329791546288514,
+        "tpot_s": 0.012607588637342732,
+        "tpot_s_std": 0.00010655423628008114,
+        "throughput_tok_s": 79.21372054249028,
+        "throughput_tok_s_std": 0.6474290722897043,
+        "ram_rss_mb": 4689.6796875,
+        "ram_rss_mb_std": 2.4113493552139276,
+        "flops": 5216848.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": 98.30081176757812,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 1024.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:All_In_One",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "torch_compile_applied",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2021",
+          "ablation:All_In_One",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "torch_compile_applied",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2021",
+          "ablation:All_In_One",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_applied",
+          "torch_compile_applied",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2021"
+        ],
+        "runs": [
+          {
+            "ppl": 130.49806442009157,
+            "ttft_s": 0.024079341001197463,
+            "tpot_s": 0.012756090380250426,
+            "throughput_tok_s": 78.30752499975188,
+            "ram_rss_mb": 4693.06640625,
+            "flops": 5216848.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:All_In_One",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "torch_compile_applied",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          },
+          {
+            "ppl": 72.4173151809685,
+            "ttft_s": 0.033495440999104176,
+            "tpot_s": 0.012511176263934366,
+            "throughput_tok_s": 79.78019306505941,
+            "ram_rss_mb": 4687.640625,
+            "flops": 5216848.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:All_In_One",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "torch_compile_applied",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          },
+          {
+            "ppl": 70.80642067891242,
+            "ttft_s": 0.024560723000831786,
+            "tpot_s": 0.012555499267843408,
+            "throughput_tok_s": 79.55344356265957,
+            "ram_rss_mb": 4688.33203125,
+            "flops": 5216848.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 1024,
+            "notes": [
+              "ablation:All_In_One",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_applied",
+              "torch_compile_applied",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2021"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "seqlen_sweep": {
+        "128": {
+          "baseline": {
+            "ttft_s": 0.02582554800028447,
+            "tpot_s": 0.01163883923618414,
+            "throughput_tok_s": 85.08115816896742
+          },
+          "snapkv": {
+            "ttft_s": 0.021681981999790878,
+            "tpot_s": 0.011479306787404362,
+            "throughput_tok_s": 86.48686755469878
+          }
+        },
+        "256": {
+          "baseline": {
+            "ttft_s": 0.019564393000109703,
+            "tpot_s": 0.01166924129022792,
+            "throughput_tok_s": 85.44316405554342
+          },
+          "snapkv": {
+            "ttft_s": 0.02286937200005923,
+            "tpot_s": 0.011881648168570132,
+            "throughput_tok_s": 83.8363982805968
+          }
+        },
+        "512": {
+          "baseline": {
+            "ttft_s": 0.020055245000548894,
+            "tpot_s": 0.012450123326813192,
+            "throughput_tok_s": 80.20067502125232
+          },
+          "snapkv": {
+            "ttft_s": 0.02003508399866405,
+            "tpot_s": 0.012073387189807924,
+            "throughput_tok_s": 82.69751621230871
+          }
+        },
+        "1024": {
+          "baseline": {
+            "ttft_s": 0.019304517001728527,
+            "tpot_s": 0.01336629078984301,
+            "throughput_tok_s": 74.76156644241033
+          },
+          "snapkv": {
+            "ttft_s": 0.02217716800078051,
+            "tpot_s": 0.013009294541541283,
+            "throughput_tok_s": 76.79413019266336
+          }
+        }
+      }
+    }
+  },
+  "environment": {
+    "torch": "2.8.0+cpu",
+    "python": "3.10.20",
+    "cpu_count": 18
+  },
+  "ppl_metric_note": "PPL computed via CrossEntropy loss on input sequence (math.exp(loss)), NOT the evaluate library.",
+  "quantization_note": "INT8 dynamic quantisation via torch.ao.quantization.quantize_dynamic on all nn.Linear layers. REPEATS=3 per ablation.",
+  "snapkv_note": "SnapKV from kvpress library, compression_ratio=0.2, window_size=16.",
+  "crosslayer_note": "Cross-layer KV sharing on layers [4,5] (last 2 of 6, mild setting).",
+  "runtime_note": "IPEX and torch.compile are typically unavailable on Windows; auto-detected and skipped.",
+  "flops_note": "FLOPs via torch.profiler (CPU). Values for quantized models are unreliable because the profiler cannot correctly count INT8 operator FLOPs.",
+  "fp16_note": "FP16 half precision via model.half(). Model size halved but CPU lacks native FP16 compute, so speed may not improve."
+}

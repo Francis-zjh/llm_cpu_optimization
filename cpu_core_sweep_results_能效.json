@@ -1,0 +1,2620 @@
+{
+  "model_name": "EleutherAI/pythia-70m",
+  "generation_tokens": 1024,
+  "dataset": "wikitext",
+  "environment": {
+    "torch": "2.8.0+cpu",
+    "python": "3.10.20",
+    "cpu_count": 18,
+    "has_ipex": true
+  },
+  "sweep_config": {
+    "phase1_cores": [
+      1,
+      2,
+      4,
+      8,
+      16
+    ],
+    "phase1_repeats": 1,
+    "phase2_repeats": 3
+  },
+  "phase1": {
+    "core_counts": [
+      1,
+      2,
+      4,
+      8,
+      16
+    ],
+    "configs": [
+      "Baseline",
+      "Quant_INT8_only",
+      "Quant_FP16_only",
+      "SnapKV_only",
+      "Crosslayer_only",
+      "Compile_only",
+      "IPEX_only"
+    ],
+    "results": {
+      "Baseline": {
+        "1": {
+          "config": "Baseline",
+          "n_threads": 1,
+          "ppl": 56.39532714022962,
+          "ttft_s": 0.04632909399970231,
+          "tpot_s": 0.020716028010755814,
+          "throughput_tok_s": 48.203771340131134,
+          "ram_rss_mb": 1099.93359375,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Baseline",
+            "threads:1"
+          ]
+        },
+        "2": {
+          "config": "Baseline",
+          "n_threads": 2,
+          "ppl": 51.71385217596288,
+          "ttft_s": 0.03786993099947722,
+          "tpot_s": 0.01786240918475966,
+          "throughput_tok_s": 55.911128236050665,
+          "ram_rss_mb": 1093.1953125,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Baseline",
+            "threads:2"
+          ]
+        },
+        "4": {
+          "config": "Baseline",
+          "n_threads": 4,
+          "ppl": 77.39437831922629,
+          "ttft_s": 0.04898765200050548,
+          "tpot_s": 0.026581991544449905,
+          "throughput_tok_s": 37.581316904297715,
+          "ram_rss_mb": 1117.6171875,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Baseline",
+            "threads:4"
+          ]
+        },
+        "8": {
+          "config": "Baseline",
+          "n_threads": 8,
+          "ppl": 85.83475971851952,
+          "ttft_s": 0.03369579300033365,
+          "tpot_s": 0.0220258287644145,
+          "throughput_tok_s": 45.368043283022836,
+          "ram_rss_mb": 1158.11328125,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Baseline",
+            "threads:8"
+          ]
+        },
+        "16": {
+          "config": "Baseline",
+          "n_threads": 16,
+          "ppl": 61.88321062137951,
+          "ttft_s": 0.5188353730000017,
+          "tpot_s": 0.013631409214083108,
+          "throughput_tok_s": 70.78260088598816,
+          "ram_rss_mb": 1151.30078125,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Baseline",
+            "threads:16"
+          ]
+        }
+      },
+      "Quant_INT8_only": {
+        "1": {
+          "config": "Quant_INT8_only",
+          "n_threads": 1,
+          "ppl": 229.40361861293684,
+          "ttft_s": 0.02442289200007508,
+          "tpot_s": 0.014147584550346304,
+          "throughput_tok_s": 70.61850944749413,
+          "ram_rss_mb": 1188.87109375,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": 98.30081176757812,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Quant_INT8_only",
+            "threads:1",
+            "quantization_applied"
+          ]
+        },
+        "2": {
+          "config": "Quant_INT8_only",
+          "n_threads": 2,
+          "ppl": 356.5293922632437,
+          "ttft_s": 0.01556554199942184,
+          "tpot_s": 0.010997697644174607,
+          "throughput_tok_s": 90.86656773515534,
+          "ram_rss_mb": 1190.5546875,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": 98.30081176757812,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Quant_INT8_only",
+            "threads:2",
+            "quantization_applied"
+          ]
+        },
+        "4": {
+          "config": "Quant_INT8_only",
+          "n_threads": 4,
+          "ppl": 160.0821960200024,
+          "ttft_s": 0.017042885000591923,
+          "tpot_s": 0.009216571653942065,
+          "throughput_tok_s": 108.37939591280866,
+          "ram_rss_mb": 1191.921875,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": 98.30081176757812,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Quant_INT8_only",
+            "threads:4",
+            "quantization_applied"
+          ]
+        },
+        "8": {
+          "config": "Quant_INT8_only",
+          "n_threads": 8,
+          "ppl": 291.16722055910367,
+          "ttft_s": 0.015373537000414217,
+          "tpot_s": 0.00913634775366795,
+          "throughput_tok_s": 109.34496171468605,
+          "ram_rss_mb": 1201.5234375,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": 98.30081176757812,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Quant_INT8_only",
+            "threads:8",
+            "quantization_applied"
+          ]
+        },
+        "16": {
+          "config": "Quant_INT8_only",
+          "n_threads": 16,
+          "ppl": 351.2827093831597,
+          "ttft_s": 0.03570576799938863,
+          "tpot_s": 0.021839957262953066,
+          "throughput_tok_s": 45.75229919998786,
+          "ram_rss_mb": 1209.6953125,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": 98.30081176757812,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Quant_INT8_only",
+            "threads:16",
+            "quantization_applied"
+          ]
+        }
+      },
+      "Quant_FP16_only": {
+        "1": {
+          "config": "Quant_FP16_only",
+          "n_threads": 1,
+          "ppl": 34.87505716207732,
+          "ttft_s": 0.15532511199944565,
+          "tpot_s": 0.018640549226779133,
+          "throughput_tok_s": 53.25336907560534,
+          "ram_rss_mb": 1119.37109375,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Quant_FP16_only",
+            "threads:1",
+            "fp16_applied"
+          ]
+        },
+        "2": {
+          "config": "Quant_FP16_only",
+          "n_threads": 2,
+          "ppl": 100.33975653423137,
+          "ttft_s": 0.07546629699936602,
+          "tpot_s": 0.014481869227770497,
+          "throughput_tok_s": 68.75027653984691,
+          "ram_rss_mb": 1041.53515625,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Quant_FP16_only",
+            "threads:2",
+            "fp16_applied"
+          ]
+        },
+        "4": {
+          "config": "Quant_FP16_only",
+          "n_threads": 4,
+          "ppl": 72.9282380922873,
+          "ttft_s": 0.04813464600010775,
+          "tpot_s": 0.012412620870973444,
+          "throughput_tok_s": 80.3138489782509,
+          "ram_rss_mb": 1095.6953125,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Quant_FP16_only",
+            "threads:4",
+            "fp16_applied"
+          ]
+        },
+        "8": {
+          "config": "Quant_FP16_only",
+          "n_threads": 8,
+          "ppl": 53.095422599364674,
+          "ttft_s": 0.05698552600006224,
+          "tpot_s": 0.010268628620711682,
+          "throughput_tok_s": 96.92255463762899,
+          "ram_rss_mb": 1102.40234375,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Quant_FP16_only",
+            "threads:8",
+            "fp16_applied"
+          ]
+        },
+        "16": {
+          "config": "Quant_FP16_only",
+          "n_threads": 16,
+          "ppl": 46.74789553492051,
+          "ttft_s": 0.031976690999727,
+          "tpot_s": 0.014198624313800543,
+          "throughput_tok_s": 70.32883381263191,
+          "ram_rss_mb": 1117.67578125,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Quant_FP16_only",
+            "threads:16",
+            "fp16_applied"
+          ]
+        }
+      },
+      "SnapKV_only": {
+        "1": {
+          "config": "SnapKV_only",
+          "n_threads": 1,
+          "ppl": 88.86363337079176,
+          "ttft_s": 0.05525552600010997,
+          "tpot_s": 0.0210396525376484,
+          "throughput_tok_s": 47.44440057311201,
+          "ram_rss_mb": 1151.3828125,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": 0.2015,
+          "notes": [
+            "config:SnapKV_only",
+            "threads:1",
+            "snapkv_hooks=6"
+          ]
+        },
+        "2": {
+          "config": "SnapKV_only",
+          "n_threads": 2,
+          "ppl": 42.63122986018965,
+          "ttft_s": 0.033922853999683866,
+          "tpot_s": 0.014775774829943453,
+          "throughput_tok_s": 67.57868174845541,
+          "ram_rss_mb": 1151.5234375,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": 0.2015,
+          "notes": [
+            "config:SnapKV_only",
+            "threads:2",
+            "snapkv_hooks=6"
+          ]
+        },
+        "4": {
+          "config": "SnapKV_only",
+          "n_threads": 4,
+          "ppl": 51.07744108331023,
+          "ttft_s": 0.0234224149999136,
+          "tpot_s": 0.026133456314753764,
+          "throughput_tok_s": 38.26205643653297,
+          "ram_rss_mb": 1162.7890625,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": 0.2015,
+          "notes": [
+            "config:SnapKV_only",
+            "threads:4",
+            "snapkv_hooks=6"
+          ]
+        },
+        "8": {
+          "config": "SnapKV_only",
+          "n_threads": 8,
+          "ppl": 45.25310816800424,
+          "ttft_s": 0.04541762300050323,
+          "tpot_s": 0.022484540581619587,
+          "throughput_tok_s": 44.42167352634108,
+          "ram_rss_mb": 1187.73046875,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": 0.2015,
+          "notes": [
+            "config:SnapKV_only",
+            "threads:8",
+            "snapkv_hooks=6"
+          ]
+        },
+        "16": {
+          "config": "SnapKV_only",
+          "n_threads": 16,
+          "ppl": 79.92446954009287,
+          "ttft_s": 1.0089247330006401,
+          "tpot_s": 0.01504441536851055,
+          "throughput_tok_s": 62.42973645949569,
+          "ram_rss_mb": 1163.609375,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": 0.2015,
+          "notes": [
+            "config:SnapKV_only",
+            "threads:16",
+            "snapkv_hooks=6"
+          ]
+        }
+      },
+      "Crosslayer_only": {
+        "1": {
+          "config": "Crosslayer_only",
+          "n_threads": 1,
+          "ppl": 53.908670951372834,
+          "ttft_s": 0.04904269799953909,
+          "tpot_s": 0.0211774078103565,
+          "throughput_tok_s": 47.14975559248529,
+          "ram_rss_mb": 1180.2578125,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Crosslayer_only",
+            "threads:1"
+          ]
+        },
+        "2": {
+          "config": "Crosslayer_only",
+          "n_threads": 2,
+          "ppl": 85.91489555296916,
+          "ttft_s": 0.031188271999781136,
+          "tpot_s": 0.017891188221901465,
+          "throughput_tok_s": 55.84170445459238,
+          "ram_rss_mb": 1149.54296875,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Crosslayer_only",
+            "threads:2"
+          ]
+        },
+        "4": {
+          "config": "Crosslayer_only",
+          "n_threads": 4,
+          "ppl": 61.20402711016858,
+          "ttft_s": 0.05458630199973413,
+          "tpot_s": 0.025676123535713673,
+          "throughput_tok_s": 38.89528194170178,
+          "ram_rss_mb": 1164.03125,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Crosslayer_only",
+            "threads:4"
+          ]
+        },
+        "8": {
+          "config": "Crosslayer_only",
+          "n_threads": 8,
+          "ppl": 46.590851382793815,
+          "ttft_s": 0.030632602999503433,
+          "tpot_s": 0.022029971998034286,
+          "throughput_tok_s": 45.36563723509955,
+          "ram_rss_mb": 1185.17578125,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Crosslayer_only",
+            "threads:8"
+          ]
+        },
+        "16": {
+          "config": "Crosslayer_only",
+          "n_threads": 16,
+          "ppl": 54.945062806210714,
+          "ttft_s": 1.0327016609999191,
+          "tpot_s": 0.09706446240077458,
+          "throughput_tok_s": 10.205964455218796,
+          "ram_rss_mb": 1151.0703125,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Crosslayer_only",
+            "threads:16"
+          ]
+        }
+      },
+      "Compile_only": {
+        "1": {
+          "config": "Compile_only",
+          "n_threads": 1,
+          "ppl": 34.4817373101416,
+          "ttft_s": 0.08948062200033746,
+          "tpot_s": 0.01432006559141221,
+          "throughput_tok_s": 69.46123771710187,
+          "ram_rss_mb": 1199.48828125,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Compile_only",
+            "threads:1",
+            "torch_compile_applied"
+          ]
+        },
+        "2": {
+          "config": "Compile_only",
+          "n_threads": 2,
+          "ppl": 81.03180006233507,
+          "ttft_s": 0.01978812399920571,
+          "tpot_s": 0.010318872685242977,
+          "throughput_tok_s": 96.79327768289978,
+          "ram_rss_mb": 1228.48828125,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Compile_only",
+            "threads:2",
+            "torch_compile_applied"
+          ]
+        },
+        "4": {
+          "config": "Compile_only",
+          "n_threads": 4,
+          "ppl": 59.78598077506069,
+          "ttft_s": 0.016351791000488447,
+          "tpot_s": 0.009354880777124125,
+          "throughput_tok_s": 106.78543551925841,
+          "ram_rss_mb": 1216.4765625,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Compile_only",
+            "threads:4",
+            "torch_compile_applied"
+          ]
+        },
+        "8": {
+          "config": "Compile_only",
+          "n_threads": 8,
+          "ppl": 62.72912751290557,
+          "ttft_s": 0.017227420000381244,
+          "tpot_s": 0.010495893253158022,
+          "throughput_tok_s": 95.18850960284388,
+          "ram_rss_mb": 1227.91796875,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Compile_only",
+            "threads:8",
+            "torch_compile_applied"
+          ]
+        },
+        "16": {
+          "config": "Compile_only",
+          "n_threads": 16,
+          "ppl": 66.67347295897152,
+          "ttft_s": 0.06998913799998263,
+          "tpot_s": 0.015469075026383236,
+          "throughput_tok_s": 64.40802319257263,
+          "ram_rss_mb": 1216.48046875,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:Compile_only",
+            "threads:16",
+            "torch_compile_applied"
+          ]
+        }
+      },
+      "IPEX_only": {
+        "1": {
+          "config": "IPEX_only",
+          "n_threads": 1,
+          "ppl": 57.27932723442005,
+          "ttft_s": 0.03761397200014471,
+          "tpot_s": 0.018946049205272975,
+          "throughput_tok_s": 52.720466450465494,
+          "ram_rss_mb": 1457.12109375,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:IPEX_only",
+            "threads:1",
+            "ipex_applied"
+          ]
+        },
+        "2": {
+          "config": "IPEX_only",
+          "n_threads": 2,
+          "ppl": 70.6229199027277,
+          "ttft_s": 0.03705934600020555,
+          "tpot_s": 0.017513070041048795,
+          "throughput_tok_s": 57.0262746445348,
+          "ram_rss_mb": 1561.78125,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:IPEX_only",
+            "threads:2",
+            "ipex_applied"
+          ]
+        },
+        "4": {
+          "config": "IPEX_only",
+          "n_threads": 4,
+          "ppl": 45.229841886046,
+          "ttft_s": 0.03930429800038837,
+          "tpot_s": 0.016453524274690528,
+          "throughput_tok_s": 60.68349914759226,
+          "ram_rss_mb": 1696.05078125,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:IPEX_only",
+            "threads:4",
+            "ipex_applied"
+          ]
+        },
+        "8": {
+          "config": "IPEX_only",
+          "n_threads": 8,
+          "ppl": 65.94784689600571,
+          "ttft_s": 0.0397400749998269,
+          "tpot_s": 0.017435567541545006,
+          "throughput_tok_s": 57.27164249188897,
+          "ram_rss_mb": 1680.8359375,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:IPEX_only",
+            "threads:8",
+            "ipex_applied"
+          ]
+        },
+        "16": {
+          "config": "IPEX_only",
+          "n_threads": 16,
+          "ppl": 48.01172149867949,
+          "ttft_s": 0.04825158299991017,
+          "tpot_s": 0.027829878928634984,
+          "throughput_tok_s": 35.902457783204895,
+          "ram_rss_mb": 1682.6875,
+          "model_size_mb": 268.6562805175781,
+          "quantized_size_mb": null,
+          "snapkv_effective_ratio": null,
+          "notes": [
+            "config:IPEX_only",
+            "threads:16",
+            "ipex_applied"
+          ]
+        }
+      }
+    },
+    "optimal_per_config": {
+      "Baseline": {
+        "optimal_cores": 16,
+        "peak_thpt_tok_s": 70.78260088598816
+      },
+      "Quant_INT8_only": {
+        "optimal_cores": 8,
+        "peak_thpt_tok_s": 109.34496171468605
+      },
+      "Quant_FP16_only": {
+        "optimal_cores": 8,
+        "peak_thpt_tok_s": 96.92255463762899
+      },
+      "SnapKV_only": {
+        "optimal_cores": 2,
+        "peak_thpt_tok_s": 67.57868174845541
+      },
+      "Crosslayer_only": {
+        "optimal_cores": 2,
+        "peak_thpt_tok_s": 55.84170445459238
+      },
+      "Compile_only": {
+        "optimal_cores": 4,
+        "peak_thpt_tok_s": 106.78543551925841
+      },
+      "IPEX_only": {
+        "optimal_cores": 4,
+        "peak_thpt_tok_s": 60.68349914759226
+      }
+    }
+  },
+  "phase2": {
+    "repeats": 3,
+    "results": {
+      "Baseline": {
+        "14": {
+          "runs": [
+            {
+              "config": "Baseline",
+              "n_threads": 14,
+              "ppl": 56.39193892718635,
+              "ttft_s": 0.013428169999315287,
+              "tpot_s": 0.013018470424256925,
+              "throughput_tok_s": 76.79299473568032,
+              "ram_rss_mb": 1352.7109375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Baseline",
+                "threads:14"
+              ]
+            },
+            {
+              "config": "Baseline",
+              "n_threads": 14,
+              "ppl": 73.35810057593847,
+              "ttft_s": 0.01519393300077354,
+              "tpot_s": 0.013562848762453582,
+              "throughput_tok_s": 73.702193963922,
+              "ram_rss_mb": 1352.7265625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Baseline",
+                "threads:14"
+              ]
+            },
+            {
+              "config": "Baseline",
+              "n_threads": 14,
+              "ppl": 78.16212165860837,
+              "ttft_s": 0.028618989000278816,
+              "tpot_s": 0.012403039697973463,
+              "throughput_tok_s": 80.50182717713184,
+              "ram_rss_mb": 1357.28515625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Baseline",
+                "threads:14"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 76.99900529224472,
+          "mean_ttft_s": 0.019080364000122547,
+          "mean_tpot_s": 0.012994786294894657,
+          "mean_ram_rss_mb": 1354.2408854166667,
+          "mean_ppl": 69.30405372057773
+        },
+        "15": {
+          "runs": [
+            {
+              "config": "Baseline",
+              "n_threads": 15,
+              "ppl": 56.39414393159071,
+              "ttft_s": 0.040827986000294914,
+              "tpot_s": 0.01790512653176755,
+              "throughput_tok_s": 55.769493180049245,
+              "ram_rss_mb": 1357.65234375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Baseline",
+                "threads:15"
+              ]
+            },
+            {
+              "config": "Baseline",
+              "n_threads": 15,
+              "ppl": 73.35890511731908,
+              "ttft_s": 0.09770346400000562,
+              "tpot_s": 0.0241925535523023,
+              "throughput_tok_s": 41.20613082558775,
+              "ram_rss_mb": 1457.421875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Baseline",
+                "threads:15"
+              ]
+            },
+            {
+              "config": "Baseline",
+              "n_threads": 15,
+              "ppl": 78.15634492847389,
+              "ttft_s": 0.027624134999314265,
+              "tpot_s": 0.018100221154438875,
+              "throughput_tok_s": 55.20842930347169,
+              "ram_rss_mb": 1359.15625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Baseline",
+                "threads:15"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 50.728017769702895,
+          "mean_ttft_s": 0.0553851949998716,
+          "mean_tpot_s": 0.020065967079502908,
+          "mean_ram_rss_mb": 1391.41015625,
+          "mean_ppl": 69.30313132579455
+        },
+        "16": {
+          "runs": [
+            {
+              "config": "Baseline",
+              "n_threads": 16,
+              "ppl": 56.394869988494506,
+              "ttft_s": 0.028807142999539792,
+              "tpot_s": 0.05775278071066372,
+              "throughput_tok_s": 17.32253306456196,
+              "ram_rss_mb": 1360.9140625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Baseline",
+                "threads:16"
+              ]
+            },
+            {
+              "config": "Baseline",
+              "n_threads": 16,
+              "ppl": 73.35813555581501,
+              "ttft_s": 0.06656741499955388,
+              "tpot_s": 0.034679321472152594,
+              "throughput_tok_s": 28.806679622654578,
+              "ram_rss_mb": 1360.98828125,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Baseline",
+                "threads:16"
+              ]
+            },
+            {
+              "config": "Baseline",
+              "n_threads": 16,
+              "ppl": 78.15910279798706,
+              "ttft_s": 0.03482772700044734,
+              "tpot_s": 0.01894207924341486,
+              "throughput_tok_s": 52.73900345884803,
+              "ram_rss_mb": 1361.9765625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Baseline",
+                "threads:16"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 32.95607204868819,
+          "mean_ttft_s": 0.04340076166651367,
+          "mean_tpot_s": 0.037124727142077055,
+          "mean_ram_rss_mb": 1361.29296875,
+          "mean_ppl": 69.30403611409886
+        }
+      },
+      "Quant_INT8_only": {
+        "6": {
+          "runs": [
+            {
+              "config": "Quant_INT8_only",
+              "n_threads": 6,
+              "ppl": 206.82271412742526,
+              "ttft_s": 0.011779985999964993,
+              "tpot_s": 0.008700531133912616,
+              "throughput_tok_s": 114.85826942705009,
+              "ram_rss_mb": 1539.9609375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": 98.30081176757812,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_INT8_only",
+                "threads:6",
+                "quantization_applied"
+              ]
+            },
+            {
+              "config": "Quant_INT8_only",
+              "n_threads": 6,
+              "ppl": 300.95024210852955,
+              "ttft_s": 0.012349732999609841,
+              "tpot_s": 0.008407015877821389,
+              "throughput_tok_s": 118.85119884340305,
+              "ram_rss_mb": 1460.94921875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": 98.30081176757812,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_INT8_only",
+                "threads:6",
+                "quantization_applied"
+              ]
+            },
+            {
+              "config": "Quant_INT8_only",
+              "n_threads": 6,
+              "ppl": 399.39585428743726,
+              "ttft_s": 0.011608028999944509,
+              "tpot_s": 0.008428924498536527,
+              "throughput_tok_s": 118.55380949028509,
+              "ram_rss_mb": 1460.76953125,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": 98.30081176757812,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_INT8_only",
+                "threads:6",
+                "quantization_applied"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 117.42109258691274,
+          "mean_ttft_s": 0.011912582666506447,
+          "mean_tpot_s": 0.008512157170090177,
+          "mean_ram_rss_mb": 1487.2265625,
+          "mean_ppl": 302.38960350779735
+        },
+        "7": {
+          "runs": [
+            {
+              "config": "Quant_INT8_only",
+              "n_threads": 7,
+              "ppl": 206.82271412742526,
+              "ttft_s": 0.013057463000222924,
+              "tpot_s": 0.009356279287398208,
+              "throughput_tok_s": 106.8051422593652,
+              "ram_rss_mb": 1460.95703125,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": 98.30081176757812,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_INT8_only",
+                "threads:7",
+                "quantization_applied"
+              ]
+            },
+            {
+              "config": "Quant_INT8_only",
+              "n_threads": 7,
+              "ppl": 300.95024210852955,
+              "ttft_s": 0.01588613100011571,
+              "tpot_s": 0.008517474975568476,
+              "throughput_tok_s": 117.2614781867455,
+              "ram_rss_mb": 1461.234375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": 98.30081176757812,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_INT8_only",
+                "threads:7",
+                "quantization_applied"
+              ]
+            },
+            {
+              "config": "Quant_INT8_only",
+              "n_threads": 7,
+              "ppl": 399.39585428743726,
+              "ttft_s": 0.014074676000745967,
+              "tpot_s": 0.008736138323549449,
+              "throughput_tok_s": 114.36077666625481,
+              "ram_rss_mb": 1461.16796875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": 98.30081176757812,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_INT8_only",
+                "threads:7",
+                "quantization_applied"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 112.8091323707885,
+          "mean_ttft_s": 0.014339423333694867,
+          "mean_tpot_s": 0.008869964195505377,
+          "mean_ram_rss_mb": 1461.1197916666667,
+          "mean_ppl": 302.38960350779735
+        },
+        "8": {
+          "runs": [
+            {
+              "config": "Quant_INT8_only",
+              "n_threads": 8,
+              "ppl": 206.82271412742526,
+              "ttft_s": 0.011541769999894314,
+              "tpot_s": 0.007686154925729418,
+              "throughput_tok_s": 129.99497597472524,
+              "ram_rss_mb": 1461.2109375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": 98.30081176757812,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_INT8_only",
+                "threads:8",
+                "quantization_applied"
+              ]
+            },
+            {
+              "config": "Quant_INT8_only",
+              "n_threads": 8,
+              "ppl": 300.95024210852955,
+              "ttft_s": 0.016678205999596685,
+              "tpot_s": 0.007562957230700576,
+              "throughput_tok_s": 132.0199795984169,
+              "ram_rss_mb": 1461.19140625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": 98.30081176757812,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_INT8_only",
+                "threads:8",
+                "quantization_applied"
+              ]
+            },
+            {
+              "config": "Quant_INT8_only",
+              "n_threads": 8,
+              "ppl": 399.39585428743726,
+              "ttft_s": 0.012656373999561765,
+              "tpot_s": 0.007849284535676748,
+              "throughput_tok_s": 127.27442424170752,
+              "ram_rss_mb": 1460.20703125,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": 98.30081176757812,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_INT8_only",
+                "threads:8",
+                "quantization_applied"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 129.7631266049499,
+          "mean_ttft_s": 0.013625449999684255,
+          "mean_tpot_s": 0.00769946556403558,
+          "mean_ram_rss_mb": 1460.8697916666667,
+          "mean_ppl": 302.38960350779735
+        },
+        "9": {
+          "runs": [
+            {
+              "config": "Quant_INT8_only",
+              "n_threads": 9,
+              "ppl": 206.82271412742526,
+              "ttft_s": 0.010084490999361151,
+              "tpot_s": 0.007869060004891222,
+              "throughput_tok_s": 126.99190067113416,
+              "ram_rss_mb": 1460.55859375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": 98.30081176757812,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_INT8_only",
+                "threads:9",
+                "quantization_applied"
+              ]
+            },
+            {
+              "config": "Quant_INT8_only",
+              "n_threads": 9,
+              "ppl": 300.95024210852955,
+              "ttft_s": 0.010183471999880567,
+              "tpot_s": 0.008337992685235142,
+              "throughput_tok_s": 119.86112831147997,
+              "ram_rss_mb": 1460.98046875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": 98.30081176757812,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_INT8_only",
+                "threads:9",
+                "quantization_applied"
+              ]
+            },
+            {
+              "config": "Quant_INT8_only",
+              "n_threads": 9,
+              "ppl": 399.39585428743726,
+              "ttft_s": 0.01071283700002823,
+              "tpot_s": 0.008228375588467987,
+              "throughput_tok_s": 121.45398863578691,
+              "ram_rss_mb": 1461.07421875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": 98.30081176757812,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_INT8_only",
+                "threads:9",
+                "quantization_applied"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 122.76900587280035,
+          "mean_ttft_s": 0.010326933333089983,
+          "mean_tpot_s": 0.008145142759531451,
+          "mean_ram_rss_mb": 1460.87109375,
+          "mean_ppl": 302.38960350779735
+        },
+        "10": {
+          "runs": [
+            {
+              "config": "Quant_INT8_only",
+              "n_threads": 10,
+              "ppl": 206.82271412742526,
+              "ttft_s": 0.012217125000461238,
+              "tpot_s": 0.008059625582611397,
+              "throughput_tok_s": 123.9688796427475,
+              "ram_rss_mb": 1460.89453125,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": 98.30081176757812,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_INT8_only",
+                "threads:10",
+                "quantization_applied"
+              ]
+            },
+            {
+              "config": "Quant_INT8_only",
+              "n_threads": 10,
+              "ppl": 300.95024210852955,
+              "ttft_s": 0.00979047599957994,
+              "tpot_s": 0.00827151420039987,
+              "throughput_tok_s": 120.83335110827498,
+              "ram_rss_mb": 1460.91796875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": 98.30081176757812,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_INT8_only",
+                "threads:10",
+                "quantization_applied"
+              ]
+            },
+            {
+              "config": "Quant_INT8_only",
+              "n_threads": 10,
+              "ppl": 399.39585428743726,
+              "ttft_s": 0.010284904999934952,
+              "tpot_s": 0.00827261769402352,
+              "throughput_tok_s": 120.80649206509129,
+              "ram_rss_mb": 1460.65234375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": 98.30081176757812,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_INT8_only",
+                "threads:10",
+                "quantization_applied"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 121.86957427203792,
+          "mean_ttft_s": 0.01076416866665871,
+          "mean_tpot_s": 0.00820125249234493,
+          "mean_ram_rss_mb": 1460.8216145833333,
+          "mean_ppl": 302.38960350779735
+        }
+      },
+      "Quant_FP16_only": {
+        "6": {
+          "runs": [
+            {
+              "config": "Quant_FP16_only",
+              "n_threads": 6,
+              "ppl": 56.39521957478208,
+              "ttft_s": 0.042253958999936,
+              "tpot_s": 0.009569433261005412,
+              "throughput_tok_s": 104.10777465950696,
+              "ram_rss_mb": 1363.6328125,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_FP16_only",
+                "threads:6",
+                "fp16_applied"
+              ]
+            },
+            {
+              "config": "Quant_FP16_only",
+              "n_threads": 6,
+              "ppl": 73.36128381300885,
+              "ttft_s": 0.047801132000131474,
+              "tpot_s": 0.0093226197683377,
+              "throughput_tok_s": 106.8006855291518,
+              "ram_rss_mb": 1413.0078125,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_FP16_only",
+                "threads:6",
+                "fp16_applied"
+              ]
+            },
+            {
+              "config": "Quant_FP16_only",
+              "n_threads": 6,
+              "ppl": 78.16405975404281,
+              "ttft_s": 0.04619875599928491,
+              "tpot_s": 0.009338499180858344,
+              "throughput_tok_s": 106.63845560764977,
+              "ram_rss_mb": 1364.01171875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_FP16_only",
+                "threads:6",
+                "fp16_applied"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 105.84897193210286,
+          "mean_ttft_s": 0.04541794899978413,
+          "mean_tpot_s": 0.00941018407006715,
+          "mean_ram_rss_mb": 1380.2174479166667,
+          "mean_ppl": 69.30685438061124
+        },
+        "7": {
+          "runs": [
+            {
+              "config": "Quant_FP16_only",
+              "n_threads": 7,
+              "ppl": 56.39430527676151,
+              "ttft_s": 0.051118461999976716,
+              "tpot_s": 0.0090356712883922,
+              "throughput_tok_s": 110.13581010118912,
+              "ram_rss_mb": 1364.0859375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_FP16_only",
+                "threads:7",
+                "fp16_applied"
+              ]
+            },
+            {
+              "config": "Quant_FP16_only",
+              "n_threads": 7,
+              "ppl": 73.35810057593847,
+              "ttft_s": 0.04485715499959042,
+              "tpot_s": 0.00885557776050603,
+              "throughput_tok_s": 112.43898424539252,
+              "ram_rss_mb": 1363.94140625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_FP16_only",
+                "threads:7",
+                "fp16_applied"
+              ]
+            },
+            {
+              "config": "Quant_FP16_only",
+              "n_threads": 7,
+              "ppl": 78.1595500292402,
+              "ttft_s": 0.044508820999908494,
+              "tpot_s": 0.008981645472138469,
+              "throughput_tok_s": 110.8747017405184,
+              "ram_rss_mb": 1363.890625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_FP16_only",
+                "threads:7",
+                "fp16_applied"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 111.14983202903335,
+          "mean_ttft_s": 0.04682814599982521,
+          "mean_tpot_s": 0.008957631507012233,
+          "mean_ram_rss_mb": 1363.97265625,
+          "mean_ppl": 69.30398529398006
+        },
+        "8": {
+          "runs": [
+            {
+              "config": "Quant_FP16_only",
+              "n_threads": 8,
+              "ppl": 56.39608010410701,
+              "ttft_s": 0.04620253099983529,
+              "tpot_s": 0.008918395927658702,
+              "throughput_tok_s": 111.63182859234185,
+              "ram_rss_mb": 1414.08984375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_FP16_only",
+                "threads:8",
+                "fp16_applied"
+              ]
+            },
+            {
+              "config": "Quant_FP16_only",
+              "n_threads": 8,
+              "ppl": 73.3591849598676,
+              "ttft_s": 0.042485752000175125,
+              "tpot_s": 0.008779723538622775,
+              "throughput_tok_s": 113.43603580107303,
+              "ram_rss_mb": 1414.48828125,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_FP16_only",
+                "threads:8",
+                "fp16_applied"
+              ]
+            },
+            {
+              "config": "Quant_FP16_only",
+              "n_threads": 8,
+              "ppl": 78.15623312500563,
+              "ttft_s": 0.043911882000429614,
+              "tpot_s": 0.008716092930607803,
+              "throughput_tok_s": 114.24232924389196,
+              "ram_rss_mb": 1365.15625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_FP16_only",
+                "threads:8",
+                "fp16_applied"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 113.10339787910227,
+          "mean_ttft_s": 0.044200055000146676,
+          "mean_tpot_s": 0.008804737465629759,
+          "mean_ram_rss_mb": 1397.9114583333333,
+          "mean_ppl": 69.30383272966007
+        },
+        "9": {
+          "runs": [
+            {
+              "config": "Quant_FP16_only",
+              "n_threads": 9,
+              "ppl": 56.394385949520014,
+              "ttft_s": 0.041674641000099655,
+              "tpot_s": 0.008408388173014,
+              "throughput_tok_s": 118.4309445646569,
+              "ram_rss_mb": 1365.01171875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_FP16_only",
+                "threads:9",
+                "fp16_applied"
+              ]
+            },
+            {
+              "config": "Quant_FP16_only",
+              "n_threads": 9,
+              "ppl": 73.35824049554473,
+              "ttft_s": 0.04600512799970602,
+              "tpot_s": 0.008382261614847751,
+              "throughput_tok_s": 118.73802725567965,
+              "ram_rss_mb": 1364.9140625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_FP16_only",
+                "threads:9",
+                "fp16_applied"
+              ]
+            },
+            {
+              "config": "Quant_FP16_only",
+              "n_threads": 9,
+              "ppl": 78.15943822118699,
+              "ttft_s": 0.042541165000329784,
+              "tpot_s": 0.008804361974585189,
+              "throughput_tok_s": 113.1181064263444,
+              "ram_rss_mb": 1414.1875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_FP16_only",
+                "threads:9",
+                "fp16_applied"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 116.76235941556031,
+          "mean_ttft_s": 0.04340697800004515,
+          "mean_tpot_s": 0.008531670587482313,
+          "mean_ram_rss_mb": 1381.37109375,
+          "mean_ppl": 69.30402155541725
+        },
+        "10": {
+          "runs": [
+            {
+              "config": "Quant_FP16_only",
+              "n_threads": 10,
+              "ppl": 56.394385949520014,
+              "ttft_s": 0.038713437000296835,
+              "tpot_s": 0.008408636916915752,
+              "throughput_tok_s": 118.45984815269811,
+              "ram_rss_mb": 1365.09375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_FP16_only",
+                "threads:10",
+                "fp16_applied"
+              ]
+            },
+            {
+              "config": "Quant_FP16_only",
+              "n_threads": 10,
+              "ppl": 73.35873021626836,
+              "ttft_s": 0.03919587299969862,
+              "tpot_s": 0.008117049824049065,
+              "throughput_tok_s": 122.69033748793012,
+              "ram_rss_mb": 1365.40234375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_FP16_only",
+                "threads:10",
+                "fp16_applied"
+              ]
+            },
+            {
+              "config": "Quant_FP16_only",
+              "n_threads": 10,
+              "ppl": 78.16044449942372,
+              "ttft_s": 0.03535504100000253,
+              "tpot_s": 0.00834988637439805,
+              "throughput_tok_s": 119.34503984315029,
+              "ram_rss_mb": 1364.8671875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Quant_FP16_only",
+                "threads:10",
+                "fp16_applied"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 120.16507516125951,
+          "mean_ttft_s": 0.03775478366666599,
+          "mean_tpot_s": 0.008291857705120954,
+          "mean_ram_rss_mb": 1365.12109375,
+          "mean_ppl": 69.30452022173735
+        }
+      },
+      "SnapKV_only": {
+        "1": {
+          "runs": [
+            {
+              "config": "SnapKV_only",
+              "n_threads": 1,
+              "ppl": 56.39532714022962,
+              "ttft_s": 0.04287730800024292,
+              "tpot_s": 0.01923493322386361,
+              "throughput_tok_s": 51.91606515187426,
+              "ram_rss_mb": 1561.375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": 0.2015,
+              "notes": [
+                "config:SnapKV_only",
+                "threads:1",
+                "snapkv_hooks=6"
+              ]
+            },
+            {
+              "config": "SnapKV_only",
+              "n_threads": 1,
+              "ppl": 73.35544215412492,
+              "ttft_s": 0.04159884799992142,
+              "tpot_s": 0.019285030292279237,
+              "throughput_tok_s": 51.785994500919564,
+              "ram_rss_mb": 1561.375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": 0.2015,
+              "notes": [
+                "config:SnapKV_only",
+                "threads:1",
+                "snapkv_hooks=6"
+              ]
+            },
+            {
+              "config": "SnapKV_only",
+              "n_threads": 1,
+              "ppl": 78.15910279798706,
+              "ttft_s": 0.04502887099988584,
+              "tpot_s": 0.018979304426186953,
+              "throughput_tok_s": 52.608526459449074,
+              "ram_rss_mb": 1561.578125,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": 0.2015,
+              "notes": [
+                "config:SnapKV_only",
+                "threads:1",
+                "snapkv_hooks=6"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 52.103528704080965,
+          "mean_ttft_s": 0.04316834233335006,
+          "mean_tpot_s": 0.019166422647443268,
+          "mean_ram_rss_mb": 1561.4427083333333,
+          "mean_ppl": 69.3032906974472
+        },
+        "2": {
+          "runs": [
+            {
+              "config": "SnapKV_only",
+              "n_threads": 2,
+              "ppl": 56.391965816964664,
+              "ttft_s": 0.025110589000178152,
+              "tpot_s": 0.013338151873888988,
+              "throughput_tok_s": 74.8920657705654,
+              "ram_rss_mb": 1561.8046875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": 0.2015,
+              "notes": [
+                "config:SnapKV_only",
+                "threads:2",
+                "snapkv_hooks=6"
+              ]
+            },
+            {
+              "config": "SnapKV_only",
+              "n_threads": 2,
+              "ppl": 73.35796065659906,
+              "ttft_s": 0.027688206000675564,
+              "tpot_s": 0.01300826793547952,
+              "throughput_tok_s": 76.77263695008331,
+              "ram_rss_mb": 1561.7734375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": 0.2015,
+              "notes": [
+                "config:SnapKV_only",
+                "threads:2",
+                "snapkv_hooks=6"
+              ]
+            },
+            {
+              "config": "SnapKV_only",
+              "n_threads": 2,
+              "ppl": 78.16212165860837,
+              "ttft_s": 0.024900751000132004,
+              "tpot_s": 0.013426636005854456,
+              "throughput_tok_s": 74.39865994923859,
+              "ram_rss_mb": 1561.81640625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": 0.2015,
+              "notes": [
+                "config:SnapKV_only",
+                "threads:2",
+                "snapkv_hooks=6"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 75.35445422329576,
+          "mean_ttft_s": 0.02589984866699524,
+          "mean_tpot_s": 0.013257685271740989,
+          "mean_ram_rss_mb": 1561.7981770833333,
+          "mean_ppl": 69.30401604405738
+        },
+        "3": {
+          "runs": [
+            {
+              "config": "SnapKV_only",
+              "n_threads": 3,
+              "ppl": 56.39325654140261,
+              "ttft_s": 0.024548837000111234,
+              "tpot_s": 0.011654072910059874,
+              "throughput_tok_s": 85.69198693301269,
+              "ram_rss_mb": 1562.28125,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": 0.2015,
+              "notes": [
+                "config:SnapKV_only",
+                "threads:3",
+                "snapkv_hooks=6"
+              ]
+            },
+            {
+              "config": "SnapKV_only",
+              "n_threads": 3,
+              "ppl": 73.35935986200252,
+              "ttft_s": 0.01945706300011807,
+              "tpot_s": 0.011569391741920875,
+              "throughput_tok_s": 86.35415763060216,
+              "ram_rss_mb": 1562.171875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": 0.2015,
+              "notes": [
+                "config:SnapKV_only",
+                "threads:3",
+                "snapkv_hooks=6"
+              ]
+            },
+            {
+              "config": "SnapKV_only",
+              "n_threads": 3,
+              "ppl": 78.15500329741043,
+              "ttft_s": 0.02986685799987754,
+              "tpot_s": 0.011885232028355112,
+              "throughput_tok_s": 83.99264879080272,
+              "ram_rss_mb": 1562.2265625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": 0.2015,
+              "notes": [
+                "config:SnapKV_only",
+                "threads:3",
+                "snapkv_hooks=6"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 85.34626445147252,
+          "mean_ttft_s": 0.02462425266670228,
+          "mean_tpot_s": 0.011702898893445288,
+          "mean_ram_rss_mb": 1562.2265625,
+          "mean_ppl": 69.30253990027184
+        },
+        "4": {
+          "runs": [
+            {
+              "config": "SnapKV_only",
+              "n_threads": 4,
+              "ppl": 56.391965816964664,
+              "ttft_s": 0.01597489499999938,
+              "tpot_s": 0.01043753509971653,
+              "throughput_tok_s": 95.73385094624669,
+              "ram_rss_mb": 1562.7734375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": 0.2015,
+              "notes": [
+                "config:SnapKV_only",
+                "threads:4",
+                "snapkv_hooks=6"
+              ]
+            },
+            {
+              "config": "SnapKV_only",
+              "n_threads": 4,
+              "ppl": 73.35796065659906,
+              "ttft_s": 0.016600203000052716,
+              "tpot_s": 0.00960637685338214,
+              "throughput_tok_s": 103.99652280557387,
+              "ram_rss_mb": 1562.8359375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": 0.2015,
+              "notes": [
+                "config:SnapKV_only",
+                "threads:4",
+                "snapkv_hooks=6"
+              ]
+            },
+            {
+              "config": "SnapKV_only",
+              "n_threads": 4,
+              "ppl": 78.16212165860837,
+              "ttft_s": 0.02258900199922209,
+              "tpot_s": 0.009335050643175124,
+              "throughput_tok_s": 106.94680743421543,
+              "ram_rss_mb": 1563.0390625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": 0.2015,
+              "notes": [
+                "config:SnapKV_only",
+                "threads:4",
+                "snapkv_hooks=6"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 102.22572706201201,
+          "mean_ttft_s": 0.018388033333091396,
+          "mean_tpot_s": 0.009792987532091265,
+          "mean_ram_rss_mb": 1562.8828125,
+          "mean_ppl": 69.30401604405738
+        }
+      },
+      "Crosslayer_only": {
+        "1": {
+          "runs": [
+            {
+              "config": "Crosslayer_only",
+              "n_threads": 1,
+              "ppl": 56.39532714022962,
+              "ttft_s": 0.042875383000136935,
+              "tpot_s": 0.017686298047895985,
+              "throughput_tok_s": 56.45216869273496,
+              "ram_rss_mb": 1563.0390625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Crosslayer_only",
+                "threads:1"
+              ]
+            },
+            {
+              "config": "Crosslayer_only",
+              "n_threads": 1,
+              "ppl": 73.35544215412492,
+              "ttft_s": 0.03697145200021623,
+              "tpot_s": 0.017828115101669807,
+              "throughput_tok_s": 56.022534826099914,
+              "ram_rss_mb": 1563.0390625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Crosslayer_only",
+                "threads:1"
+              ]
+            },
+            {
+              "config": "Crosslayer_only",
+              "n_threads": 1,
+              "ppl": 78.15910279798706,
+              "ttft_s": 0.050424037000084354,
+              "tpot_s": 0.018675903964817258,
+              "throughput_tok_s": 53.445155560624336,
+              "ram_rss_mb": 1563.0390625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Crosslayer_only",
+                "threads:1"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 55.30661969315307,
+          "mean_ttft_s": 0.04342362400014584,
+          "mean_tpot_s": 0.018063439038127682,
+          "mean_ram_rss_mb": 1563.0390625,
+          "mean_ppl": 69.3032906974472
+        },
+        "2": {
+          "runs": [
+            {
+              "config": "Crosslayer_only",
+              "n_threads": 2,
+              "ppl": 56.391965816964664,
+              "ttft_s": 0.024385178999182244,
+              "tpot_s": 0.012802919230674984,
+              "throughput_tok_s": 78.01989985790885,
+              "ram_rss_mb": 1563.1484375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Crosslayer_only",
+                "threads:2"
+              ]
+            },
+            {
+              "config": "Crosslayer_only",
+              "n_threads": 2,
+              "ppl": 73.35796065659906,
+              "ttft_s": 0.02410210499965615,
+              "tpot_s": 0.01298127214272182,
+              "throughput_tok_s": 76.95130588996282,
+              "ram_rss_mb": 1563.1171875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Crosslayer_only",
+                "threads:2"
+              ]
+            },
+            {
+              "config": "Crosslayer_only",
+              "n_threads": 2,
+              "ppl": 78.16212165860837,
+              "ttft_s": 0.024998109999614826,
+              "tpot_s": 0.014034784297173593,
+              "throughput_tok_s": 71.18013089042671,
+              "ram_rss_mb": 1562.9921875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Crosslayer_only",
+                "threads:2"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 75.3837788794328,
+          "mean_ttft_s": 0.02449513133281774,
+          "mean_tpot_s": 0.013272991890190133,
+          "mean_ram_rss_mb": 1563.0859375,
+          "mean_ppl": 69.30401604405738
+        },
+        "3": {
+          "runs": [
+            {
+              "config": "Crosslayer_only",
+              "n_threads": 3,
+              "ppl": 56.39325654140261,
+              "ttft_s": 0.01721318300042185,
+              "tpot_s": 0.01070546832061519,
+              "throughput_tok_s": 93.32561451028916,
+              "ram_rss_mb": 1563.0859375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Crosslayer_only",
+                "threads:3"
+              ]
+            },
+            {
+              "config": "Crosslayer_only",
+              "n_threads": 3,
+              "ppl": 73.35935986200252,
+              "ttft_s": 0.024947285000052943,
+              "tpot_s": 0.010773869535669264,
+              "throughput_tok_s": 92.67488252011202,
+              "ram_rss_mb": 1563.0703125,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Crosslayer_only",
+                "threads:3"
+              ]
+            },
+            {
+              "config": "Crosslayer_only",
+              "n_threads": 3,
+              "ppl": 78.15500329741043,
+              "ttft_s": 0.021153705999495287,
+              "tpot_s": 0.010483497241474245,
+              "throughput_tok_s": 95.26895267643334,
+              "ram_rss_mb": 1563.2421875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Crosslayer_only",
+                "threads:3"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 93.7564832356115,
+          "mean_ttft_s": 0.021104724666656693,
+          "mean_tpot_s": 0.010654278365919567,
+          "mean_ram_rss_mb": 1563.1328125,
+          "mean_ppl": 69.30253990027184
+        },
+        "4": {
+          "runs": [
+            {
+              "config": "Crosslayer_only",
+              "n_threads": 4,
+              "ppl": 56.391965816964664,
+              "ttft_s": 0.013840896999681718,
+              "tpot_s": 0.009091834062547282,
+              "throughput_tok_s": 109.90204151026114,
+              "ram_rss_mb": 1563.1640625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Crosslayer_only",
+                "threads:4"
+              ]
+            },
+            {
+              "config": "Crosslayer_only",
+              "n_threads": 4,
+              "ppl": 73.35796065659906,
+              "ttft_s": 0.02201363600033801,
+              "tpot_s": 0.009964864778116537,
+              "throughput_tok_s": 100.20915445296043,
+              "ram_rss_mb": 1563.0859375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Crosslayer_only",
+                "threads:4"
+              ]
+            },
+            {
+              "config": "Crosslayer_only",
+              "n_threads": 4,
+              "ppl": 78.16212165860837,
+              "ttft_s": 0.02882677399975364,
+              "tpot_s": 0.011738584455521096,
+              "throughput_tok_s": 85.04531234423503,
+              "ram_rss_mb": 1563.0078125,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Crosslayer_only",
+                "threads:4"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 98.3855027691522,
+          "mean_ttft_s": 0.021560435666591122,
+          "mean_tpot_s": 0.010265094432061639,
+          "mean_ram_rss_mb": 1563.0859375,
+          "mean_ppl": 69.30401604405738
+        }
+      },
+      "Compile_only": {
+        "2": {
+          "runs": [
+            {
+              "config": "Compile_only",
+              "n_threads": 2,
+              "ppl": 56.39427838586765,
+              "ttft_s": 0.018831122000847245,
+              "tpot_s": 0.010605146490709141,
+              "throughput_tok_s": 94.19696829989638,
+              "ram_rss_mb": 1563.02734375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Compile_only",
+                "threads:2",
+                "torch_compile_applied"
+              ]
+            },
+            {
+              "config": "Compile_only",
+              "n_threads": 2,
+              "ppl": 73.35834543542458,
+              "ttft_s": 0.01923471900045115,
+              "tpot_s": 0.010863257864119128,
+              "throughput_tok_s": 91.95750421918515,
+              "ram_rss_mb": 1563.046875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Compile_only",
+                "threads:2",
+                "torch_compile_applied"
+              ]
+            },
+            {
+              "config": "Compile_only",
+              "n_threads": 2,
+              "ppl": 78.15701575264215,
+              "ttft_s": 0.01983016000031057,
+              "tpot_s": 0.01049775420821272,
+              "throughput_tok_s": 95.14723960623857,
+              "ram_rss_mb": 1563.06640625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Compile_only",
+                "threads:2",
+                "torch_compile_applied"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 93.76723737510672,
+          "mean_ttft_s": 0.019298667000536323,
+          "mean_tpot_s": 0.010655386187680327,
+          "mean_ram_rss_mb": 1563.046875,
+          "mean_ppl": 69.30321319131146
+        },
+        "3": {
+          "runs": [
+            {
+              "config": "Compile_only",
+              "n_threads": 3,
+              "ppl": 56.39325654140261,
+              "ttft_s": 0.01780826599951979,
+              "tpot_s": 0.01098793958357586,
+              "throughput_tok_s": 90.93135752344656,
+              "ram_rss_mb": 1563.12890625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Compile_only",
+                "threads:3",
+                "torch_compile_applied"
+              ]
+            },
+            {
+              "config": "Compile_only",
+              "n_threads": 3,
+              "ppl": 73.35935986200252,
+              "ttft_s": 0.017523496000649175,
+              "tpot_s": 0.01109279569893264,
+              "throughput_tok_s": 90.07656636922705,
+              "ram_rss_mb": 1563.01953125,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Compile_only",
+                "threads:3",
+                "torch_compile_applied"
+              ]
+            },
+            {
+              "config": "Compile_only",
+              "n_threads": 3,
+              "ppl": 78.15500329741043,
+              "ttft_s": 0.027442671999779122,
+              "tpot_s": 0.010808277754626734,
+              "throughput_tok_s": 92.36288265752584,
+              "ram_rss_mb": 1563.16015625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Compile_only",
+                "threads:3",
+                "torch_compile_applied"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 91.12360218339983,
+          "mean_ttft_s": 0.02092481133331603,
+          "mean_tpot_s": 0.010963004345711744,
+          "mean_ram_rss_mb": 1563.1028645833333,
+          "mean_ppl": 69.30253990027184
+        },
+        "4": {
+          "runs": [
+            {
+              "config": "Compile_only",
+              "n_threads": 4,
+              "ppl": 56.391965816964664,
+              "ttft_s": 0.015787525999257923,
+              "tpot_s": 0.00996570767156415,
+              "throughput_tok_s": 100.2650069050191,
+              "ram_rss_mb": 1563.50390625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Compile_only",
+                "threads:4",
+                "torch_compile_applied"
+              ]
+            },
+            {
+              "config": "Compile_only",
+              "n_threads": 4,
+              "ppl": 73.35796065659906,
+              "ttft_s": 0.013789493999865954,
+              "tpot_s": 0.009578984277619296,
+              "throughput_tok_s": 104.322568661123,
+              "ram_rss_mb": 1563.51953125,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Compile_only",
+                "threads:4",
+                "torch_compile_applied"
+              ]
+            },
+            {
+              "config": "Compile_only",
+              "n_threads": 4,
+              "ppl": 78.16212165860837,
+              "ttft_s": 0.014164090999656764,
+              "tpot_s": 0.0097516148455859,
+              "throughput_tok_s": 102.4774675136409,
+              "ram_rss_mb": 1563.34765625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Compile_only",
+                "threads:4",
+                "torch_compile_applied"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 102.35501435992767,
+          "mean_ttft_s": 0.014580370332926881,
+          "mean_tpot_s": 0.009765435598256449,
+          "mean_ram_rss_mb": 1563.45703125,
+          "mean_ppl": 69.30401604405738
+        },
+        "5": {
+          "runs": [
+            {
+              "config": "Compile_only",
+              "n_threads": 5,
+              "ppl": 56.394869988494506,
+              "ttft_s": 0.024211392999859527,
+              "tpot_s": 0.011238476213119072,
+              "throughput_tok_s": 88.8579531776082,
+              "ram_rss_mb": 1563.90625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Compile_only",
+                "threads:5",
+                "torch_compile_applied"
+              ]
+            },
+            {
+              "config": "Compile_only",
+              "n_threads": 5,
+              "ppl": 73.36009445552284,
+              "ttft_s": 0.025775867999982438,
+              "tpot_s": 0.011327746014658233,
+              "throughput_tok_s": 88.1462707515056,
+              "ram_rss_mb": 1563.8671875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Compile_only",
+                "threads:5",
+                "torch_compile_applied"
+              ]
+            },
+            {
+              "config": "Compile_only",
+              "n_threads": 5,
+              "ppl": 78.15582318032367,
+              "ttft_s": 0.022004952999850502,
+              "tpot_s": 0.01135274382795259,
+              "throughput_tok_s": 87.98150610595614,
+              "ram_rss_mb": 1563.6875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Compile_only",
+                "threads:5",
+                "torch_compile_applied"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 88.32857667835664,
+          "mean_ttft_s": 0.023997404666564155,
+          "mean_tpot_s": 0.011306322018576632,
+          "mean_ram_rss_mb": 1563.8203125,
+          "mean_ppl": 69.30359587478033
+        },
+        "6": {
+          "runs": [
+            {
+              "config": "Compile_only",
+              "n_threads": 6,
+              "ppl": 56.39443973142313,
+              "ttft_s": 0.019298660000458767,
+              "tpot_s": 0.01117436125513737,
+              "throughput_tok_s": 89.40517492695044,
+              "ram_rss_mb": 1564.14453125,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Compile_only",
+                "threads:6",
+                "torch_compile_applied"
+              ]
+            },
+            {
+              "config": "Compile_only",
+              "n_threads": 6,
+              "ppl": 73.35942982297325,
+              "ttft_s": 0.018504392999602715,
+              "tpot_s": 0.010902465605101986,
+              "throughput_tok_s": 91.63710653916894,
+              "ram_rss_mb": 1563.89453125,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Compile_only",
+                "threads:6",
+                "torch_compile_applied"
+              ]
+            },
+            {
+              "config": "Compile_only",
+              "n_threads": 6,
+              "ppl": 78.1595500292402,
+              "ttft_s": 0.021695919999729085,
+              "tpot_s": 0.011268238608018129,
+              "throughput_tok_s": 88.64303484632246,
+              "ram_rss_mb": 1563.92578125,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:Compile_only",
+                "threads:6",
+                "torch_compile_applied"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 89.89510543748061,
+          "mean_ttft_s": 0.01983299099993019,
+          "mean_tpot_s": 0.011115021822752494,
+          "mean_ram_rss_mb": 1563.98828125,
+          "mean_ppl": 69.30447319454552
+        }
+      },
+      "IPEX_only": {
+        "2": {
+          "runs": [
+            {
+              "config": "IPEX_only",
+              "n_threads": 2,
+              "ppl": 56.39532714022962,
+              "ttft_s": 0.04035321999981534,
+              "tpot_s": 0.016784700262950956,
+              "throughput_tok_s": 59.48537155955493,
+              "ram_rss_mb": 1690.19140625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:IPEX_only",
+                "threads:2",
+                "ipex_applied"
+              ]
+            },
+            {
+              "config": "IPEX_only",
+              "n_threads": 2,
+              "ppl": 73.35544215412492,
+              "ttft_s": 0.040127215000211436,
+              "tpot_s": 0.017073098727267852,
+              "throughput_tok_s": 58.48444252026217,
+              "ram_rss_mb": 1673.94140625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:IPEX_only",
+                "threads:2",
+                "ipex_applied"
+              ]
+            },
+            {
+              "config": "IPEX_only",
+              "n_threads": 2,
+              "ppl": 78.15910279798706,
+              "ttft_s": 0.04017982599998504,
+              "tpot_s": 0.01680639199414682,
+              "throughput_tok_s": 59.40902069535832,
+              "ram_rss_mb": 1691.8046875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:IPEX_only",
+                "threads:2",
+                "ipex_applied"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 59.12627825839181,
+          "mean_ttft_s": 0.040220087000003936,
+          "mean_tpot_s": 0.01688806366145521,
+          "mean_ram_rss_mb": 1685.3125,
+          "mean_ppl": 69.3032906974472
+        },
+        "3": {
+          "runs": [
+            {
+              "config": "IPEX_only",
+              "n_threads": 3,
+              "ppl": 56.39532714022962,
+              "ttft_s": 0.04419914600021002,
+              "tpot_s": 0.01588468300196161,
+              "throughput_tok_s": 62.833577784738935,
+              "ram_rss_mb": 1674.1875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:IPEX_only",
+                "threads:3",
+                "ipex_applied"
+              ]
+            },
+            {
+              "config": "IPEX_only",
+              "n_threads": 3,
+              "ppl": 73.35544215412492,
+              "ttft_s": 0.040879647999645385,
+              "tpot_s": 0.016162339576735792,
+              "throughput_tok_s": 61.76757556477735,
+              "ram_rss_mb": 1708.03125,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:IPEX_only",
+                "threads:3",
+                "ipex_applied"
+              ]
+            },
+            {
+              "config": "IPEX_only",
+              "n_threads": 3,
+              "ppl": 78.15910279798706,
+              "ttft_s": 0.03839045899985649,
+              "tpot_s": 0.01608767545356845,
+              "throughput_tok_s": 62.06376196528972,
+              "ram_rss_mb": 1674.7421875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:IPEX_only",
+                "threads:3",
+                "ipex_applied"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 62.22163843826868,
+          "mean_ttft_s": 0.04115641766657063,
+          "mean_tpot_s": 0.016044899344088617,
+          "mean_ram_rss_mb": 1685.6536458333333,
+          "mean_ppl": 69.3032906974472
+        },
+        "4": {
+          "runs": [
+            {
+              "config": "IPEX_only",
+              "n_threads": 4,
+              "ppl": 56.39532714022962,
+              "ttft_s": 0.04183105700030865,
+              "tpot_s": 0.015661730836750026,
+              "throughput_tok_s": 63.73465781712979,
+              "ram_rss_mb": 1673.73046875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:IPEX_only",
+                "threads:4",
+                "ipex_applied"
+              ]
+            },
+            {
+              "config": "IPEX_only",
+              "n_threads": 4,
+              "ppl": 73.35544215412492,
+              "ttft_s": 0.04018995000024006,
+              "tpot_s": 0.015818332394931692,
+              "throughput_tok_s": 63.112078448236204,
+              "ram_rss_mb": 1657.7109375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:IPEX_only",
+                "threads:4",
+                "ipex_applied"
+              ]
+            },
+            {
+              "config": "IPEX_only",
+              "n_threads": 4,
+              "ppl": 78.15910279798706,
+              "ttft_s": 0.03862540799946146,
+              "tpot_s": 0.01581600991302191,
+              "throughput_tok_s": 63.12651540779438,
+              "ram_rss_mb": 1673.90234375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:IPEX_only",
+                "threads:4",
+                "ipex_applied"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 63.32441722438679,
+          "mean_ttft_s": 0.040215471666670055,
+          "mean_tpot_s": 0.015765357714901212,
+          "mean_ram_rss_mb": 1668.4479166666667,
+          "mean_ppl": 69.3032906974472
+        },
+        "5": {
+          "runs": [
+            {
+              "config": "IPEX_only",
+              "n_threads": 5,
+              "ppl": 56.39532714022962,
+              "ttft_s": 0.03725570999995398,
+              "tpot_s": 0.01658311439393489,
+              "throughput_tok_s": 60.21814821847429,
+              "ram_rss_mb": 1689.74609375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:IPEX_only",
+                "threads:5",
+                "ipex_applied"
+              ]
+            },
+            {
+              "config": "IPEX_only",
+              "n_threads": 5,
+              "ppl": 73.35544215412492,
+              "ttft_s": 0.04195488699951966,
+              "tpot_s": 0.016410289853376413,
+              "throughput_tok_s": 60.833587169247146,
+              "ram_rss_mb": 1673.859375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:IPEX_only",
+                "threads:5",
+                "ipex_applied"
+              ]
+            },
+            {
+              "config": "IPEX_only",
+              "n_threads": 5,
+              "ppl": 78.15910279798706,
+              "ttft_s": 0.04011238000020967,
+              "tpot_s": 0.016784964140780536,
+              "throughput_tok_s": 59.485740510196145,
+              "ram_rss_mb": 1649.90625,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:IPEX_only",
+                "threads:5",
+                "ipex_applied"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 60.179158632639194,
+          "mean_ttft_s": 0.039774325666561104,
+          "mean_tpot_s": 0.01659278946269728,
+          "mean_ram_rss_mb": 1671.1705729166667,
+          "mean_ppl": 69.3032906974472
+        },
+        "6": {
+          "runs": [
+            {
+              "config": "IPEX_only",
+              "n_threads": 6,
+              "ppl": 56.39532714022962,
+              "ttft_s": 0.038085269999101,
+              "tpot_s": 0.016607511812307737,
+              "throughput_tok_s": 60.12688373699332,
+              "ram_rss_mb": 1657.52734375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:IPEX_only",
+                "threads:6",
+                "ipex_applied"
+              ]
+            },
+            {
+              "config": "IPEX_only",
+              "n_threads": 6,
+              "ppl": 73.35544215412492,
+              "ttft_s": 0.044371167000463174,
+              "tpot_s": 0.016835808436951927,
+              "throughput_tok_s": 59.29268795174026,
+              "ram_rss_mb": 1649.77734375,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:IPEX_only",
+                "threads:6",
+                "ipex_applied"
+              ]
+            },
+            {
+              "config": "IPEX_only",
+              "n_threads": 6,
+              "ppl": 78.15910279798706,
+              "ttft_s": 0.04874472400024388,
+              "tpot_s": 0.016998908001960487,
+              "throughput_tok_s": 58.710589801561035,
+              "ram_rss_mb": 1681.44921875,
+              "model_size_mb": 268.6562805175781,
+              "quantized_size_mb": null,
+              "snapkv_effective_ratio": null,
+              "notes": [
+                "config:IPEX_only",
+                "threads:6",
+                "ipex_applied"
+              ]
+            }
+          ],
+          "mean_throughput_tok_s": 59.376720496764875,
+          "mean_ttft_s": 0.04373372033326935,
+          "mean_tpot_s": 0.01681407608374005,
+          "mean_ram_rss_mb": 1662.91796875,
+          "mean_ppl": 69.3032906974472
+        }
+      }
+    },
+    "final_optimal": {
+      "Baseline": {
+        "optimal_cores": 14,
+        "peak_thpt_tok_s": 76.99900529224472
+      },
+      "Quant_INT8_only": {
+        "optimal_cores": 8,
+        "peak_thpt_tok_s": 129.7631266049499
+      },
+      "Quant_FP16_only": {
+        "optimal_cores": 10,
+        "peak_thpt_tok_s": 120.16507516125951
+      },
+      "SnapKV_only": {
+        "optimal_cores": 4,
+        "peak_thpt_tok_s": 102.22572706201201
+      },
+      "Crosslayer_only": {
+        "optimal_cores": 4,
+        "peak_thpt_tok_s": 98.3855027691522
+      },
+      "Compile_only": {
+        "optimal_cores": 4,
+        "peak_thpt_tok_s": 102.35501435992767
+      },
+      "IPEX_only": {
+        "optimal_cores": 4,
+        "peak_thpt_tok_s": 63.32441722438679
+      }
+    }
+  },
+  "final_summary": {
+    "rows": [
+      {
+        "config": "Baseline",
+        "optimal_cores": 14,
+        "peak_thpt_tok_s": 77.0,
+        "thpt_1core_tok_s": 48.2,
+        "speedup_vs_1core": 1.6,
+        "scaling_efficiency": 0.1141
+      },
+      {
+        "config": "Quant_INT8_only",
+        "optimal_cores": 8,
+        "peak_thpt_tok_s": 129.76,
+        "thpt_1core_tok_s": 70.62,
+        "speedup_vs_1core": 1.84,
+        "scaling_efficiency": 0.2297
+      },
+      {
+        "config": "Quant_FP16_only",
+        "optimal_cores": 10,
+        "peak_thpt_tok_s": 120.17,
+        "thpt_1core_tok_s": 53.25,
+        "speedup_vs_1core": 2.26,
+        "scaling_efficiency": 0.2256
+      },
+      {
+        "config": "SnapKV_only",
+        "optimal_cores": 4,
+        "peak_thpt_tok_s": 102.23,
+        "thpt_1core_tok_s": 47.44,
+        "speedup_vs_1core": 2.15,
+        "scaling_efficiency": 0.5387
+      },
+      {
+        "config": "Crosslayer_only",
+        "optimal_cores": 4,
+        "peak_thpt_tok_s": 98.39,
+        "thpt_1core_tok_s": 47.15,
+        "speedup_vs_1core": 2.09,
+        "scaling_efficiency": 0.5217
+      },
+      {
+        "config": "Compile_only",
+        "optimal_cores": 4,
+        "peak_thpt_tok_s": 102.36,
+        "thpt_1core_tok_s": 69.46,
+        "speedup_vs_1core": 1.47,
+        "scaling_efficiency": 0.3684
+      },
+      {
+        "config": "IPEX_only",
+        "optimal_cores": 4,
+        "peak_thpt_tok_s": 63.32,
+        "thpt_1core_tok_s": 52.72,
+        "speedup_vs_1core": 1.2,
+        "scaling_efficiency": 0.3003
+      }
+    ],
+    "note": "Scaling efficiency = speedup / optimal_cores. 1.0 = perfect linear scaling."
+  }
+}

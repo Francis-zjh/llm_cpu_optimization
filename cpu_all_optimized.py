@@ -7,10 +7,6 @@ import os
 os.environ.setdefault("HF_ENDPOINT", "https://hf-mirror.com")
 os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
 
-# Thread control — 8 threads is optimal for pythia-70m on Xeon 8369B
-os.environ["OMP_NUM_THREADS"] = "8"
-os.environ["MKL_NUM_THREADS"] = "8"
-
 import gc
 import shutil
 import ssl
@@ -24,7 +20,6 @@ from typing import Any
 
 import psutil
 import torch
-torch.set_num_threads(8)
 import tqdm
 from datasets import load_dataset
 from datasets import load_dataset
@@ -65,6 +60,7 @@ SEQ_LENGTHS = [128, 256, 512, 1024] # sequence lengths for the sweep
 class AblationConfig:
     name: str
     use_quantization: bool = False
+    use_fp16: bool = False
     use_snapkv: bool = False
     snapkv_compression_ratio: float = 0.2
     snapkv_window_size: int = 16
@@ -72,6 +68,7 @@ class AblationConfig:
     cross_layer_groups: list[list[int]] = field(default_factory=list)
     use_ipex: bool = False
     use_compile: bool = False
+    n_threads: int = 8
 
 
 @dataclass
@@ -86,6 +83,15 @@ class RunMetrics:
     quantized_size_mb: float | None
     generated_tokens: int
     notes: list[str]
+
+
+# ---------------------------------------------------------------------------
+# Thread control  (set per-ablation before model loading)
+# ---------------------------------------------------------------------------
+def set_thread_count(n: int) -> None:
+    os.environ["OMP_NUM_THREADS"] = str(n)
+    os.environ["MKL_NUM_THREADS"] = str(n)
+    torch.set_num_threads(n)
 
 
 # ---------------------------------------------------------------------------
@@ -118,6 +124,18 @@ def apply_dynamic_quantization(model: torch.nn.Module) -> torch.nn.Module:
         return model
     except Exception as exc:
         print(f"  [WARN] Quantization failed: {exc}")
+        return model
+
+
+# ---------------------------------------------------------------------------
+# Optimisation 1b — FP16 Half Precision
+# ---------------------------------------------------------------------------
+def apply_fp16(model: torch.nn.Module) -> torch.nn.Module:
+    try:
+        model = model.half()
+        return model
+    except Exception as exc:
+        print(f"  [WARN] FP16 conversion failed: {exc}")
         return model
 
 
@@ -282,15 +300,25 @@ def load_corpus_text(dataset_type: str) -> str:
 # Metric helpers
 # ---------------------------------------------------------------------------
 def compute_perplexity(
-    model: torch.nn.Module, tokenizer: Any, text: str, max_length: int = 128
+    model: torch.nn.Module, tokenizer: Any, text: str, max_length: int = 512
 ) -> float | None:
     try:
-        enc = tokenizer(text, return_tensors="pt", truncation=True, max_length=max_length)
+        enc = tokenizer(text, return_tensors="pt", truncation=False)
         input_ids = enc["input_ids"]
+        if input_ids.shape[1] > max_length:
+            offset = torch.randint(0, input_ids.shape[1] - max_length, (1,)).item()
+            input_ids = input_ids[:, offset : offset + max_length]
+        # FP16 models can produce NaN loss; compute PPL in FP32
+        was_fp16 = next(model.parameters()).dtype == torch.float16
+        if was_fp16:
+            model = model.float()
         with torch.inference_mode(), torch.amp.autocast("cpu", enabled=False):
             outputs = model(input_ids=input_ids, labels=input_ids.clone(), use_cache=True)
-        loss = float(outputs.loss)
+            loss = float(outputs.loss)
+        if was_fp16:
+            model = model.half()  # restore FP16 for generation benchmark
         if math.isnan(loss) or math.isinf(loss):
+            print(f"  [DEBUG] PPL skipped: loss={loss}")
             return None
         return math.exp(loss)
     except Exception as exc:
@@ -462,6 +490,15 @@ def run_ablation(
     else:
         size_int8 = None
 
+    # 2b. FP16 half precision (only if not also quantizing — FP16 overrides)
+    if ablation.use_fp16 and not ablation.use_quantization:
+        model = apply_fp16(model)
+        size_fp16 = measure_model_size_mb(model)
+        notes.append(f"fp16_model_size_mb={size_fp16:.1f}")
+        notes.append("fp16_applied")
+    elif ablation.use_fp16 and ablation.use_quantization:
+        notes.append("fp16_skipped:quantization_overrides")
+
     # 3. SnapKV hooks
     if ablation.use_snapkv:
         handles, press_stats, _ = attach_snapkv_hooks(
@@ -487,7 +524,7 @@ def run_ablation(
 
     # 5. Metrics
     print("    PPL …")
-    ppl = compute_perplexity(model, tokenizer, corpus_text, max_length=128)
+    ppl = compute_perplexity(model, tokenizer, corpus_text, max_length=512)
 
     print(f"    Generation ({GENERATION_TOKENS} tokens) …")
     gen, shared_layers = measure_generation(model, tokenizer, prompt, ablation=ablation)
@@ -571,40 +608,36 @@ def run_seqlen_sweep(
 # Main
 # ---------------------------------------------------------------------------
 def main() -> None:
-    torch.manual_seed(7)
     prompt = "Pythia-70M is a small language model that can still be profiled on CPU."
 
     datasets = ["wikitext", "pg19"]
 
-    # Ablation matrix
-    # Order: non-IPEX groups first (to avoid oneDNN state leaking into quant-only runs),
-    # then IPEX groups (which set their own oneDNN state).
+    # Ablation matrix (same as before)
     ablations = [
-        # Baseline & Single (non-IPEX first)
-        AblationConfig(name="Baseline"),
-        AblationConfig(name="Quant_only", use_quantization=True),
-        AblationConfig(name="SnapKV_only", use_snapkv=True, snapkv_compression_ratio=0.2),
-        AblationConfig(name="Crosslayer_only", use_cross_layer=True, cross_layer_groups=[[4, 5]]),
-        AblationConfig(name="Compile_only", use_compile=True),
-        AblationConfig(name="Compile_SnapKV", use_compile=True, use_snapkv=True, snapkv_compression_ratio=0.2),
-        AblationConfig(name="Compile_Quantization", use_compile=True, use_quantization=True),
-        AblationConfig(name="SnapKV_CrossLayer", use_snapkv=True, use_cross_layer=True, cross_layer_groups=[[4, 5]], snapkv_compression_ratio=0.2),
-
-        # IPEX groups
-        AblationConfig(name="IPEX_only", use_ipex=True),
-        AblationConfig(name="IPEX_Compile", use_ipex=True, use_compile=True),
-        AblationConfig(name="IPEX_SnapKV", use_ipex=True, use_snapkv=True, snapkv_compression_ratio=0.2),
-        AblationConfig(name="IPEX_CrossLayer", use_ipex=True, use_cross_layer=True, cross_layer_groups=[[4, 5]]),
-        AblationConfig(name="IPEX_Quantization", use_ipex=True, use_quantization=True),
-
-        # Tri-level + All-in-One
-        AblationConfig(name="Compile_SnapKV_CrossLayer", use_compile=True, use_snapkv=True, use_cross_layer=True, cross_layer_groups=[[4, 5]], snapkv_compression_ratio=0.2),
-        AblationConfig(name="IPEX_Compile_SnapKV", use_ipex=True, use_compile=True, use_snapkv=True, snapkv_compression_ratio=0.2),
-        AblationConfig(name="IPEX_Quant_SnapKV", use_ipex=True, use_quantization=True, use_snapkv=True, snapkv_compression_ratio=0.2),
-
-        # All-in-One Ultimate
-        AblationConfig(name="All_In_One", use_ipex=True, use_compile=True, use_quantization=True, use_snapkv=True, use_cross_layer=True, snapkv_compression_ratio=0.2, cross_layer_groups=[[4, 5]]),
+        AblationConfig(name="Baseline", n_threads=1),
+        AblationConfig(name="Baseline_opt", n_threads=8),
+        AblationConfig(name="Quant_only", use_quantization=True, n_threads=8),
+        AblationConfig(name="SnapKV_only", use_snapkv=True, snapkv_compression_ratio=0.2, n_threads=4),
+        AblationConfig(name="Crosslayer_only", use_cross_layer=True, cross_layer_groups=[[4, 5]], n_threads=4),
+        AblationConfig(name="FP16_only", use_fp16=True, n_threads=8),
+        AblationConfig(name="Compile_only", use_compile=True, n_threads=4),
+        AblationConfig(name="Compile_SnapKV", use_compile=True, use_snapkv=True, snapkv_compression_ratio=0.2, n_threads=4),
+        AblationConfig(name="Compile_Quantization", use_compile=True, use_quantization=True, n_threads=4),
+        AblationConfig(name="Compile_FP16", use_compile=True, use_fp16=True, n_threads=4),
+        AblationConfig(name="SnapKV_CrossLayer", use_snapkv=True, use_cross_layer=True, cross_layer_groups=[[4, 5]], snapkv_compression_ratio=0.2, n_threads=4),
+        AblationConfig(name="FP16_SnapKV", use_fp16=True, use_snapkv=True, snapkv_compression_ratio=0.2, n_threads=4),
+        AblationConfig(name="IPEX_only", use_ipex=True, n_threads=4),
+        AblationConfig(name="IPEX_Compile", use_ipex=True, use_compile=True, n_threads=4),
+        AblationConfig(name="IPEX_SnapKV", use_ipex=True, use_snapkv=True, snapkv_compression_ratio=0.2, n_threads=4),
+        AblationConfig(name="IPEX_CrossLayer", use_ipex=True, use_cross_layer=True, cross_layer_groups=[[4, 5]], n_threads=4),
+        AblationConfig(name="IPEX_Quantization", use_ipex=True, use_quantization=True, n_threads=4),
+        AblationConfig(name="Compile_SnapKV_CrossLayer", use_compile=True, use_snapkv=True, use_cross_layer=True, cross_layer_groups=[[4, 5]], snapkv_compression_ratio=0.2, n_threads=4),
+        AblationConfig(name="Compile_FP16_SnapKV", use_compile=True, use_fp16=True, use_snapkv=True, snapkv_compression_ratio=0.2, n_threads=4),
+        AblationConfig(name="IPEX_Compile_SnapKV", use_ipex=True, use_compile=True, use_snapkv=True, snapkv_compression_ratio=0.2, n_threads=4),
+        AblationConfig(name="IPEX_Quant_SnapKV", use_ipex=True, use_quantization=True, use_snapkv=True, snapkv_compression_ratio=0.2, n_threads=4),
+        AblationConfig(name="All_In_One", use_ipex=True, use_compile=True, use_quantization=True, use_snapkv=True, use_cross_layer=True, snapkv_compression_ratio=0.2, cross_layer_groups=[[4, 5]], n_threads=4),
     ]
+    ablation_names = {a.name for a in ablations}
 
     all_results: dict[str, Any] = {
         "model_name": MODEL_NAME,
@@ -632,56 +665,106 @@ def main() -> None:
             "FLOPs via torch.profiler (CPU). Values for quantized models are unreliable "
             "because the profiler cannot correctly count INT8 operator FLOPs."
         ),
+        "fp16_note": "FP16 half precision via model.half(). Model size halved but CPU lacks native FP16 compute, so speed may not improve.",
     }
 
-    for dt in tqdm.tqdm(datasets, desc="Dataset", unit="ds"):
-        print(f"\n{'=' * 60}\nRunning dataset: {dt}")
+    # ------------------------------------------------------------------
+    # Resume: load existing partial results
+    # ------------------------------------------------------------------
+    if RESULT_PATH.exists():
+        try:
+            saved = json.loads(RESULT_PATH.read_text(encoding="utf-8"))
+            if saved.get("model_name") == MODEL_NAME and "results" in saved:
+                all_results = saved
+                n_done = sum(
+                    1 for ds in saved["results"].values()
+                    for k in ds if k in ablation_names
+                )
+                print(f"[Resume] Loaded existing results ({n_done} configs done)")
+        except Exception as exc:
+            print(f"[Resume] Ignored corrupt results file: {exc}")
+
+    def save_checkpoint() -> None:
+        RESULT_PATH.write_text(
+            json.dumps(all_results, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
+
+    # ==================================================================
+    # Dataset loop
+    # ==================================================================
+    for dt in datasets:
+        # Check which ablation configs are already complete for this dataset
+        ds_done: set[str] = set()
+        if "results" in all_results and dt in all_results["results"]:
+            ds_done = {k for k in all_results["results"][dt] if k in ablation_names}
+
+        if ds_done == ablation_names:
+            print(f"\n[Skip] {dt} — all {len(ablations)} configs completed")
+            continue
+
+        if ds_done:
+            missing = ablation_names - ds_done
+            print(f"\n{'=' * 60}\n[Resume] {dt}: {len(ds_done)}/{len(ablations)} done, missing: {sorted(missing)}")
+        else:
+            print(f"\n{'=' * 60}\nRunning dataset: {dt}")
+
         corpus_text = load_corpus_text(dt)
-        dt_results: dict[str, Any] = {}
+
+        # Get or create the dataset result dict
+        dt_results: dict[str, Any] = all_results.setdefault("results", {}).setdefault(dt, {})
+        dt_results.setdefault("experiments", [])
+
+        if "fallback_used" not in dt_results:
+            dt_results["fallback_used"] = corpus_text.startswith("[FALLBACK]")
+        if "core_ablation" not in dt_results["experiments"]:
+            dt_results["experiments"].append("core_ablation")
 
         # ---- Core ablation with repeats ----
-        dt_results["experiments_run"] = ["core_ablation"]
         core_start = time.perf_counter()
 
         for abl in tqdm.tqdm(ablations, desc=f"  [{dt}]", unit="exp", leave=False):
-            print(f"\n  === {abl.name} (REPEATS={REPEATS}) ===")
+            if abl.name in dt_results:
+                print(f"  [Skip] {abl.name} already done")
+                continue
+
+            print(f"\n  === {abl.name} (REPEATS={REPEATS}, threads={abl.n_threads}) ===")
             run_list: list[dict[str, Any]] = []
 
             for rep in range(REPEATS):
                 print(f"    ── repeat {rep + 1}/{REPEATS} ──")
+                set_thread_count(abl.n_threads)
                 model, tokenizer = load_model_and_tokenizer()
+                torch.manual_seed(7 + rep)
                 metrics = run_ablation(abl, model, tokenizer, prompt, corpus_text)
                 run_list.append(asdict(metrics))
                 del model, tokenizer
                 gc.collect()
 
-            # Aggregate the repeats
             dt_results[abl.name] = aggregate_runs(run_list)
+            save_checkpoint()
+            print(f"    ✓ checkpoint saved")
 
         core_elapsed = time.perf_counter() - core_start
         print(f"\n  [Core ablation for {dt} done in {core_elapsed:.0f}s]")
 
         # ---- Sequence-length sweep ----
         if RUN_SEQLEN_SWEEP:
-            dt_results["experiments_run"].append("seqlen_sweep")
-            print(f"\n  === Sequence-length sweep {SEQ_LENGTHS} ===")
-            model, tokenizer = load_model_and_tokenizer()
-            sweep = run_seqlen_sweep(model, tokenizer, prompt, lengths=SEQ_LENGTHS)
-            dt_results["seqlen_sweep"] = sweep
-            del model, tokenizer
-            gc.collect()
-            print(f"  [SeqLen sweep done]")
+            if "seqlen_sweep" in dt_results:
+                print(f"  [Skip] SeqLen sweep already done for {dt}")
+            else:
+                dt_results["experiments"].append("seqlen_sweep")
+                print(f"\n  === Sequence-length sweep {SEQ_LENGTHS} ===")
+                set_thread_count(8)
+                model, tokenizer = load_model_and_tokenizer()
+                sweep = run_seqlen_sweep(model, tokenizer, prompt, lengths=SEQ_LENGTHS)
+                dt_results["seqlen_sweep"] = sweep
+                del model, tokenizer
+                gc.collect()
+                print(f"  [SeqLen sweep done]")
+                save_checkpoint()
 
-        all_results["results"][dt] = {
-            "fallback_used": corpus_text.startswith("[FALLBACK]"),
-            "experiments": dt_results.pop("experiments_run"),
-            **dt_results,
-        }
         print(f"{'=' * 60}\n")
 
-    RESULT_PATH.write_text(
-        json.dumps(all_results, indent=2, ensure_ascii=False), encoding="utf-8"
-    )
     print(f"\n{'=' * 60}")
     print(f"All experiments complete! Results → {RESULT_PATH}")
     print(f"{'=' * 60}")
