@@ -3,13 +3,23 @@ from __future__ import annotations
 import json
 import math
 import os
+os.environ.setdefault("HF_ENDPOINT", "https://hf-mirror.com")
+os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
+# os.environ["HF_HUB_OFFLINE"] = "1"
+# os.environ["HF_DATASETS_OFFLINE"] = "1"
+
 import shutil
 import time
 import warnings
 import gc
-from dataclasses import asdict, dataclass
+import ssl
+import urllib3
+ssl._create_default_https_context = ssl._create_unverified_context
+urllib3.disable_warnings()
+
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Tuple
 
 import psutil
 import torch
@@ -21,14 +31,20 @@ from kvpress.utils import extract_keys_and_values
 
 
 MODEL_NAME = "EleutherAI/pythia-70m"
-DATASET_NAME = "wikitext"
-DATASET_CONFIG = "wikitext-2-raw-v1"
 RESULT_PATH = Path("cpu_all_opt_results.json")
 
-
-os.environ.setdefault("HF_ENDPOINT", "https://hf-mirror.com")
-os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
-
+@dataclass
+class AblationConfig:
+    name: str
+    use_gqa: bool = False
+    gqa_target_kv_heads: int = 4
+    gqa_mix_alpha: float = 0.15
+    use_snapkv: bool = False
+    snapkv_compression_ratio: float = 0.2
+    snapkv_window_size: int = 16
+    use_cross_layer: bool = False
+    cross_layer_groups: list[list[int]] = field(default_factory=list)
+    use_runtime_opt: bool = True
 
 @dataclass
 class RunMetrics:
@@ -42,7 +58,7 @@ class RunMetrics:
     notes: list[str]
 
 
-def load_model_and_tokenizer() -> tuple[torch.nn.Module, Any]:
+def load_model_and_tokenizer() -> Tuple[torch.nn.Module, Any]:
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
@@ -103,7 +119,6 @@ def apply_gqa_emulation(model: torch.nn.Module, target_kv_heads: int = 4, mix_al
         grouped_k = regroup(k_weight)
         grouped_v = regroup(v_weight)
 
-        # Use a conservative blend so the no-training emulation does not fully overwrite pretrained behavior.
         k_weight = (1.0 - mix_alpha) * k_weight + mix_alpha * grouped_k
         v_weight = (1.0 - mix_alpha) * v_weight + mix_alpha * grouped_v
 
@@ -117,23 +132,23 @@ def apply_gqa_emulation(model: torch.nn.Module, target_kv_heads: int = 4, mix_al
             proj.bias.data = torch.cat([q_bias, k_bias, v_bias], dim=0)
 
 
-def maybe_optimize_runtime(model: torch.nn.Module) -> tuple[torch.nn.Module, list[str]]:
+def maybe_optimize_runtime(model: torch.nn.Module) -> Tuple[torch.nn.Module, list[str]]:
     notes: list[str] = []
     try:
         import intel_extension_for_pytorch as ipex  # type: ignore
 
         model = ipex.optimize(model, dtype=torch.bfloat16)
         notes.append("ipex_applied")
-    except Exception as exc:  # pragma: no cover
+    except Exception as exc:
         notes.append(f"ipex_skipped:{type(exc).__name__}")
 
     if os.name == "nt" and shutil.which("cl") is None:
-        notes.append("torch_compile_skipped:no_cl_compiler")
+        notes.append("torch_compile_skipped:no_cl_compiler_on_windows")
     else:
         try:
             model = torch.compile(model, mode="reduce-overhead")
             notes.append("torch_compile_applied")
-        except Exception as exc:  # pragma: no cover
+        except Exception as exc:
             notes.append(f"torch_compile_skipped:{type(exc).__name__}")
 
     return model, notes
@@ -143,13 +158,9 @@ def attach_snapkv_hooks(
     model: torch.nn.Module,
     compression_ratio: float = 0.5,
     window_size: int = 16,
-) -> tuple[list[Any], dict[str, float], SnapKVPress]:
+) -> Tuple[list[Any], dict[str, float], SnapKVPress]:
     press = SnapKVPress(compression_ratio=compression_ratio, window_size=window_size, kernel_size=5)
-    stats = {
-        "calls": 0.0,
-        "tokens_before": 0.0,
-        "tokens_after": 0.0,
-    }
+    stats = {"calls": 0.0, "tokens_before": 0.0, "tokens_after": 0.0}
     if hasattr(press, "post_init_from_model"):
         try:
             press.post_init_from_model(model)
@@ -221,18 +232,25 @@ def share_kv_cache_across_layer_groups(cache: Any, groups: list[list[int]]) -> i
     return shared_layers
 
 
-def load_corpus_text() -> str:
+def load_corpus_text(dataset_type: str) -> str:
     try:
-        ds = load_dataset(DATASET_NAME, DATASET_CONFIG, split="test[:5]")
-        texts = [row["text"] for row in ds if row.get("text")]
+        if dataset_type == "wikitext":
+            ds = load_dataset("wikitext", "wikitext-2-raw-v1", split="test[:5%]")
+            texts = [row["text"] for row in ds if row.get("text")]
+        else: # pg19
+            # Attempt to load a small subset of pg19 test set
+            ds = load_dataset("emozilla/pg19-test", split="test[:1]")
+            texts = [row["text"] for row in ds if row.get("text")]
+            
         corpus = "\n\n".join(texts).strip()
         if corpus:
-            return corpus
-    except Exception:
-        pass
+            # truncate to max 2000 chars for benchmarking speed if pg19 is huge, or 4000.
+            return corpus[:4000]
+    except Exception as e:
+        print(f"Fallback used for {dataset_type}: {e}")
 
     return (
-        "This is a local fallback corpus for benchmarking. "
+        f"This is a local fallback corpus for benchmarking {dataset_type}. "
         "It is only used when the dataset download fails. "
         "The goal is to keep the pipeline runnable on Windows while preserving the benchmark flow.\n"
         "We still report the fallback in the results JSON."
@@ -240,6 +258,7 @@ def load_corpus_text() -> str:
 
 
 def compute_perplexity(model: torch.nn.Module, tokenizer: Any, text: str, max_length: int = 128) -> float | None:
+    # Explicitly note this is raw CrossEntropy-based (CE) perplexity
     try:
         enc = tokenizer(text, return_tensors="pt", truncation=True, max_length=max_length)
         input_ids = enc["input_ids"]
@@ -257,8 +276,8 @@ def measure_generation(
     tokenizer: Any,
     prompt: str,
     max_new_tokens: int = 8,
-    optimized_mode: bool = False,
-) -> tuple[dict[str, float | int | None], int]:
+    ablation: AblationConfig = None,
+) -> Tuple[dict[str, float | int | None], int]:
     inputs = tokenizer(prompt, return_tensors="pt")
     input_ids = inputs["input_ids"]
     attention_mask = inputs.get("attention_mask")
@@ -270,8 +289,9 @@ def measure_generation(
     with torch.inference_mode():
         outputs = model(input_ids=generated, attention_mask=attention_mask, use_cache=True)
         shared_layers = 0
-        if optimized_mode:
-            shared_layers = share_kv_cache_across_layer_groups(outputs.past_key_values, [[0, 1, 2], [3, 4, 5]])
+        if ablation and ablation.use_cross_layer:
+            shared_layers = share_kv_cache_across_layer_groups(outputs.past_key_values, ablation.cross_layer_groups)
+            
         next_token = outputs.logits[:, -1, :].argmax(dim=-1, keepdim=True)
         generated = torch.cat([generated, next_token], dim=-1)
         past_key_values = outputs.past_key_values
@@ -322,43 +342,46 @@ def measure_flops(model: torch.nn.Module, tokenizer: Any, prompt: str, max_new_t
     except Exception:
         return None
 
-
 def rss_mb() -> float:
     return psutil.Process().memory_info().rss / (1024 * 1024)
 
-
-def run_pipeline(kind: str, model: torch.nn.Module, tokenizer: Any, prompt: str, corpus_text: str) -> RunMetrics:
-    notes: list[str] = []
+def run_ablation(ablation: AblationConfig, model: torch.nn.Module, tokenizer: Any, prompt: str, corpus_text: str) -> RunMetrics:
+    notes: list[str] = [f"ablation:{ablation.name}"]
     handles: list[Any] = []
     press_stats: dict[str, float] | None = None
-    if kind == "optimized":
-        apply_gqa_emulation(model, target_kv_heads=4, mix_alpha=0.15)
-        handles, press_stats, _ = attach_snapkv_hooks(model, compression_ratio=0.5, window_size=16)
+    
+    if ablation.use_gqa:
+        apply_gqa_emulation(model, target_kv_heads=ablation.gqa_target_kv_heads, mix_alpha=ablation.gqa_mix_alpha)
+        notes.append("gqa_applied")
+        
+    if ablation.use_snapkv:
+        handles, press_stats, _ = attach_snapkv_hooks(model, compression_ratio=ablation.snapkv_compression_ratio, window_size=ablation.snapkv_window_size)
+        notes.append(f"kvpress_hooks={len(handles)}")
+        
+    if ablation.use_runtime_opt:
         model, runtime_notes = maybe_optimize_runtime(model)
         notes.extend(runtime_notes)
-        notes.append(f"kvpress_hooks={len(handles)}")
-    else:
-        notes.append("baseline_eager")
 
-    ppl = compute_perplexity(model, tokenizer, corpus_text)
-    gen, shared_layers = measure_generation(model, tokenizer, prompt, optimized_mode=(kind == "optimized"))
-    flops = measure_flops(model, tokenizer, prompt)
+    ppl = compute_perplexity(model, tokenizer, corpus_text, max_length=128)
+    gen, shared_layers = measure_generation(model, tokenizer, prompt, max_new_tokens=8, ablation=ablation)
+    flops = measure_flops(model, tokenizer, prompt, max_new_tokens=4)
     ram = rss_mb()
 
+    # Cleanup hooks
     for handle in handles:
         try:
             handle.remove()
         except Exception:
             pass
 
-    if kind == "optimized":
+    if ablation.use_cross_layer:
         notes.append(f"cross_layer_shared_layers={shared_layers}")
+        
+    if ablation.use_snapkv:
         if press_stats and press_stats["calls"] > 0:
             avg_before = press_stats["tokens_before"] / press_stats["calls"]
             avg_after = press_stats["tokens_after"] / press_stats["calls"]
             ratio = 1.0 - (avg_after / avg_before if avg_before > 0 else 1.0)
-            notes.append(f"snapkv_avg_tokens_before={avg_before:.2f}")
-            notes.append(f"snapkv_avg_tokens_after={avg_after:.2f}")
             notes.append(f"snapkv_effective_ratio={ratio:.4f}")
         else:
             notes.append("snapkv_effective_ratio=0.0000")
@@ -379,30 +402,48 @@ def main() -> None:
     torch.manual_seed(7)
     prompt = "Pythia-70M is a small language model that can still be profiled on CPU."
 
-    baseline_model, tokenizer = load_model_and_tokenizer()
-    corpus_text = load_corpus_text()
-    baseline_metrics = run_pipeline("baseline", baseline_model, tokenizer, prompt, corpus_text)
+    datasets = ["wikitext", "pg19"]
+    ablations = [
+        AblationConfig(name="baseline", use_gqa=False, use_snapkv=False, use_cross_layer=False, use_runtime_opt=True),
+        AblationConfig(name="gqa_only", use_gqa=True, gqa_target_kv_heads=4, gqa_mix_alpha=0.15, use_runtime_opt=True),
+        AblationConfig(name="snapkv_only", use_snapkv=True, snapkv_compression_ratio=0.2, snapkv_window_size=16, use_runtime_opt=True),
+        AblationConfig(name="crosslayer_only", use_cross_layer=True, cross_layer_groups=[[4, 5]], use_runtime_opt=True), # Mild sharing
+        AblationConfig(name="all_optimized", use_gqa=True, use_snapkv=True, snapkv_compression_ratio=0.2, use_cross_layer=True, cross_layer_groups=[[4, 5]], use_runtime_opt=True),
+    ]
 
-    del baseline_model
-    gc.collect()
-
-    optimized_model, tokenizer = load_model_and_tokenizer()
-    optimized_metrics = run_pipeline("optimized", optimized_model, tokenizer, prompt, corpus_text)
-
-    results = {
+    all_results = {
         "model_name": MODEL_NAME,
-        "dataset": {"name": DATASET_NAME, "config": DATASET_CONFIG, "fallback_used": corpus_text.startswith("This is a local fallback corpus")},
-        "baseline": asdict(baseline_metrics),
-        "optimized": asdict(optimized_metrics),
+        "results": {},
         "environment": {
             "torch": torch.__version__,
             "python": f"{os.sys.version_info.major}.{os.sys.version_info.minor}.{os.sys.version_info.micro}",
             "cpu_count": os.cpu_count(),
         },
+        "ppl_metric_note": "PPL is manually calculated via CrossEntropy loss over sequence (not hf evaluate library)."
     }
 
-    RESULT_PATH.write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(json.dumps(results, indent=2, ensure_ascii=False))
+    for dt in datasets:
+        corpus_text = load_corpus_text(dt)
+        dt_results = {}
+        for abl in ablations:
+            print(f"Running Ablation: {abl.name} on Dataset: {dt}...")
+            
+            # Load fresh model for each ablation to avoid state pollution
+            model, tokenizer = load_model_and_tokenizer()
+            metrics = run_ablation(abl, model, tokenizer, prompt, corpus_text)
+            
+            dt_results[abl.name] = asdict(metrics)
+            
+            del model
+            gc.collect()
+            
+        all_results["results"][dt] = {
+            "fallback_used": corpus_text.startswith("This is a local fallback corpus"),
+            "ablations": dt_results
+        }
+
+    RESULT_PATH.write_text(json.dumps(all_results, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"Metrics written to {RESULT_PATH}")
 
 
 if __name__ == "__main__":

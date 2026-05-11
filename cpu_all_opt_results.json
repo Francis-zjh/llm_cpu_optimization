@@ -1,43 +1,177 @@
 {
   "model_name": "EleutherAI/pythia-70m",
-  "dataset": {
-    "name": "wikitext",
-    "config": "wikitext-2-raw-v1",
-    "fallback_used": false
-  },
-  "baseline": {
-    "ppl": 63.51248711959022,
-    "ttft_s": 0.021119899989571422,
-    "tpot_s": 0.010534400003962219,
-    "throughput_tok_s": 84.29366650227753,
-    "ram_rss_mb": 738.4453125,
-    "flops": 1969209120.0,
-    "generated_tokens": 8,
-    "notes": [
-      "baseline_eager"
-    ]
-  },
-  "optimized": {
-    "ppl": 415759.56202114775,
-    "ttft_s": 0.022800700011430308,
-    "tpot_s": 0.010509014291788585,
-    "throughput_tok_s": 82.98445285607524,
-    "ram_rss_mb": 744.28515625,
-    "flops": 1968837600.0,
-    "generated_tokens": 8,
-    "notes": [
-      "ipex_skipped:ModuleNotFoundError",
-      "torch_compile_skipped:no_cl_compiler",
-      "kvpress_hooks=6",
-      "cross_layer_shared_layers=4",
-      "snapkv_avg_tokens_before=55.33",
-      "snapkv_avg_tokens_after=27.33",
-      "snapkv_effective_ratio=0.5060"
-    ]
+  "results": {
+    "wikitext": {
+      "fallback_used": false,
+      "ablations": {
+        "baseline": {
+          "ppl": 63.51248711959022,
+          "ttft_s": 0.02058850001776591,
+          "tpot_s": 0.011528600015610988,
+          "throughput_tok_s": 78.94544670707866,
+          "ram_rss_mb": 738.05078125,
+          "flops": 1969209120.0,
+          "generated_tokens": 8,
+          "notes": [
+            "ablation:baseline",
+            "ipex_skipped:ModuleNotFoundError",
+            "torch_compile_skipped:no_cl_compiler_on_windows"
+          ]
+        },
+        "gqa_only": {
+          "ppl": 415759.56202114775,
+          "ttft_s": 0.019663500017486513,
+          "tpot_s": 0.010407357144036464,
+          "throughput_tok_s": 86.4324778656461,
+          "ram_rss_mb": 741.3828125,
+          "flops": 1969209120.0,
+          "generated_tokens": 8,
+          "notes": [
+            "ablation:gqa_only",
+            "gqa_applied",
+            "ipex_skipped:ModuleNotFoundError",
+            "torch_compile_skipped:no_cl_compiler_on_windows"
+          ]
+        },
+        "snapkv_only": {
+          "ppl": 63.51248711959022,
+          "ttft_s": 0.027562699979171157,
+          "tpot_s": 0.010285442869644612,
+          "throughput_tok_s": 80.31870463437885,
+          "ram_rss_mb": 748.625,
+          "flops": 1969060512.0,
+          "generated_tokens": 8,
+          "notes": [
+            "ablation:snapkv_only",
+            "kvpress_hooks=6",
+            "ipex_skipped:ModuleNotFoundError",
+            "torch_compile_skipped:no_cl_compiler_on_windows",
+            "snapkv_effective_ratio=0.2048"
+          ]
+        },
+        "crosslayer_only": {
+          "ppl": 63.51248711959022,
+          "ttft_s": 0.020525300002191216,
+          "tpot_s": 0.009844885723266219,
+          "throughput_tok_s": 89.40145724730372,
+          "ram_rss_mb": 747.484375,
+          "flops": 1969209120.0,
+          "generated_tokens": 8,
+          "notes": [
+            "ablation:crosslayer_only",
+            "ipex_skipped:ModuleNotFoundError",
+            "torch_compile_skipped:no_cl_compiler_on_windows",
+            "cross_layer_shared_layers=1"
+          ]
+        },
+        "all_optimized": {
+          "ppl": 415759.56202114775,
+          "ttft_s": 0.020007099956274033,
+          "tpot_s": 0.010359385707748256,
+          "throughput_tok_s": 86.42752891093443,
+          "ram_rss_mb": 745.30859375,
+          "flops": 1969060512.0,
+          "generated_tokens": 8,
+          "notes": [
+            "ablation:all_optimized",
+            "gqa_applied",
+            "kvpress_hooks=6",
+            "ipex_skipped:ModuleNotFoundError",
+            "torch_compile_skipped:no_cl_compiler_on_windows",
+            "cross_layer_shared_layers=1",
+            "snapkv_effective_ratio=0.2048"
+          ]
+        }
+      }
+    },
+    "pg19": {
+      "fallback_used": false,
+      "ablations": {
+        "baseline": {
+          "ppl": 32.91832593327398,
+          "ttft_s": 0.020871900022029877,
+          "tpot_s": 0.009666028573909509,
+          "throughput_tok_s": 90.31475818830215,
+          "ram_rss_mb": 782.859375,
+          "flops": 1969209120.0,
+          "generated_tokens": 8,
+          "notes": [
+            "ablation:baseline",
+            "ipex_skipped:ModuleNotFoundError",
+            "torch_compile_skipped:no_cl_compiler_on_windows"
+          ]
+        },
+        "gqa_only": {
+          "ppl": 1176231.3549238367,
+          "ttft_s": 0.02162260003387928,
+          "tpot_s": 0.01066177142950307,
+          "throughput_tok_s": 83.07036370863558,
+          "ram_rss_mb": 786.8203125,
+          "flops": 1969209120.0,
+          "generated_tokens": 8,
+          "notes": [
+            "ablation:gqa_only",
+            "gqa_applied",
+            "ipex_skipped:ModuleNotFoundError",
+            "torch_compile_skipped:no_cl_compiler_on_windows"
+          ]
+        },
+        "snapkv_only": {
+          "ppl": 32.91832593327398,
+          "ttft_s": 0.028746700030751526,
+          "tpot_s": 0.01180819999093988,
+          "throughput_tok_s": 71.77874918673547,
+          "ram_rss_mb": 787.66796875,
+          "flops": 1969060512.0,
+          "generated_tokens": 8,
+          "notes": [
+            "ablation:snapkv_only",
+            "kvpress_hooks=6",
+            "ipex_skipped:ModuleNotFoundError",
+            "torch_compile_skipped:no_cl_compiler_on_windows",
+            "snapkv_effective_ratio=0.2048"
+          ]
+        },
+        "crosslayer_only": {
+          "ppl": 32.91832593327398,
+          "ttft_s": 0.02052620000904426,
+          "tpot_s": 0.009695914282929152,
+          "throughput_tok_s": 90.4608982264811,
+          "ram_rss_mb": 791.89453125,
+          "flops": 1969209120.0,
+          "generated_tokens": 8,
+          "notes": [
+            "ablation:crosslayer_only",
+            "ipex_skipped:ModuleNotFoundError",
+            "torch_compile_skipped:no_cl_compiler_on_windows",
+            "cross_layer_shared_layers=1"
+          ]
+        },
+        "all_optimized": {
+          "ppl": 1176231.3549238367,
+          "ttft_s": 0.022386499971617013,
+          "tpot_s": 0.009712728580260383,
+          "throughput_tok_s": 88.47942577280655,
+          "ram_rss_mb": 791.3359375,
+          "flops": 1969060512.0,
+          "generated_tokens": 8,
+          "notes": [
+            "ablation:all_optimized",
+            "gqa_applied",
+            "kvpress_hooks=6",
+            "ipex_skipped:ModuleNotFoundError",
+            "torch_compile_skipped:no_cl_compiler_on_windows",
+            "cross_layer_shared_layers=1",
+            "snapkv_effective_ratio=0.2048"
+          ]
+        }
+      }
+    }
   },
   "environment": {
     "torch": "2.11.0+cpu",
     "python": "3.10.20",
     "cpu_count": 18
-  }
+  },
+  "ppl_metric_note": "PPL is manually calculated via CrossEntropy loss over sequence (not hf evaluate library)."
 }
