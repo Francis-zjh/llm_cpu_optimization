@@ -22,7 +22,14 @@ import psutil
 import torch
 import tqdm
 from datasets import load_dataset
+from datasets import load_dataset
 from transformers import AutoModelForCausalLM, AutoTokenizer
+
+try:
+    import intel_extension_for_pytorch as ipex
+    HAS_IPEX = True
+except ImportError:
+    HAS_IPEX = False
 
 from kvpress.presses.snapkv_press import SnapKVPress
 from kvpress.utils import extract_keys_and_values
@@ -40,10 +47,10 @@ warnings.filterwarnings("ignore", message="Profiler clears events")
 # ===================================================================
 MODEL_NAME = "EleutherAI/pythia-70m"
 RESULT_PATH = Path("cpu_all_opt_results.json")
-GENERATION_TOKENS = 64        # generation length for the core ablation
+GENERATION_TOKENS = 1024      # generation length for the core ablation (maximized for extreme long-context testing)
 REPEATS = 3                   # set to 3 for final runs with mean±std
 RUN_SEQLEN_SWEEP = True       # False to skip (saves time)
-SEQ_LENGTHS = [32, 64, 128]   # sequence lengths for the sweep
+SEQ_LENGTHS = [128, 256, 512, 1024] # sequence lengths for the sweep
 # ===================================================================
 
 # ---------------------------------------------------------------------------
@@ -58,6 +65,8 @@ class AblationConfig:
     snapkv_window_size: int = 16
     use_cross_layer: bool = False
     cross_layer_groups: list[list[int]] = field(default_factory=list)
+    use_ipex: bool = False
+    use_compile: bool = False
 
 
 @dataclass
@@ -209,23 +218,24 @@ def share_kv_cache_across_layer_groups(cache: Any, groups: list[list[int]]) -> i
 # ---------------------------------------------------------------------------
 # Runtime optimisation attempt  (IPEX / torch.compile — usually skipped on Win)
 # ---------------------------------------------------------------------------
-def maybe_optimize_runtime(model: torch.nn.Module) -> tuple[torch.nn.Module, list[str]]:
+def maybe_optimize_runtime(model: torch.nn.Module, ablation: AblationConfig) -> tuple[torch.nn.Module, list[str]]:
     notes: list[str] = []
-    try:
-        import intel_extension_for_pytorch as ipex  # type: ignore[import-untyped]
-        model = ipex.optimize(model, dtype=torch.bfloat16)
-        notes.append("ipex_applied")
-    except Exception as exc:
-        notes.append(f"ipex_skipped:{type(exc).__name__}")
+    
+    if ablation.use_ipex:
+        try:
+            import intel_extension_for_pytorch as ipex  # type: ignore[import-untyped]
+            model = ipex.optimize(model, dtype=torch.bfloat16)
+            notes.append("ipex_applied")
+        except Exception as exc:
+            notes.append(f"ipex_skipped:{type(exc).__name__}")
 
-    if os.name == "nt" and shutil.which("cl") is None:
-        notes.append("torch_compile_skipped:no_cl_compiler_on_windows")
-    else:
+    if ablation.use_compile:
         try:
             model = torch.compile(model, mode="reduce-overhead")
             notes.append("torch_compile_applied")
         except Exception as exc:
             notes.append(f"torch_compile_skipped:{type(exc).__name__}")
+            
     return model, notes
 
 
@@ -445,8 +455,18 @@ def run_ablation(
         notes.append(f"kvpress_hooks={len(handles)}")
 
     # 4. Runtime optimisation (attempt, usually skipped on Windows)
-    model, runtime_notes = maybe_optimize_runtime(model)
+    model, runtime_notes = maybe_optimize_runtime(model, ablation)
     notes.extend(runtime_notes)
+
+    # 4.5 Warm-up to skip JIT translation/graph compiation latency
+    if ablation.use_compile or ablation.use_ipex:
+        print("    Warm-up to avoid cold start penalty …")
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                _ = measure_generation(model, tokenizer, prompt, max_new_tokens=4, ablation=ablation)
+        except Exception as exc:
+            print(f"    [WARN] Warmup generation failed: {exc}")
 
     # 5. Metrics
     print("    PPL …")
@@ -539,15 +559,32 @@ def main() -> None:
 
     datasets = ["wikitext", "pg19"]
 
-    # Ablation matrix (6 experiments)
+    # Ablation matrix (V3 Core + V4 IPEX/Compile)
     ablations = [
-        AblationConfig(name="baseline"),
-        AblationConfig(name="quant_only", use_quantization=True),
-        AblationConfig(name="snapkv_only", use_snapkv=True, snapkv_compression_ratio=0.2),
-        AblationConfig(name="crosslayer_only", use_cross_layer=True, cross_layer_groups=[[4, 5]]),
-        AblationConfig(name="quant+snapkv", use_quantization=True, use_snapkv=True, snapkv_compression_ratio=0.2),
-        AblationConfig(name="all_optimized", use_quantization=True, use_snapkv=True, snapkv_compression_ratio=0.2,
-                       use_cross_layer=True, cross_layer_groups=[[4, 5]]),
+        # Baseline & Single
+        AblationConfig(name="Baseline"),
+        AblationConfig(name="IPEX_only", use_ipex=True),
+        AblationConfig(name="Compile_only", use_compile=True),
+        AblationConfig(name="Quant_only", use_quantization=True),
+        AblationConfig(name="SnapKV_only", use_snapkv=True, snapkv_compression_ratio=0.2),
+        AblationConfig(name="Crosslayer_only", use_cross_layer=True, cross_layer_groups=[[4, 5]]),
+        
+        # Pairwise
+        AblationConfig(name="IPEX_Compile", use_ipex=True, use_compile=True),
+        AblationConfig(name="IPEX_SnapKV", use_ipex=True, use_snapkv=True, snapkv_compression_ratio=0.2),
+        AblationConfig(name="Compile_SnapKV", use_compile=True, use_snapkv=True, snapkv_compression_ratio=0.2),
+        AblationConfig(name="IPEX_CrossLayer", use_ipex=True, use_cross_layer=True, cross_layer_groups=[[4, 5]]),
+        AblationConfig(name="IPEX_Quantization", use_ipex=True, use_quantization=True),
+        AblationConfig(name="Compile_Quantization", use_compile=True, use_quantization=True),
+        AblationConfig(name="SnapKV_CrossLayer", use_snapkv=True, use_cross_layer=True, cross_layer_groups=[[4, 5]], snapkv_compression_ratio=0.2),
+        
+        # Tri-level
+        AblationConfig(name="IPEX_Compile_SnapKV", use_ipex=True, use_compile=True, use_snapkv=True, snapkv_compression_ratio=0.2),
+        AblationConfig(name="Compile_SnapKV_CrossLayer", use_compile=True, use_snapkv=True, use_cross_layer=True, cross_layer_groups=[[4, 5]], snapkv_compression_ratio=0.2),
+        AblationConfig(name="IPEX_Quant_SnapKV", use_ipex=True, use_quantization=True, use_snapkv=True, snapkv_compression_ratio=0.2),
+        
+        # All-in-One Ultimate
+        AblationConfig(name="All_In_One", use_ipex=True, use_compile=True, use_quantization=True, use_snapkv=True, use_cross_layer=True, snapkv_compression_ratio=0.2, cross_layer_groups=[[4, 5]])
     ]
 
     all_results: dict[str, Any] = {
