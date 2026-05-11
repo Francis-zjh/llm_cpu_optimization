@@ -7,6 +7,10 @@ import os
 os.environ.setdefault("HF_ENDPOINT", "https://hf-mirror.com")
 os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
 
+# Thread control — 8 threads is optimal for pythia-70m on Xeon 8369B
+os.environ["OMP_NUM_THREADS"] = "8"
+os.environ["MKL_NUM_THREADS"] = "8"
+
 import gc
 import shutil
 import ssl
@@ -20,6 +24,7 @@ from typing import Any
 
 import psutil
 import torch
+torch.set_num_threads(8)
 import tqdm
 from datasets import load_dataset
 from datasets import load_dataset
@@ -87,12 +92,12 @@ class RunMetrics:
 # Model loading
 # ---------------------------------------------------------------------------
 def load_model_and_tokenizer() -> tuple[torch.nn.Module, Any]:
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, local_files_only=True)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "left"
 
-    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
+    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, local_files_only=True, dtype=torch.float32)
     model.eval()
     model.config.use_cache = True
     if getattr(model.config, "pad_token_id", None) is None:
@@ -224,7 +229,7 @@ def maybe_optimize_runtime(model: torch.nn.Module, ablation: AblationConfig) -> 
     if ablation.use_ipex:
         try:
             import intel_extension_for_pytorch as ipex  # type: ignore[import-untyped]
-            model = ipex.optimize(model, dtype=torch.bfloat16)
+            model = ipex.optimize(model, dtype=torch.float32)
             notes.append("ipex_applied")
         except Exception as exc:
             notes.append(f"ipex_skipped:{type(exc).__name__}")
@@ -242,7 +247,19 @@ def maybe_optimize_runtime(model: torch.nn.Module, ablation: AblationConfig) -> 
 # ---------------------------------------------------------------------------
 # Data loading
 # ---------------------------------------------------------------------------
+DATA_DIR = Path(__file__).parent / "data"
+
+
 def load_corpus_text(dataset_type: str) -> str:
+    # Try local file first
+    local_path = DATA_DIR / f"{dataset_type}_corpus.txt"
+    if local_path.exists():
+        text = local_path.read_text(encoding="utf-8").strip()
+        if text:
+            print(f"  [OK] Loaded local {dataset_type}_corpus.txt ({len(text)} chars)")
+            return text
+
+    # Fall back to online dataset
     try:
         if dataset_type == "wikitext":
             ds = load_dataset("wikitext", "wikitext-2-raw-v1", split="test[:5%]")
@@ -270,7 +287,7 @@ def compute_perplexity(
     try:
         enc = tokenizer(text, return_tensors="pt", truncation=True, max_length=max_length)
         input_ids = enc["input_ids"]
-        with torch.inference_mode():
+        with torch.inference_mode(), torch.amp.autocast("cpu", enabled=False):
             outputs = model(input_ids=input_ids, labels=input_ids.clone(), use_cache=True)
         loss = float(outputs.loss)
         if math.isnan(loss) or math.isinf(loss):
@@ -301,7 +318,7 @@ def measure_generation(
     generated = inputs["input_ids"]
     step_times: list[float] = []
 
-    with torch.inference_mode():
+    with torch.inference_mode(), torch.amp.autocast("cpu", enabled=False):
         # ---- prefill + first token ----
         start = time.perf_counter()
         outputs = model(input_ids=generated, use_cache=True)
@@ -350,7 +367,7 @@ def measure_flops(
 
         inputs = tokenizer(prompt, return_tensors="pt")
         with profile(activities=[ProfilerActivity.CPU], with_flops=True) as prof:
-            with torch.inference_mode():
+            with torch.inference_mode(), torch.amp.autocast("cpu", enabled=False):
                 outputs = model(**inputs, use_cache=True)
                 tok = outputs.logits[:, -1, :].argmax(dim=-1, keepdim=True)
                 pkv = outputs.past_key_values
@@ -559,32 +576,34 @@ def main() -> None:
 
     datasets = ["wikitext", "pg19"]
 
-    # Ablation matrix (V3 Core + V4 IPEX/Compile)
+    # Ablation matrix
+    # Order: non-IPEX groups first (to avoid oneDNN state leaking into quant-only runs),
+    # then IPEX groups (which set their own oneDNN state).
     ablations = [
-        # Baseline & Single
+        # Baseline & Single (non-IPEX first)
         AblationConfig(name="Baseline"),
-        AblationConfig(name="IPEX_only", use_ipex=True),
-        AblationConfig(name="Compile_only", use_compile=True),
         AblationConfig(name="Quant_only", use_quantization=True),
         AblationConfig(name="SnapKV_only", use_snapkv=True, snapkv_compression_ratio=0.2),
         AblationConfig(name="Crosslayer_only", use_cross_layer=True, cross_layer_groups=[[4, 5]]),
-        
-        # Pairwise
-        AblationConfig(name="IPEX_Compile", use_ipex=True, use_compile=True),
-        AblationConfig(name="IPEX_SnapKV", use_ipex=True, use_snapkv=True, snapkv_compression_ratio=0.2),
+        AblationConfig(name="Compile_only", use_compile=True),
         AblationConfig(name="Compile_SnapKV", use_compile=True, use_snapkv=True, snapkv_compression_ratio=0.2),
-        AblationConfig(name="IPEX_CrossLayer", use_ipex=True, use_cross_layer=True, cross_layer_groups=[[4, 5]]),
-        AblationConfig(name="IPEX_Quantization", use_ipex=True, use_quantization=True),
         AblationConfig(name="Compile_Quantization", use_compile=True, use_quantization=True),
         AblationConfig(name="SnapKV_CrossLayer", use_snapkv=True, use_cross_layer=True, cross_layer_groups=[[4, 5]], snapkv_compression_ratio=0.2),
-        
-        # Tri-level
-        AblationConfig(name="IPEX_Compile_SnapKV", use_ipex=True, use_compile=True, use_snapkv=True, snapkv_compression_ratio=0.2),
+
+        # IPEX groups
+        AblationConfig(name="IPEX_only", use_ipex=True),
+        AblationConfig(name="IPEX_Compile", use_ipex=True, use_compile=True),
+        AblationConfig(name="IPEX_SnapKV", use_ipex=True, use_snapkv=True, snapkv_compression_ratio=0.2),
+        AblationConfig(name="IPEX_CrossLayer", use_ipex=True, use_cross_layer=True, cross_layer_groups=[[4, 5]]),
+        AblationConfig(name="IPEX_Quantization", use_ipex=True, use_quantization=True),
+
+        # Tri-level + All-in-One
         AblationConfig(name="Compile_SnapKV_CrossLayer", use_compile=True, use_snapkv=True, use_cross_layer=True, cross_layer_groups=[[4, 5]], snapkv_compression_ratio=0.2),
+        AblationConfig(name="IPEX_Compile_SnapKV", use_ipex=True, use_compile=True, use_snapkv=True, snapkv_compression_ratio=0.2),
         AblationConfig(name="IPEX_Quant_SnapKV", use_ipex=True, use_quantization=True, use_snapkv=True, snapkv_compression_ratio=0.2),
-        
+
         # All-in-One Ultimate
-        AblationConfig(name="All_In_One", use_ipex=True, use_compile=True, use_quantization=True, use_snapkv=True, use_cross_layer=True, snapkv_compression_ratio=0.2, cross_layer_groups=[[4, 5]])
+        AblationConfig(name="All_In_One", use_ipex=True, use_compile=True, use_quantization=True, use_snapkv=True, use_cross_layer=True, snapkv_compression_ratio=0.2, cross_layer_groups=[[4, 5]]),
     ]
 
     all_results: dict[str, Any] = {

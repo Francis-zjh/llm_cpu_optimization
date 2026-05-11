@@ -217,39 +217,6 @@ Optimized：
 
 ---
 
-## Trial 7：全阶段全组合优化矩阵补全测试 (Full Matrix Completion)
-
-### 目标
-
-在前序 Trial 6 中，由于漏配组合项与超量运行限制，未能拉满全部组合矩阵。本次 Trial 将运行配置恢复为完全状态（REPEATS=3，生成长度扩展到 1024，重新扫描各个长度下的动态影响），并将漏掉的 11 套两两组合、三合一组合与全链路（All_In_One）补齐。这旨在获得一幅完整无缺的 CPU 端模型参数优化雷达图。
-
-### 环境与基础设置
-
-- 与 Trial 6 相同，维持 `torch==2.8.0` 和 `intel_extension_for_pytorch==2.8.0` 解决底层算子溢出问题。
-- 测试脚本：挂载完 17个组合项节点的 `cpu_all_optimized.py`。
-- 测试文本策略：Wikitext 短效+中等相关测试；PG-19 长效贯穿与承载抗压测试。
-
-### 实验结果与诊断
-
-1. **图编译与动态缓存相互排斥（Graph Breaks 干涉）**：
-   证明了引入深度图追踪（`torch.compile`）与底层算力加持（`IPEX`）的联合阵列可以极大地压榨计算时延，使 `wikitext` 吞吐从 91.77 跃升为 109.41。但是在复合入 `SnapKV` (Python前向钩子函数拦截缓存机制) 后，大量产生 Dynamo 图断裂，编译器被强行击穿回到局部解释执行模式，导致吞吐率大失血并倒退至 91.62 tok/s 的尴尬地步。
-   
-2. **算力量化组合效应与内存通胀（Memory Inflation）**：
-   实验发现单纯通过指令集来做量化 `IPEX_Quantization` 可以达到最高 149.58 tok/s 的吞吐，但动态量化由于申请运行时 buffer 的常数占比太大，反而将内存消耗激增到了 1300+MB 级别（比全浮点 Baseline 还多耗费数吉字节），在 Pythia-70M 规模上可谓买椟还珠。并且 PPL 在 `pg19` 上直蹦 242（基准线32），基本判定其出局。
-   
-3. **最差情况（All_In_One 反噬）**：
-   究极混合体并没有带来预想的超级性能。五毒俱全的加压使得各项技术互相倾轧。PPL 退相（174.1），吞吐卡死（137.6 tok/s，不及双拼方案），RAM 直接泄露涨暴至 1406 MB。
-
-### 本次 Trial 的最终结论
-
-CPU 并行策略切忌“大杂烩”。对于 70M/百兆级 LLM 在不同分布任务下的指导原则已然确立：
-1) 强调文本精度时只做 `Compile` 与 `IPEX`（纯计算优化且不损害泛化性）；
-2) 绝境算力压榨而牺牲极高精度要求时下达 `INT8 SIMD` 硬件量化拦截；
-3) 遇到由于上下文爆炸导致的 Out-of-Memory 困境而不是算力卡脖子时，才采用 `SnapKV`。 
-（本轮实验收官并支撑了终稿报告的全数据填充）。
-
----
-
 ## Trial 7：全阶段全组合优化矩阵补全测试 (Full Matrix Completion & Final Report)
 
 ### 目标
@@ -381,4 +348,90 @@ PG-19 吞吐（137.61）远低于 IPEX_Quantization（149.58）和 Compile_Quant
    - PPL 崩、RAM 涨、吞吐不及双组合
    - "优化越多越好"的直觉在系统层面是错误
 
-Trial 7 最终完成了全阶段全组合优化矩阵的所有 17 种方案的双数据集评测，产出了完整的 JSON 结果文件（`cpu_all_opt_results.json`），并支撑了终稿实验报告（`cpu_report_section.md`）的全数据填充。本轮实验正式收官。
+Trial 7 最终完成了全阶段全组合优化矩阵的所有 17 种方案的双数据集评测，产出了完整的 JSON 结果文件（`cpu_all_opt_results.json`），并支撑了终稿实验报告（`cpu_report_section.md`）的全数据填充。
+
+---
+
+## Trial 8：跨平台验证——ModelScope Xeon 8369B 全组合优化矩阵复现
+
+### 目标
+
+在 Trial 6/7（WSL 环境）中，IPEX 因缺少底层支持被静默跳过，且 Baseline 吞吐仅 91.77 tok/s。本次 Trial 的目的是：
+1. 在 Intel Xeon 服务器（完整 AVX-512 支持）上完整再现 17 种方案的优化矩阵
+2. 验证 IPEX 在完整支持环境下的实际效果
+3. 对比两套硬件环境下各优化方案的效果差异
+
+### 环境
+
+| 维度 | Trial 6/7 (WSL) | Trial 8 (ModelScope) |
+|---|---|---|
+| **OS** | WSL / Linux | 原生 Linux（ModelScope 魔搭社区） |
+| **CPU** | 18 核（消费级） | Intel Xeon Platinum 8369B @ 2.70GHz，64 核 |
+| **RAM** | 约 16 GB | 28 GB |
+| **PyTorch** | 2.8.0+cpu | 2.8.0+cpu |
+| **IPEX** | 2.8.0+cpu（不可用——AssertionError） | 2.8.0+cpu（✅ 完整支持——AVX-512F/BW/VL/DQ 全部就绪） |
+| **Triton** | — | 3.2.0 |
+| **线程数** | 18 核默认 | **8 线程最优**（64 线程因同步开销过慢） |
+| **Python** | 3.10.20 | 3.10.20 |
+| **IPEX 配置** | dtype=bfloat16（未生效） | dtype=float32（权重预打包模式，正常生效） |
+| **数据集来源** | HuggingFace datasets | 本地 text 文件加载（HuggingFace 不可达） |
+
+### 关键调试历程
+
+1. **线程数调优**：64 线程时因同步开销过大，单次推理 >60 秒；经逐步降低发现 8 线程最优（prefill 0.116s，优于 4 线程的 0.274s）
+2. **IPEX dtype 修正**：`dtype=torch.bfloat16` 触发混合精度错误（layer_norm Float vs Half），改为 `dtype=torch.float32`——避免精度变化但仍执行 AVX-512 权重预打包
+3. **模型加载 dtype 修正**：pythia-70m 的 safetensors 存储为 float16，需用 `dtype=torch.float32` 显式加载为 FP32，否则量化时触发 "expected Float but found Half"
+4. **关闭 autocast**：显式设置 `torch.amp.autocast("cpu", enabled=False)` 防止 AMP 自动精度转换干扰量化
+5. **Triton 降级**：Triton 3.5.1 与 PyTorch 2.8.0 不兼容，降级至 3.2.0
+6. **本地数据集加载**：因 ModelScope 实例无法连接 huggingface.co 和 hf-mirror.com，将 wikitext-2-raw 和 pg-19 的文本文件下载到本地 DATA_DIR 加载
+7. **IPEX 兼容性确认**：通过 `check_ipex_compat.py` 确认 FULL IPEX SUPPORT（AVX-512F/BW/VL/DQ, AVX-VNNI, AMX 均有）
+8. **IPEX 实际效果反直觉**：在所有 IPEX_applied 的方案中，吞吐反而下降 5-19%，RAM 暴涨 150-170%
+
+### 实验结果与关键发现
+
+完整 17 方案数据见 `cpu_all_opt_results.json`。核心结果摘要：
+
+| 方案 | Wiki Thpt (tok/s) | PG19 Thpt (tok/s) | Wiki RAM (MB) | PPL 影响 |
+|---|---:|---:|---:|---:|
+| Baseline | 151.83 | 151.08 | 1000 | — |
+| Compile_only | **158.66** (+4.5%) | 142.60 | 1659 | **无损** |
+| Quant_only | **169.04** (+11.3%) | **162.30** | 1471 | ❌ ×2.39~×7.36 |
+| Compile_SnapKV | **159.85** (+5.3%) | 140.55 | 1772 | **无损**（但 SnapKV 被编译器移除） |
+| IPEX_Quant_SnapKV | 163.54 | **163.12** (+8.0%) | 2567 | ❌ 同量化 |
+| IPEX_only | 135.91 (-10.5%) | 137.34 | **2560** | **无损**但吞吐下降 |
+| All_In_One | 143.98 (-5.2%) | 144.68 | 2601 | ❌ ×2.47~×7.36 |
+
+#### 发现 1：IPEX 在完整支持环境下反而产生净负收益
+
+这是本次 Trial **最反直觉的发现**。在 AVX-512 完整支持、`ipex_applied` 确认生效的 Xeon 服务器上：
+- IPEX_only 吞吐 135.91，低于 Baseline 151.83（-10.5%）
+- 所有含 IPEX 的方案均比其对应的非 IPEX 版本更差：IPEX_Compile < Compile_only, IPEX_SnapKV < SnapKV_only 等
+- RAM 从 1000 MB 飙升至 2500-2800 MB（+150~180%）
+
+**根因**：IPEX `dtype=float32` 的权重预打包为每个 Linear 层创建了优化后的权重副本，对于 70M 模型（仅 268 MB 权重），预打包副本使内存占用量翻倍，在逐 token 生成（memory-bound）阶段转为额外的内存带宽压力，最终导致净负收益。这与此前 WSL 环境中 IPEX 因无法应用而静默跳过形成鲜明对比——**在这个场景下，"不能用"反而是更好的结果**。
+
+#### 发现 2：Xeon 服务器 Baseline 大幅提升，优化的边际空间缩小
+
+本机 Baseline 吞吐 151.83 tok/s，较 WSL 的 91.77 tok/s 提升 65.5%。量化带来的绝对增益从 WSL 的 +15.5%（91.77→106.01）缩小到 +11.3%（151.83→169.04）。编译带来的增益也从 +8.6% 缩小到 +4.5%。
+
+这意味着：**硬件越强，优化的边际收益越小**。在强 CPU 上，Python 解释器开销占比更低，torch.compile 的优化空间被压缩。
+
+#### 发现 3：Graph Break 效应在 Xeon 上同样存在
+
+Compile_SnapKV 的 SnapKV 裁剪率为 0.0000（被编译器移除），Compile_SnapKV_CrossLayer 返回 0.2048（正常裁剪）但吞吐仅 141.10。与 WSL 现象一致。
+
+#### 发现 4：Compile_Quantization "负负得正"未复现
+
+在 WSL 中，Compile_Quantization 在 PG-19 上的 PPL（174.10）低于 Quant_only（242.41）。在 Xeon 上两者均为 242.39。说明此前观测到的现象可能是特定环境下的数值巧合，不具备跨平台可重现性。
+
+### 本次 Trial 的最终结论
+
+1. **优化决策具有强烈的硬件依赖性**：一套方案在两套 CPU 上效果排名完全不同。IPEX 在 WSL 上不可用（无影响），在 Xeon 上可用但有害。量化在 WSL 上相对收益更大（+15.5%），在 Xeon 上更小（+11.3%）。推理优化必须基于目标硬件上的实测数据，不能跨平台泛化。
+
+2. **IPEX 的"有效性假设"被证伪**：即使 IPEX 正常应用且底层指令集完整支持，对于 70M 极小模型仍产生负收益。IPEX 在 1B+ 模型上可能表现不同，但其在 70M 尺度上的表现警告我们：**不要默认假设底层加速库总是有益的**。
+
+3. **最稳定的优化依然是 torch.compile**：在本机所有 PPL 无损方案中，Compile_only（158.66 tok/s）和 Compile_SnapKV（159.85 tok/s）表现最佳，且与 WSL 环境下的结论一致。
+
+4. **All_In_One 在两个平台上均被证伪**：无论是 WSL（Thpt 117.09, PPL 157）还是 Xeon（Thpt 143.98, PPL 157），五合一方案都系统性劣于单点优化。这为"过度优化反噬"的论点提供了跨平台确证。
+
+Trial 8 在 Intel Xeon 8369B 服务器上成功复现了 17 种全组合优化矩阵，产出完整 JSON 结果，验证了 IPEX 在完整支持环境下的真实效果（出乎意料的负面），为优化方案的硬件依赖性提供了关键实证数据，并支撑了 `cpu_report_section.md` 的全面重写。
