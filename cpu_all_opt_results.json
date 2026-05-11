@@ -1,246 +1,1324 @@
 {
   "model_name": "EleutherAI/pythia-70m",
   "generation_tokens": 64,
+  "repeats": 3,
+  "seqlen_sweep_lengths": [
+    32,
+    64,
+    128
+  ],
   "results": {
     "wikitext": {
       "fallback_used": false,
-      "ablations": {
-        "baseline": {
-          "ppl": 63.51248711959022,
-          "ttft_s": 0.03391279996139929,
-          "tpot_s": 0.016028414283590836,
-          "throughput_tok_s": 61.30662229643112,
-          "ram_rss_mb": 741.88671875,
-          "flops": 1969209120.0,
-          "model_size_mb": 268.6562805175781,
-          "quantized_size_mb": null,
-          "generated_tokens": 64,
-          "notes": [
-            "ablation:baseline",
-            "fp32_model_size_mb=268.7",
-            "ipex_skipped:ModuleNotFoundError",
-            "torch_compile_skipped:no_cl_compiler_on_windows"
-          ]
+      "experiments": [
+        "core_ablation",
+        "seqlen_sweep"
+      ],
+      "baseline": {
+        "ppl": 63.51248711959022,
+        "ppl_std": 0.0,
+        "ttft_s": 0.014805700009067854,
+        "ttft_s_std": 0.0024952852132210817,
+        "tpot_s": 0.008981632273249997,
+        "tpot_s_std": 0.0007078847982759982,
+        "throughput_tok_s": 110.88066001068132,
+        "throughput_tok_s_std": 8.532117454622481,
+        "ram_rss_mb": 742.0182291666666,
+        "ram_rss_mb_std": 5.159328048023119,
+        "flops": 1969209120.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 64.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:baseline",
+          "fp32_model_size_mb=268.7",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "ablation:baseline",
+          "fp32_model_size_mb=268.7",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "ablation:baseline",
+          "fp32_model_size_mb=268.7",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows"
+        ],
+        "runs": [
+          {
+            "ppl": 63.51248711959022,
+            "ttft_s": 0.018253899994306266,
+            "tpot_s": 0.0099674126961165,
+            "throughput_tok_s": 99.0138682839736,
+            "ram_rss_mb": 738.21875,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:baseline",
+              "fp32_model_size_mb=268.7",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows"
+            ]
+          },
+          {
+            "ppl": 63.51248711959022,
+            "ttft_s": 0.013731300015933812,
+            "tpot_s": 0.008337649210016168,
+            "throughput_tok_s": 118.70614016798618,
+            "ram_rss_mb": 738.5234375,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:baseline",
+              "fp32_model_size_mb=268.7",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows"
+            ]
+          },
+          {
+            "ppl": 63.51248711959022,
+            "ttft_s": 0.012431900016963482,
+            "tpot_s": 0.008639834913617325,
+            "throughput_tok_s": 114.92197158008423,
+            "ram_rss_mb": 749.3125,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:baseline",
+              "fp32_model_size_mb=268.7",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "quant_only": {
+        "ppl": 153.8820954312777,
+        "ppl_std": 0.0,
+        "ttft_s": 0.01339263335103169,
+        "ttft_s_std": 0.0032636336097474094,
+        "tpot_s": 0.009254614285762524,
+        "tpot_s_std": 0.0003951618436078818,
+        "throughput_tok_s": 107.50752209136449,
+        "throughput_tok_s_std": 5.0155465802928285,
+        "ram_rss_mb": 1059.65625,
+        "ram_rss_mb_std": 20.48341654095098,
+        "flops": 5488416.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": 98.30081176757812,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 64.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:quant_only",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "ablation:quant_only",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "ablation:quant_only",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows"
+        ],
+        "runs": [
+          {
+            "ppl": 153.8820954312777,
+            "ttft_s": 0.01800730003742501,
+            "tpot_s": 0.009658592062935765,
+            "throughput_tok_s": 102.13040840525068,
+            "ram_rss_mb": 1030.78125,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:quant_only",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows"
+            ]
+          },
+          {
+            "ppl": 153.8820954312777,
+            "ttft_s": 0.011010500020347536,
+            "tpot_s": 0.008718214286971719,
+            "throughput_tok_s": 114.20214278233824,
+            "ram_rss_mb": 1076.1015625,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:quant_only",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows"
+            ]
+          },
+          {
+            "ppl": 153.8820954312777,
+            "ttft_s": 0.011160099995322526,
+            "tpot_s": 0.00938703650738009,
+            "throughput_tok_s": 106.19001508650459,
+            "ram_rss_mb": 1072.0859375,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:quant_only",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "snapkv_only": {
+        "ppl": 63.51248711959022,
+        "ppl_std": 0.0,
+        "ttft_s": 0.015795933354335528,
+        "ttft_s_std": 0.001212053964960186,
+        "tpot_s": 0.008938477778371187,
+        "tpot_s_std": 0.00014084946363721932,
+        "throughput_tok_s": 110.54819395322737,
+        "throughput_tok_s_std": 1.7518547750731734,
+        "ram_rss_mb": 1082.4049479166667,
+        "ram_rss_mb_std": 23.395743691738886,
+        "flops": 1969060512.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 64.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:snapkv_only",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "snapkv_effective_ratio=0.2048",
+          "ablation:snapkv_only",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "snapkv_effective_ratio=0.2048",
+          "ablation:snapkv_only",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "snapkv_effective_ratio=0.2048"
+        ],
+        "runs": [
+          {
+            "ppl": 63.51248711959022,
+            "ttft_s": 0.017479599977377802,
+            "tpot_s": 0.00899553491682228,
+            "throughput_tok_s": 109.52194014997141,
+            "ram_rss_mb": 1065.26953125,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:snapkv_only",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "snapkv_effective_ratio=0.2048"
+            ]
+          },
+          {
+            "ppl": 63.51248711959022,
+            "ttft_s": 0.014675600046757609,
+            "tpot_s": 0.009075225400184059,
+            "throughput_tok_s": 109.10847803529789,
+            "ram_rss_mb": 1066.4609375,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:snapkv_only",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "snapkv_effective_ratio=0.2048"
+            ]
+          },
+          {
+            "ppl": 63.51248711959022,
+            "ttft_s": 0.015232600038871169,
+            "tpot_s": 0.00874467301810722,
+            "throughput_tok_s": 113.01416367441277,
+            "ram_rss_mb": 1115.484375,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:snapkv_only",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "snapkv_effective_ratio=0.2048"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "crosslayer_only": {
+        "ppl": 63.51248711959022,
+        "ppl_std": 0.0,
+        "ttft_s": 0.014423300007668635,
+        "ttft_s_std": 0.0010384238241510333,
+        "tpot_s": 0.00926627248843452,
+        "tpot_s_std": 0.0002848583802781431,
+        "throughput_tok_s": 107.0452119146733,
+        "throughput_tok_s_std": 3.090124078130641,
+        "ram_rss_mb": 1138.2486979166667,
+        "ram_rss_mb_std": 2.177306825400537,
+        "flops": 1969209120.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 64.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:crosslayer_only",
+          "fp32_model_size_mb=268.7",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "cross_layer_shared_layers=1",
+          "ablation:crosslayer_only",
+          "fp32_model_size_mb=268.7",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "cross_layer_shared_layers=1",
+          "ablation:crosslayer_only",
+          "fp32_model_size_mb=268.7",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "cross_layer_shared_layers=1"
+        ],
+        "runs": [
+          {
+            "ppl": 63.51248711959022,
+            "ttft_s": 0.015122400014661252,
+            "tpot_s": 0.008899871429007146,
+            "throughput_tok_s": 111.11388895685005,
+            "ram_rss_mb": 1135.8125,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:crosslayer_only",
+              "fp32_model_size_mb=268.7",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "cross_layer_shared_layers=1"
+            ]
+          },
+          {
+            "ppl": 63.51248711959022,
+            "ttft_s": 0.012955299986060709,
+            "tpot_s": 0.009594487303513147,
+            "throughput_tok_s": 103.6296780517842,
+            "ram_rss_mb": 1137.8359375,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:crosslayer_only",
+              "fp32_model_size_mb=268.7",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "cross_layer_shared_layers=1"
+            ]
+          },
+          {
+            "ppl": 63.51248711959022,
+            "ttft_s": 0.015192200022283942,
+            "tpot_s": 0.009304458732783263,
+            "throughput_tok_s": 106.39206873538568,
+            "ram_rss_mb": 1141.09765625,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:crosslayer_only",
+              "fp32_model_size_mb=268.7",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "cross_layer_shared_layers=1"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "quant+snapkv": {
+        "ppl": 153.8820954312777,
+        "ppl_std": 0.0,
+        "ttft_s": 0.01648533334567522,
+        "ttft_s_std": 0.0006984443614603336,
+        "tpot_s": 0.00931143386242665,
+        "tpot_s_std": 0.0003820014984669956,
+        "throughput_tok_s": 106.26047705655941,
+        "throughput_tok_s_std": 4.230101882953614,
+        "ram_rss_mb": 1091.2838541666667,
+        "ram_rss_mb_std": 17.378510801221886,
+        "flops": 5339808.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": 98.30081176757812,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 64.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:quant+snapkv",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "snapkv_effective_ratio=0.2048",
+          "ablation:quant+snapkv",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "snapkv_effective_ratio=0.2048",
+          "ablation:quant+snapkv",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "snapkv_effective_ratio=0.2048"
+        ],
+        "runs": [
+          {
+            "ppl": 153.8820954312777,
+            "ttft_s": 0.016113099991343915,
+            "tpot_s": 0.009802085713350348,
+            "throughput_tok_s": 100.97809910988151,
+            "ram_rss_mb": 1115.80078125,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:quant+snapkv",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "snapkv_effective_ratio=0.2048"
+            ]
+          },
+          {
+            "ppl": 153.8820954312777,
+            "ttft_s": 0.01746380003169179,
+            "tpot_s": 0.009261896823614186,
+            "throughput_tok_s": 106.46999883811618,
+            "ram_rss_mb": 1080.51171875,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:quant+snapkv",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "snapkv_effective_ratio=0.2048"
+            ]
+          },
+          {
+            "ppl": 153.8820954312777,
+            "ttft_s": 0.015879100013989955,
+            "tpot_s": 0.008870319050315413,
+            "throughput_tok_s": 111.33333322168053,
+            "ram_rss_mb": 1077.5390625,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:quant+snapkv",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "snapkv_effective_ratio=0.2048"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "all_optimized": {
+        "ppl": 153.8820954312777,
+        "ppl_std": 0.0,
+        "ttft_s": 0.01774273331587513,
+        "ttft_s_std": 0.0020386469000964105,
+        "tpot_s": 0.0092589365097906,
+        "tpot_s_std": 0.00046793863977311143,
+        "throughput_tok_s": 106.67950856223585,
+        "throughput_tok_s_std": 4.829580691799938,
+        "ram_rss_mb": 1084.2708333333333,
+        "ram_rss_mb_std": 8.96959060587136,
+        "flops": 5339808.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": 98.30081176757812,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 64.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:all_optimized",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2048",
+          "ablation:all_optimized",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2048",
+          "ablation:all_optimized",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2048"
+        ],
+        "runs": [
+          {
+            "ppl": 153.8820954312777,
+            "ttft_s": 0.017002399952616543,
+            "tpot_s": 0.008919390478348803,
+            "throughput_tok_s": 110.52338001546498,
+            "ram_rss_mb": 1080.69921875,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:all_optimized",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2048"
+            ]
+          },
+          {
+            "ppl": 153.8820954312777,
+            "ttft_s": 0.015699799987487495,
+            "tpot_s": 0.009920625397676809,
+            "throughput_tok_s": 99.86822076441617,
+            "ram_rss_mb": 1096.59765625,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:all_optimized",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2048"
+            ]
+          },
+          {
+            "ppl": 153.8820954312777,
+            "ttft_s": 0.02052600000752136,
+            "tpot_s": 0.008936793653346185,
+            "throughput_tok_s": 109.6469249068264,
+            "ram_rss_mb": 1075.515625,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:all_optimized",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2048"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "seqlen_sweep": {
+        "32": {
+          "baseline": {
+            "ttft_s": 0.019326400011777878,
+            "tpot_s": 0.008703809676526656,
+            "throughput_tok_s": 110.63832435484568
+          },
+          "snapkv": {
+            "ttft_s": 0.013303499959874898,
+            "tpot_s": 0.008819867744140567,
+            "throughput_tok_s": 111.57429942695886
+          }
         },
-        "quant_only": {
-          "ppl": 153.8820954312777,
-          "ttft_s": 0.020744699984788895,
-          "tpot_s": 0.010939680952726611,
-          "throughput_tok_s": 90.12615831849246,
-          "ram_rss_mb": 1016.83203125,
-          "flops": 5488416.0,
-          "model_size_mb": 268.6562805175781,
-          "quantized_size_mb": 98.30081176757812,
-          "generated_tokens": 64,
-          "notes": [
-            "ablation:quant_only",
-            "fp32_model_size_mb=268.7",
-            "int8_model_size_mb=98.3",
-            "quantization_applied",
-            "ipex_skipped:ModuleNotFoundError",
-            "torch_compile_skipped:no_cl_compiler_on_windows"
-          ]
+        "64": {
+          "baseline": {
+            "ttft_s": 0.014884800009895116,
+            "tpot_s": 0.008502958725864393,
+            "throughput_tok_s": 116.20852965954349
+          },
+          "snapkv": {
+            "ttft_s": 0.013834299985319376,
+            "tpot_s": 0.008829234922785194,
+            "throughput_tok_s": 112.23269766355278
+          }
         },
-        "snapkv_only": {
-          "ppl": 63.51248711959022,
-          "ttft_s": 0.016762100043706596,
-          "tpot_s": 0.010478952385869527,
-          "throughput_tok_s": 94.51717672578991,
-          "ram_rss_mb": 761.73828125,
-          "flops": 1969060512.0,
-          "model_size_mb": 268.6562805175781,
-          "quantized_size_mb": null,
-          "generated_tokens": 64,
-          "notes": [
-            "ablation:snapkv_only",
-            "fp32_model_size_mb=268.7",
-            "kvpress_hooks=6",
-            "ipex_skipped:ModuleNotFoundError",
-            "torch_compile_skipped:no_cl_compiler_on_windows",
-            "snapkv_effective_ratio=0.2048"
-          ]
-        },
-        "crosslayer_only": {
-          "ppl": 63.51248711959022,
-          "ttft_s": 0.017664499988313764,
-          "tpot_s": 0.009255241268196159,
-          "throughput_tok_s": 106.50144741748366,
-          "ram_rss_mb": 757.6484375,
-          "flops": 1969209120.0,
-          "model_size_mb": 268.6562805175781,
-          "quantized_size_mb": null,
-          "generated_tokens": 64,
-          "notes": [
-            "ablation:crosslayer_only",
-            "fp32_model_size_mb=268.7",
-            "ipex_skipped:ModuleNotFoundError",
-            "torch_compile_skipped:no_cl_compiler_on_windows",
-            "cross_layer_shared_layers=1"
-          ]
-        },
-        "quant+snapkv": {
-          "ppl": 153.8820954312777,
-          "ttft_s": 0.019109200045932084,
-          "tpot_s": 0.0113012634849708,
-          "throughput_tok_s": 87.51875841477296,
-          "ram_rss_mb": 997.6015625,
-          "flops": 5339808.0,
-          "model_size_mb": 268.6562805175781,
-          "quantized_size_mb": 98.30081176757812,
-          "generated_tokens": 64,
-          "notes": [
-            "ablation:quant+snapkv",
-            "fp32_model_size_mb=268.7",
-            "int8_model_size_mb=98.3",
-            "quantization_applied",
-            "kvpress_hooks=6",
-            "ipex_skipped:ModuleNotFoundError",
-            "torch_compile_skipped:no_cl_compiler_on_windows",
-            "snapkv_effective_ratio=0.2048"
-          ]
-        },
-        "all_optimized": {
-          "ppl": 153.8820954312777,
-          "ttft_s": 0.01574479998089373,
-          "tpot_s": 0.010690671426894527,
-          "throughput_tok_s": 92.82921846430496,
-          "ram_rss_mb": 1076.40625,
-          "flops": 5339808.0,
-          "model_size_mb": 268.6562805175781,
-          "quantized_size_mb": 98.30081176757812,
-          "generated_tokens": 64,
-          "notes": [
-            "ablation:all_optimized",
-            "fp32_model_size_mb=268.7",
-            "int8_model_size_mb=98.3",
-            "quantization_applied",
-            "kvpress_hooks=6",
-            "ipex_skipped:ModuleNotFoundError",
-            "torch_compile_skipped:no_cl_compiler_on_windows",
-            "cross_layer_shared_layers=1",
-            "snapkv_effective_ratio=0.2048"
-          ]
+        "128": {
+          "baseline": {
+            "ttft_s": 0.014710700022988021,
+            "tpot_s": 0.008766262992340191,
+            "throughput_tok_s": 113.44250224410484
+          },
+          "snapkv": {
+            "ttft_s": 0.014674099977128208,
+            "tpot_s": 0.008865907085201461,
+            "throughput_tok_s": 112.1885005220676
+          }
         }
       }
     },
     "pg19": {
       "fallback_used": false,
-      "ablations": {
-        "baseline": {
-          "ppl": 32.91832593327398,
-          "ttft_s": 0.015548199997283518,
-          "tpot_s": 0.009378769843366056,
-          "throughput_tok_s": 105.50956090348696,
-          "ram_rss_mb": 1056.9140625,
-          "flops": 1969209120.0,
-          "model_size_mb": 268.6562805175781,
-          "quantized_size_mb": null,
-          "generated_tokens": 64,
-          "notes": [
-            "ablation:baseline",
-            "fp32_model_size_mb=268.7",
-            "ipex_skipped:ModuleNotFoundError",
-            "torch_compile_skipped:no_cl_compiler_on_windows"
-          ]
+      "experiments": [
+        "core_ablation",
+        "seqlen_sweep"
+      ],
+      "baseline": {
+        "ppl": 32.91832593327398,
+        "ppl_std": 0.0,
+        "ttft_s": 0.015483433303112784,
+        "ttft_s_std": 0.0019294644023202328,
+        "tpot_s": 0.008622251851385628,
+        "tpot_s_std": 6.160190217934642e-05,
+        "throughput_tok_s": 114.53225571203022,
+        "throughput_tok_s_std": 1.0238563904513092,
+        "ram_rss_mb": 1090.59375,
+        "ram_rss_mb_std": 1.0096025365959822,
+        "flops": 1969209120.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 64.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:baseline",
+          "fp32_model_size_mb=268.7",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "ablation:baseline",
+          "fp32_model_size_mb=268.7",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "ablation:baseline",
+          "fp32_model_size_mb=268.7",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows"
+        ],
+        "runs": [
+          {
+            "ppl": 32.91832593327398,
+            "ttft_s": 0.017254099948331714,
+            "tpot_s": 0.00858569840737988,
+            "throughput_tok_s": 114.63266232938112,
+            "ram_rss_mb": 1090.33984375,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:baseline",
+              "fp32_model_size_mb=268.7",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows"
+            ]
+          },
+          {
+            "ppl": 32.91832593327398,
+            "ttft_s": 0.016396099992562085,
+            "tpot_s": 0.008709012701671334,
+            "throughput_tok_s": 113.23110806174877,
+            "ram_rss_mb": 1091.9375,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:baseline",
+              "fp32_model_size_mb=268.7",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows"
+            ]
+          },
+          {
+            "ppl": 32.91832593327398,
+            "ttft_s": 0.012800099968444556,
+            "tpot_s": 0.008572044445105665,
+            "throughput_tok_s": 115.73299674496079,
+            "ram_rss_mb": 1089.50390625,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:baseline",
+              "fp32_model_size_mb=268.7",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "quant_only": {
+        "ppl": 245.8571628824419,
+        "ppl_std": 0.0,
+        "ttft_s": 0.01610406666683654,
+        "ttft_s_std": 0.0027484268019942804,
+        "tpot_s": 0.009336124336908733,
+        "tpot_s_std": 0.0007233727191349268,
+        "throughput_tok_s": 106.44630720549009,
+        "throughput_tok_s_std": 7.822801612229837,
+        "ram_rss_mb": 1083.0638020833333,
+        "ram_rss_mb_std": 10.585558559740784,
+        "flops": 5488416.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": 98.30081176757812,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 64.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:quant_only",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "ablation:quant_only",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "ablation:quant_only",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows"
+        ],
+        "runs": [
+          {
+            "ppl": 245.8571628824419,
+            "ttft_s": 0.01837930001784116,
+            "tpot_s": 0.009411450794210569,
+            "throughput_tok_s": 104.66946853491133,
+            "ram_rss_mb": 1080.77734375,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:quant_only",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows"
+            ]
+          },
+          {
+            "ppl": 245.8571628824419,
+            "ttft_s": 0.012237299990374595,
+            "tpot_s": 0.010182003172794505,
+            "throughput_tok_s": 97.87816951136804,
+            "ram_rss_mb": 1071.39453125,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:quant_only",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows"
+            ]
+          },
+          {
+            "ppl": 245.8571628824419,
+            "ttft_s": 0.017695599992293864,
+            "tpot_s": 0.008414919043721129,
+            "throughput_tok_s": 116.79128357019088,
+            "ram_rss_mb": 1097.01953125,
+            "flops": 5488416.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:quant_only",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "snapkv_only": {
+        "ppl": 32.91832593327398,
+        "ppl_std": 0.0,
+        "ttft_s": 0.019403266662266105,
+        "ttft_s_std": 0.0022074277404883656,
+        "tpot_s": 0.008718703173731685,
+        "tpot_s_std": 0.00025894494084732707,
+        "throughput_tok_s": 112.5817567499164,
+        "throughput_tok_s_std": 2.7995550318025155,
+        "ram_rss_mb": 1112.3958333333333,
+        "ram_rss_mb_std": 10.568989322157709,
+        "flops": 1969060512.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 64.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:snapkv_only",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "snapkv_effective_ratio=0.2048",
+          "ablation:snapkv_only",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "snapkv_effective_ratio=0.2048",
+          "ablation:snapkv_only",
+          "fp32_model_size_mb=268.7",
+          "kvpress_hooks=6",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "snapkv_effective_ratio=0.2048"
+        ],
+        "runs": [
+          {
+            "ppl": 32.91832593327398,
+            "ttft_s": 0.0222018999629654,
+            "tpot_s": 0.008503303174779469,
+            "throughput_tok_s": 114.683193959708,
+            "ram_rss_mb": 1097.63671875,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:snapkv_only",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "snapkv_effective_ratio=0.2048"
+            ]
+          },
+          {
+            "ppl": 32.91832593327398,
+            "ttft_s": 0.01680610002949834,
+            "tpot_s": 0.009082880957672993,
+            "throughput_tok_s": 108.62514175937406,
+            "ram_rss_mb": 1121.8203125,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:snapkv_only",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "snapkv_effective_ratio=0.2048"
+            ]
+          },
+          {
+            "ppl": 32.91832593327398,
+            "ttft_s": 0.01920179999433458,
+            "tpot_s": 0.008569925388742593,
+            "throughput_tok_s": 114.43693453066714,
+            "ram_rss_mb": 1117.73046875,
+            "flops": 1969060512.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:snapkv_only",
+              "fp32_model_size_mb=268.7",
+              "kvpress_hooks=6",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "snapkv_effective_ratio=0.2048"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "crosslayer_only": {
+        "ppl": 32.91832593327398,
+        "ppl_std": 0.0,
+        "ttft_s": 0.015976133348885924,
+        "ttft_s_std": 0.0023276111494936217,
+        "tpot_s": 0.008735058201531136,
+        "tpot_s_std": 1.88035808128827e-05,
+        "throughput_tok_s": 112.98792286815252,
+        "throughput_tok_s_std": 0.2516413840482436,
+        "ram_rss_mb": 1119.0885416666667,
+        "ram_rss_mb_std": 0.6853387944935316,
+        "flops": 1969209120.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": null,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 64.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:crosslayer_only",
+          "fp32_model_size_mb=268.7",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "cross_layer_shared_layers=1",
+          "ablation:crosslayer_only",
+          "fp32_model_size_mb=268.7",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "cross_layer_shared_layers=1",
+          "ablation:crosslayer_only",
+          "fp32_model_size_mb=268.7",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "cross_layer_shared_layers=1"
+        ],
+        "runs": [
+          {
+            "ppl": 32.91832593327398,
+            "ttft_s": 0.013137800036929548,
+            "tpot_s": 0.008761093657951625,
+            "throughput_tok_s": 113.22710153347383,
+            "ram_rss_mb": 1120.0390625,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:crosslayer_only",
+              "fp32_model_size_mb=268.7",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "cross_layer_shared_layers=1"
+            ]
+          },
+          {
+            "ppl": 32.91832593327398,
+            "ttft_s": 0.015951499983202666,
+            "tpot_s": 0.008726728568223142,
+            "throughput_tok_s": 113.09654452074437,
+            "ram_rss_mb": 1118.77734375,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:crosslayer_only",
+              "fp32_model_size_mb=268.7",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "cross_layer_shared_layers=1"
+            ]
+          },
+          {
+            "ppl": 32.91832593327398,
+            "ttft_s": 0.018839100026525557,
+            "tpot_s": 0.00871735237841864,
+            "throughput_tok_s": 112.64012255023938,
+            "ram_rss_mb": 1118.44921875,
+            "flops": 1969209120.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": null,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:crosslayer_only",
+              "fp32_model_size_mb=268.7",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "cross_layer_shared_layers=1"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "quant+snapkv": {
+        "ppl": 245.8571628824419,
+        "ppl_std": 0.0,
+        "ttft_s": 0.01506800000788644,
+        "ttft_s_std": 0.002120424661845211,
+        "tpot_s": 0.009630411108783273,
+        "tpot_s_std": 0.00017272295195533145,
+        "throughput_tok_s": 102.95019514610522,
+        "throughput_tok_s_std": 2.1496323899587604,
+        "ram_rss_mb": 1080.15234375,
+        "ram_rss_mb_std": 2.660996448627727,
+        "flops": 5339808.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": 98.30081176757812,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 64.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:quant+snapkv",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "snapkv_effective_ratio=0.2048",
+          "ablation:quant+snapkv",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "snapkv_effective_ratio=0.2048",
+          "ablation:quant+snapkv",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "snapkv_effective_ratio=0.2048"
+        ],
+        "runs": [
+          {
+            "ppl": 245.8571628824419,
+            "ttft_s": 0.012116300000343472,
+            "tpot_s": 0.009413223806953442,
+            "throughput_tok_s": 105.73431906651767,
+            "ram_rss_mb": 1082.80859375,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:quant+snapkv",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "snapkv_effective_ratio=0.2048"
+            ]
+          },
+          {
+            "ppl": 245.8571628824419,
+            "ttft_s": 0.01608570001553744,
+            "tpot_s": 0.009642195234644331,
+            "throughput_tok_s": 102.6154267188311,
+            "ram_rss_mb": 1081.1328125,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:quant+snapkv",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "snapkv_effective_ratio=0.2048"
+            ]
+          },
+          {
+            "ppl": 245.8571628824419,
+            "ttft_s": 0.017002000007778406,
+            "tpot_s": 0.009835814284752048,
+            "throughput_tok_s": 100.50083965296686,
+            "ram_rss_mb": 1076.515625,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:quant+snapkv",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "snapkv_effective_ratio=0.2048"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "all_optimized": {
+        "ppl": 245.8571628824419,
+        "ppl_std": 0.0,
+        "ttft_s": 0.02387070000016441,
+        "ttft_s_std": 0.005622278373559107,
+        "tpot_s": 0.009305791004817125,
+        "tpot_s_std": 0.00037333428209520946,
+        "throughput_tok_s": 104.96238912315368,
+        "throughput_tok_s_std": 3.155919864510453,
+        "ram_rss_mb": 1099.2799479166667,
+        "ram_rss_mb_std": 11.01736389816275,
+        "flops": 5339808.0,
+        "flops_std": 0.0,
+        "model_size_mb": 268.6562805175781,
+        "model_size_mb_std": 0.0,
+        "quantized_size_mb": 98.30081176757812,
+        "quantized_size_mb_std": 0.0,
+        "generated_tokens": 64.0,
+        "generated_tokens_std": 0.0,
+        "notes": [
+          "ablation:all_optimized",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2048",
+          "ablation:all_optimized",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2048",
+          "ablation:all_optimized",
+          "fp32_model_size_mb=268.7",
+          "int8_model_size_mb=98.3",
+          "quantization_applied",
+          "kvpress_hooks=6",
+          "ipex_skipped:ModuleNotFoundError",
+          "torch_compile_skipped:no_cl_compiler_on_windows",
+          "cross_layer_shared_layers=1",
+          "snapkv_effective_ratio=0.2048"
+        ],
+        "runs": [
+          {
+            "ppl": 245.8571628824419,
+            "ttft_s": 0.030945600010454655,
+            "tpot_s": 0.00879809047679402,
+            "throughput_tok_s": 109.33211063507113,
+            "ram_rss_mb": 1106.09375,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:all_optimized",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2048"
+            ]
+          },
+          {
+            "ppl": 245.8571628824419,
+            "ttft_s": 0.023475599999073893,
+            "tpot_s": 0.009434150792436586,
+            "throughput_tok_s": 103.56422762233119,
+            "ram_rss_mb": 1083.73828125,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:all_optimized",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2048"
+            ]
+          },
+          {
+            "ppl": 245.8571628824419,
+            "ttft_s": 0.01719089999096468,
+            "tpot_s": 0.009685131745220768,
+            "throughput_tok_s": 101.99082911205872,
+            "ram_rss_mb": 1108.0078125,
+            "flops": 5339808.0,
+            "model_size_mb": 268.6562805175781,
+            "quantized_size_mb": 98.30081176757812,
+            "generated_tokens": 64,
+            "notes": [
+              "ablation:all_optimized",
+              "fp32_model_size_mb=268.7",
+              "int8_model_size_mb=98.3",
+              "quantization_applied",
+              "kvpress_hooks=6",
+              "ipex_skipped:ModuleNotFoundError",
+              "torch_compile_skipped:no_cl_compiler_on_windows",
+              "cross_layer_shared_layers=1",
+              "snapkv_effective_ratio=0.2048"
+            ]
+          }
+        ],
+        "num_repeats": 3
+      },
+      "seqlen_sweep": {
+        "32": {
+          "baseline": {
+            "ttft_s": 0.015758799971081316,
+            "tpot_s": 0.008274183871464865,
+            "throughput_tok_s": 117.49940700359552
+          },
+          "snapkv": {
+            "ttft_s": 0.013208999997004867,
+            "tpot_s": 0.008756741933945206,
+            "throughput_tok_s": 112.375136293476
+          }
         },
-        "quant_only": {
-          "ppl": 245.8571628824419,
-          "ttft_s": 0.014876799948979169,
-          "tpot_s": 0.010600374601337881,
-          "throughput_tok_s": 93.72098676988466,
-          "ram_rss_mb": 1108.16015625,
-          "flops": 5488416.0,
-          "model_size_mb": 268.6562805175781,
-          "quantized_size_mb": 98.30081176757812,
-          "generated_tokens": 64,
-          "notes": [
-            "ablation:quant_only",
-            "fp32_model_size_mb=268.7",
-            "int8_model_size_mb=98.3",
-            "quantization_applied",
-            "ipex_skipped:ModuleNotFoundError",
-            "torch_compile_skipped:no_cl_compiler_on_windows"
-          ]
+        "64": {
+          "baseline": {
+            "ttft_s": 0.014963000023271888,
+            "tpot_s": 0.00862149841388658,
+            "throughput_tok_s": 114.63773401312537
+          },
+          "snapkv": {
+            "ttft_s": 0.015861099993344396,
+            "tpot_s": 0.00882614285884691,
+            "throughput_tok_s": 111.87432318248516
+          }
         },
-        "snapkv_only": {
-          "ppl": 32.91832593327398,
-          "ttft_s": 0.017384400009177625,
-          "tpot_s": 0.009198687305407864,
-          "throughput_tok_s": 107.19221222011582,
-          "ram_rss_mb": 1063.3359375,
-          "flops": 1969060512.0,
-          "model_size_mb": 268.6562805175781,
-          "quantized_size_mb": null,
-          "generated_tokens": 64,
-          "notes": [
-            "ablation:snapkv_only",
-            "fp32_model_size_mb=268.7",
-            "kvpress_hooks=6",
-            "ipex_skipped:ModuleNotFoundError",
-            "torch_compile_skipped:no_cl_compiler_on_windows",
-            "snapkv_effective_ratio=0.2048"
-          ]
-        },
-        "crosslayer_only": {
-          "ppl": 32.91832593327398,
-          "ttft_s": 0.025256199995055795,
-          "tpot_s": 0.00905628412932394,
-          "throughput_tok_s": 107.38727105213549,
-          "ram_rss_mb": 1057.4296875,
-          "flops": 1969209120.0,
-          "model_size_mb": 268.6562805175781,
-          "quantized_size_mb": null,
-          "generated_tokens": 64,
-          "notes": [
-            "ablation:crosslayer_only",
-            "fp32_model_size_mb=268.7",
-            "ipex_skipped:ModuleNotFoundError",
-            "torch_compile_skipped:no_cl_compiler_on_windows",
-            "cross_layer_shared_layers=1"
-          ]
-        },
-        "quant+snapkv": {
-          "ppl": 245.8571628824419,
-          "ttft_s": 0.016431199968792498,
-          "tpot_s": 0.010894880954375756,
-          "throughput_tok_s": 91.04068608754307,
-          "ram_rss_mb": 1108.22265625,
-          "flops": 5339808.0,
-          "model_size_mb": 268.6562805175781,
-          "quantized_size_mb": 98.30081176757812,
-          "generated_tokens": 64,
-          "notes": [
-            "ablation:quant+snapkv",
-            "fp32_model_size_mb=268.7",
-            "int8_model_size_mb=98.3",
-            "quantization_applied",
-            "kvpress_hooks=6",
-            "ipex_skipped:ModuleNotFoundError",
-            "torch_compile_skipped:no_cl_compiler_on_windows",
-            "snapkv_effective_ratio=0.2048"
-          ]
-        },
-        "all_optimized": {
-          "ppl": 245.8571628824419,
-          "ttft_s": 0.01760130003094673,
-          "tpot_s": 0.010892160319989281,
-          "throughput_tok_s": 90.91113124115374,
-          "ram_rss_mb": 1096.88671875,
-          "flops": 5339808.0,
-          "model_size_mb": 268.6562805175781,
-          "quantized_size_mb": 98.30081176757812,
-          "generated_tokens": 64,
-          "notes": [
-            "ablation:all_optimized",
-            "fp32_model_size_mb=268.7",
-            "int8_model_size_mb=98.3",
-            "quantization_applied",
-            "kvpress_hooks=6",
-            "ipex_skipped:ModuleNotFoundError",
-            "torch_compile_skipped:no_cl_compiler_on_windows",
-            "cross_layer_shared_layers=1",
-            "snapkv_effective_ratio=0.2048"
-          ]
+        "128": {
+          "baseline": {
+            "ttft_s": 0.012213699985295534,
+            "tpot_s": 0.008324768504688853,
+            "throughput_tok_s": 119.65236874176523
+          },
+          "snapkv": {
+            "ttft_s": 0.012993899988941848,
+            "tpot_s": 0.008428866928718309,
+            "throughput_tok_s": 118.10803840352285
+          }
         }
       }
     }
@@ -251,7 +1329,9 @@
     "cpu_count": 18
   },
   "ppl_metric_note": "PPL computed via CrossEntropy loss on input sequence (math.exp(loss)), NOT the evaluate library.",
-  "quantization_note": "INT8 dynamic quantisation via torch.ao.quantization.quantize_dynamic on all nn.Linear layers. Post-training, training-free.",
+  "quantization_note": "INT8 dynamic quantisation via torch.ao.quantization.quantize_dynamic on all nn.Linear layers. REPEATS=3 per ablation.",
   "snapkv_note": "SnapKV from kvpress library, compression_ratio=0.2, window_size=16.",
-  "crosslayer_note": "Cross-layer KV sharing on layers [4,5] (last 2 of 6, mild setting)."
+  "crosslayer_note": "Cross-layer KV sharing on layers [4,5] (last 2 of 6, mild setting).",
+  "runtime_note": "IPEX and torch.compile are typically unavailable on Windows; auto-detected and skipped.",
+  "flops_note": "FLOPs via torch.profiler (CPU). Values for quantized models are unreliable because the profiler cannot correctly count INT8 operator FLOPs."
 }

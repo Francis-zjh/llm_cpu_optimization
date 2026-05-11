@@ -30,13 +30,21 @@ from kvpress.utils import extract_keys_and_values
 ssl._create_default_https_context = ssl._create_unverified_context
 urllib3.disable_warnings()
 
-# ---------------------------------------------------------------------------
-# Constants
-# ---------------------------------------------------------------------------
+# Suppress non-critical warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="torch\\.ao")
+warnings.filterwarnings("ignore", message="Profiler clears events")
+
+
+# ===================================================================
+# User configuration — change these before running
+# ===================================================================
 MODEL_NAME = "EleutherAI/pythia-70m"
 RESULT_PATH = Path("cpu_all_opt_results.json")
-GENERATION_TOKENS = 64  # number of tokens to generate for TTFT / TPOT / Throughput
-
+GENERATION_TOKENS = 64        # generation length for the core ablation
+REPEATS = 3                   # set to 3 for final runs with mean±std
+RUN_SEQLEN_SWEEP = True       # False to skip (saves time)
+SEQ_LENGTHS = [32, 64, 128]   # sequence lengths for the sweep
+# ===================================================================
 
 # ---------------------------------------------------------------------------
 # Config & result dataclasses
@@ -86,12 +94,9 @@ def load_model_and_tokenizer() -> tuple[torch.nn.Module, Any]:
 
 
 # ---------------------------------------------------------------------------
-# Optimisation 1 — INT8 Dynamic Quantization  (primary positive result)
+# Optimisation 1 — INT8 Dynamic Quantization
 # ---------------------------------------------------------------------------
 def apply_dynamic_quantization(model: torch.nn.Module) -> torch.nn.Module:
-    """Post-training INT8 dynamic quantisation on all Linear layers.
-    Training-free, works on any CPU, reduces model footprint ~4× on linear layers.
-    """
     try:
         model = torch.ao.quantization.quantize_dynamic(
             model, {torch.nn.Linear}, dtype=torch.qint8
@@ -106,7 +111,6 @@ def apply_dynamic_quantization(model: torch.nn.Module) -> torch.nn.Module:
 # Optimisation 2 — SnapKV (kvpress)
 # ---------------------------------------------------------------------------
 def _get_attention_modules(model: torch.nn.Module) -> list[torch.nn.Module]:
-    """Return the attention submodule of every GPT-NeoX layer."""
     layers = getattr(model.gpt_neox, "layers", [])
     modules = []
     head_dim = int(model.config.hidden_size) // int(model.config.num_attention_heads)
@@ -127,7 +131,6 @@ def attach_snapkv_hooks(
     compression_ratio: float = 0.2,
     window_size: int = 16,
 ) -> tuple[list[Any], dict[str, float], SnapKVPress]:
-    """Register forward hooks that compress KV caches after prefill via SnapKV."""
     press = SnapKVPress(
         compression_ratio=compression_ratio, window_size=window_size, kernel_size=5
     )
@@ -158,10 +161,8 @@ def attach_snapkv_hooks(
             if hidden_states is None or cache is None:
                 return output
 
-            # Only compress once after prefill, not during token-by-token generation
+            # Compress once after the prefill (not during token-by-token generation)
             seq_len = hidden_states.shape[1]
-
-            # Skip prefill if sequence is shorter than window size
             if seq_len <= press.window_size:
                 return output
 
@@ -171,7 +172,6 @@ def attach_snapkv_hooks(
                 new_keys, new_values = press.compress(
                     module, hidden_states, keys, values, output[1], kwargs
                 )
-                # Replace cache in-place
                 cache.layers[_layer_idx].keys = new_keys.contiguous()
                 cache.layers[_layer_idx].values = new_values.contiguous()
                 stats["calls"] += 1.0
@@ -186,15 +186,9 @@ def attach_snapkv_hooks(
 
 
 # ---------------------------------------------------------------------------
-# Optimisation 3 — Cross-layer KV sharing  (exploratory)
+# Optimisation 3 — Cross-layer KV sharing
 # ---------------------------------------------------------------------------
 def share_kv_cache_across_layer_groups(cache: Any, groups: list[list[int]]) -> int:
-    """Share (alias) KV cache entries across layers within each group.
-
-    After this call, layers in the same group point to the *same* KV tensors,
-    saving memory at the cost of reduced expressiveness.
-    Returns the number of layers that were overwritten.
-    """
     shared = 0
     for group in groups:
         if len(group) <= 1:
@@ -213,13 +207,12 @@ def share_kv_cache_across_layer_groups(cache: Any, groups: list[list[int]]) -> i
 
 
 # ---------------------------------------------------------------------------
-# Runtime optimisation attempt  (IPEX / torch.compile – usually skipped on Win)
+# Runtime optimisation attempt  (IPEX / torch.compile — usually skipped on Win)
 # ---------------------------------------------------------------------------
 def maybe_optimize_runtime(model: torch.nn.Module) -> tuple[torch.nn.Module, list[str]]:
     notes: list[str] = []
     try:
         import intel_extension_for_pytorch as ipex  # type: ignore[import-untyped]
-
         model = ipex.optimize(model, dtype=torch.bfloat16)
         notes.append("ipex_applied")
     except Exception as exc:
@@ -252,7 +245,6 @@ def load_corpus_text(dataset_type: str) -> str:
     except Exception as exc:
         print(f"  [WARN] Could not load {dataset_type}: {exc}")
 
-    # Fallback
     return (
         "[FALLBACK] Local fallback corpus — dataset download failed. "
         "The benchmark pipeline is preserved; fallback is flagged in results."
@@ -265,7 +257,6 @@ def load_corpus_text(dataset_type: str) -> str:
 def compute_perplexity(
     model: torch.nn.Module, tokenizer: Any, text: str, max_length: int = 128
 ) -> float | None:
-    """Perplexity via CrossEntropy loss on the *input* sequence (not eval library)."""
     try:
         enc = tokenizer(text, return_tensors="pt", truncation=True, max_length=max_length)
         input_ids = enc["input_ids"]
@@ -296,7 +287,6 @@ def measure_generation(
     max_new_tokens: int = GENERATION_TOKENS,
     ablation: AblationConfig | None = None,
 ) -> tuple[dict[str, Any], int]:
-    """Return generation metrics and number of layers cross-shared."""
     inputs = tokenizer(prompt, return_tensors="pt")
     generated = inputs["input_ids"]
     step_times: list[float] = []
@@ -345,7 +335,6 @@ def measure_generation(
 def measure_flops(
     model: torch.nn.Module, tokenizer: Any, prompt: str, max_new_tokens: int = 4
 ) -> float | None:
-    """Aggregate CPU FLOPs from torch.profiler (best-effort on CPU)."""
     try:
         from torch.profiler import ProfilerActivity, profile
 
@@ -376,7 +365,51 @@ def rss_mb() -> float:
 
 
 # ---------------------------------------------------------------------------
-# Ablation runner
+# Repeat aggregation helpers
+# ---------------------------------------------------------------------------
+def _mean(values: list[float | None]) -> float | None:
+    clean = [v for v in values if v is not None]
+    if not clean:
+        return None
+    return sum(clean) / len(clean)
+
+
+def _stdev(values: list[float | None]) -> float | None:
+    clean = [v for v in values if v is not None]
+    if len(clean) < 2:
+        return 0.0
+    m = sum(clean) / len(clean)
+    var = sum((v - m) ** 2 for v in clean) / len(clean)
+    return math.sqrt(var)
+
+
+def aggregate_runs(runs: list[dict[str, Any]]) -> dict[str, Any]:
+    """Aggregate a list of RunMetrics dicts into a single entry with mean / std."""
+    # Fields to average
+    numeric_keys = [
+        "ppl", "ttft_s", "tpot_s", "throughput_tok_s",
+        "ram_rss_mb", "flops", "model_size_mb", "quantized_size_mb", "generated_tokens",
+    ]
+    aggregated: dict[str, Any] = {}
+    for k in numeric_keys:
+        vals = [r[k] for r in runs]
+        aggregated[k] = _mean(vals)
+        aggregated[f"{k}_std"] = _stdev(vals)
+
+    # Concatenate notes
+    all_notes: list[str] = []
+    for r in runs:
+        all_notes.extend(r.get("notes", []))
+    aggregated["notes"] = all_notes
+
+    # Store raw individual runs
+    aggregated["runs"] = runs
+    aggregated["num_repeats"] = len(runs)
+    return aggregated
+
+
+# ---------------------------------------------------------------------------
+# Ablation runner  (single run)
 # ---------------------------------------------------------------------------
 def run_ablation(
     ablation: AblationConfig,
@@ -461,6 +494,43 @@ def run_ablation(
 
 
 # ---------------------------------------------------------------------------
+# Sequence-length sweep  (baseline vs SnapKV at multiple generation lengths)
+# ---------------------------------------------------------------------------
+def run_seqlen_sweep(
+    model: torch.nn.Module,
+    tokenizer: Any,
+    prompt: str,
+    lengths: list[int] = SEQ_LENGTHS,
+) -> dict[str, Any]:
+    """Returns {length_str: {baseline: ..., snapkv: ...}, ...}."""
+    results: dict[str, Any] = {}
+
+    for L in lengths:
+        # Baseline (no hooks)
+        gen_base, _ = measure_generation(model, tokenizer, prompt, max_new_tokens=L)
+
+        # SnapKV
+        handles, _, _ = attach_snapkv_hooks(model, compression_ratio=0.2, window_size=16)
+        gen_skv, _ = measure_generation(model, tokenizer, prompt, max_new_tokens=L)
+        for h in handles:
+            h.remove()
+
+        results[str(L)] = {
+            "baseline": {
+                "ttft_s": gen_base["ttft_s"],
+                "tpot_s": gen_base["tpot_s"],
+                "throughput_tok_s": gen_base["throughput_tok_s"],
+            },
+            "snapkv": {
+                "ttft_s": gen_skv["ttft_s"],
+                "tpot_s": gen_skv["tpot_s"],
+                "throughput_tok_s": gen_skv["throughput_tok_s"],
+            },
+        }
+    return results
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 def main() -> None:
@@ -469,45 +539,22 @@ def main() -> None:
 
     datasets = ["wikitext", "pg19"]
 
-    # Ablation matrix (6 experiments):
-    #   baseline          – no optimisations (reference point)
-    #   quant_only        – INT8 dynamic quantisation only
-    #   snapkv_only       – SnapKV KV cache compression only
-    #   crosslayer_only   – cross-layer KV sharing only
-    #   quant+snapkv      – combined: compute (quant) + memory (SnapKV)
-    #   all_optimized     – quant + snapkv + cross-layer
+    # Ablation matrix (6 experiments)
     ablations = [
         AblationConfig(name="baseline"),
         AblationConfig(name="quant_only", use_quantization=True),
-        AblationConfig(
-            name="snapkv_only",
-            use_snapkv=True,
-            snapkv_compression_ratio=0.2,
-        ),
-        AblationConfig(
-            name="crosslayer_only",
-            use_cross_layer=True,
-            cross_layer_groups=[[4, 5]],
-        ),
-        AblationConfig(
-            name="quant+snapkv",
-            use_quantization=True,
-            use_snapkv=True,
-            snapkv_compression_ratio=0.2,
-        ),
-        AblationConfig(
-            name="all_optimized",
-            use_quantization=True,
-            use_snapkv=True,
-            snapkv_compression_ratio=0.2,
-            use_cross_layer=True,
-            cross_layer_groups=[[4, 5]],
-        ),
+        AblationConfig(name="snapkv_only", use_snapkv=True, snapkv_compression_ratio=0.2),
+        AblationConfig(name="crosslayer_only", use_cross_layer=True, cross_layer_groups=[[4, 5]]),
+        AblationConfig(name="quant+snapkv", use_quantization=True, use_snapkv=True, snapkv_compression_ratio=0.2),
+        AblationConfig(name="all_optimized", use_quantization=True, use_snapkv=True, snapkv_compression_ratio=0.2,
+                       use_cross_layer=True, cross_layer_groups=[[4, 5]]),
     ]
 
-    all_results = {
+    all_results: dict[str, Any] = {
         "model_name": MODEL_NAME,
         "generation_tokens": GENERATION_TOKENS,
+        "repeats": REPEATS,
+        "seqlen_sweep_lengths": SEQ_LENGTHS if RUN_SEQLEN_SWEEP else [],
         "results": {},
         "environment": {
             "torch": torch.__version__,
@@ -519,39 +566,66 @@ def main() -> None:
             "NOT the evaluate library."
         ),
         "quantization_note": (
-            "INT8 dynamic quantisation via torch.ao.quantization.quantize_dynamic "
-            "on all nn.Linear layers. Post-training, training-free."
+            f"INT8 dynamic quantisation via torch.ao.quantization.quantize_dynamic "
+            f"on all nn.Linear layers. REPEATS={REPEATS} per ablation."
         ),
-        "snapkv_note": (
-            "SnapKV from kvpress library, compression_ratio=0.2, window_size=16."
-        ),
-        "crosslayer_note": (
-            "Cross-layer KV sharing on layers [4,5] (last 2 of 6, mild setting)."
+        "snapkv_note": "SnapKV from kvpress library, compression_ratio=0.2, window_size=16.",
+        "crosslayer_note": "Cross-layer KV sharing on layers [4,5] (last 2 of 6, mild setting).",
+        "runtime_note": "IPEX and torch.compile are typically unavailable on Windows; auto-detected and skipped.",
+        "flops_note": (
+            "FLOPs via torch.profiler (CPU). Values for quantized models are unreliable "
+            "because the profiler cannot correctly count INT8 operator FLOPs."
         ),
     }
 
     for dt in tqdm.tqdm(datasets, desc="Dataset", unit="ds"):
-        print(f"\n{'=' * 60}")
-        print(f"Loading dataset: {dt}")
+        print(f"\n{'=' * 60}\nRunning dataset: {dt}")
         corpus_text = load_corpus_text(dt)
         dt_results: dict[str, Any] = {}
 
-        for abl in tqdm.tqdm(ablations, desc=f"  [{dt}]", unit="exp", leave=False):
-            print(f"  === {abl.name} ===")
-            model, tokenizer = load_model_and_tokenizer()
-            metrics = run_ablation(abl, model, tokenizer, prompt, corpus_text)
-            dt_results[abl.name] = asdict(metrics)
+        # ---- Core ablation with repeats ----
+        dt_results["experiments_run"] = ["core_ablation"]
+        core_start = time.perf_counter()
 
+        for abl in tqdm.tqdm(ablations, desc=f"  [{dt}]", unit="exp", leave=False):
+            print(f"\n  === {abl.name} (REPEATS={REPEATS}) ===")
+            run_list: list[dict[str, Any]] = []
+
+            for rep in range(REPEATS):
+                print(f"    ── repeat {rep + 1}/{REPEATS} ──")
+                model, tokenizer = load_model_and_tokenizer()
+                metrics = run_ablation(abl, model, tokenizer, prompt, corpus_text)
+                run_list.append(asdict(metrics))
+                del model, tokenizer
+                gc.collect()
+
+            # Aggregate the repeats
+            dt_results[abl.name] = aggregate_runs(run_list)
+
+        core_elapsed = time.perf_counter() - core_start
+        print(f"\n  [Core ablation for {dt} done in {core_elapsed:.0f}s]")
+
+        # ---- Sequence-length sweep ----
+        if RUN_SEQLEN_SWEEP:
+            dt_results["experiments_run"].append("seqlen_sweep")
+            print(f"\n  === Sequence-length sweep {SEQ_LENGTHS} ===")
+            model, tokenizer = load_model_and_tokenizer()
+            sweep = run_seqlen_sweep(model, tokenizer, prompt, lengths=SEQ_LENGTHS)
+            dt_results["seqlen_sweep"] = sweep
             del model, tokenizer
             gc.collect()
+            print(f"  [SeqLen sweep done]")
 
         all_results["results"][dt] = {
             "fallback_used": corpus_text.startswith("[FALLBACK]"),
-            "ablations": dt_results,
+            "experiments": dt_results.pop("experiments_run"),
+            **dt_results,
         }
         print(f"{'=' * 60}\n")
 
-    RESULT_PATH.write_text(json.dumps(all_results, indent=2, ensure_ascii=False), encoding="utf-8")
+    RESULT_PATH.write_text(
+        json.dumps(all_results, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
     print(f"\n{'=' * 60}")
     print(f"All experiments complete! Results → {RESULT_PATH}")
     print(f"{'=' * 60}")
