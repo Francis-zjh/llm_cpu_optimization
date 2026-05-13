@@ -12,6 +12,10 @@ from pathlib import Path
 
 import psutil
 import torch
+
+os.environ.setdefault("HF_ENDPOINT", "https://hf-mirror.com")
+os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
+
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 try:
@@ -23,15 +27,11 @@ except ImportError:
 from kvpress.presses.snapkv_press import SnapKVPress
 from kvpress.utils import extract_keys_and_values
 
-os.environ.setdefault("HF_ENDPOINT", "https://hf-mirror.com")
-os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
-
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 MODEL_NAME = "EleutherAI/pythia-70m"
 GENERATION_TOKENS = 1024
 DATA_DIR = Path(__file__).parent / "data"
-
 _MAX_LOGICAL_CPU = os.cpu_count() or 16
 PHASE1_CORES = [c for c in [1, 2, 4, 8, 16, 32] if c <= _MAX_LOGICAL_CPU]
 PHASE1_REPEATS = 1
@@ -39,8 +39,8 @@ PHASE2_REPEATS = 3
 
 SINGLE_CONFIGS = [
     "Baseline",
-    "Quant_only",
-    "FP16_only",
+    "Quant_INT8_only",
+    "Quant_FP16_only",
     "SnapKV_only",
     "Crosslayer_only",
     "Compile_only",
@@ -48,20 +48,28 @@ SINGLE_CONFIGS = [
 ]
 
 def set_thread_count(n: int) -> None:
-
     os.environ["OMP_NUM_THREADS"] = str(n)
     os.environ["MKL_NUM_THREADS"] = str(n)
     torch.set_num_threads(n)
 
+
 def load_model_and_tokenizer():
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, local_files_only=True)
+    try:
+        tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, local_files_only=True)
+    except Exception:
+        tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, local_files_only=False)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "left"
 
-    model = AutoModelForCausalLM.from_pretrained(
-        MODEL_NAME, local_files_only=True, dtype=torch.float32
-    )
+    try:
+        model = AutoModelForCausalLM.from_pretrained(
+            MODEL_NAME, local_files_only=True, dtype=torch.float32
+        )
+    except Exception:
+        model = AutoModelForCausalLM.from_pretrained(
+            MODEL_NAME, local_files_only=False, dtype=torch.float32
+        )
     model.eval()
     model.config.use_cache = True
     if getattr(model.config, "pad_token_id", None) is None:
@@ -70,10 +78,12 @@ def load_model_and_tokenizer():
         model.config._attn_implementation = "eager"
     return model, tokenizer
 
+
 def apply_dynamic_quantization(model: torch.nn.Module) -> torch.nn.Module:
     return torch.ao.quantization.quantize_dynamic(
         model, {torch.nn.Linear}, dtype=torch.qint8
     )
+
 
 def apply_fp16(model: torch.nn.Module) -> torch.nn.Module:
     try:
@@ -81,6 +91,7 @@ def apply_fp16(model: torch.nn.Module) -> torch.nn.Module:
     except Exception as exc:
         print(f"  [WARN] FP16 conversion failed: {exc}")
         return model
+
 
 def _get_attention_modules(model: torch.nn.Module):
     layers = getattr(model.gpt_neox, "layers", [])
@@ -96,6 +107,7 @@ def _get_attention_modules(model: torch.nn.Module):
             attn.config.num_key_value_heads = attn.config.num_attention_heads
         modules.append(attn)
     return modules
+
 
 def attach_snapkv_hooks(
     model: torch.nn.Module,
@@ -146,6 +158,7 @@ def attach_snapkv_hooks(
         handles.append(attn.register_forward_hook(_hook, with_kwargs=True))
     return handles, stats, press
 
+
 def share_kv_cache_across_layer_groups(cache, groups):
     shared = 0
     for group in groups:
@@ -163,6 +176,7 @@ def share_kv_cache_across_layer_groups(cache, groups):
             continue
     return shared
 
+
 def maybe_optimize_runtime(model: torch.nn.Module, use_ipex: bool, use_compile: bool):
     notes = []
     if use_ipex:
@@ -179,6 +193,7 @@ def maybe_optimize_runtime(model: torch.nn.Module, use_ipex: bool, use_compile: 
         except Exception as exc:
             notes.append(f"torch_compile_skipped:{type(exc).__name__}")
     return model, notes
+
 
 def compute_perplexity(model, tokenizer, text, max_length=512):
     try:
@@ -201,6 +216,7 @@ def compute_perplexity(model, tokenizer, text, max_length=512):
     except Exception:
         return None
 
+
 def measure_model_size_mb(model):
     try:
         param_bytes = sum(p.numel() * p.element_size() for p in model.parameters())
@@ -208,6 +224,7 @@ def measure_model_size_mb(model):
         return (param_bytes + buf_bytes) / (1024.0 * 1024.0)
     except Exception:
         return 0.0
+
 
 def measure_generation(
     model, tokenizer, prompt,
@@ -248,21 +265,23 @@ def measure_generation(
         "generated_tokens": max_new_tokens,
     }
 
+
 def rss_mb() -> float:
     return psutil.Process().memory_info().rss / (1024.0 * 1024.0)
 
-def get_config_opts(name: str):
 
+def get_config_opts(name: str):
     m = {
         "Baseline":        (False, False, False, False, False, False, []),
-        "Quant_only":      (False, False, True,  False, False, False, []),
-        "FP16_only":       (False, False, False, True,  False, False, []),
+        "Quant_INT8_only":      (False, False, True,  False, False, False, []),
+        "Quant_FP16_only":       (False, False, False, True,  False, False, []),
         "SnapKV_only":     (False, False, False, False, True,  False, []),
         "Crosslayer_only": (False, False, False, False, False, True,  [[4, 5]]),
         "Compile_only":    (False, True,  False, False, False, False, []),
         "IPEX_only":       (True,  False, False, False, False, False, []),
     }
     return m[name]
+
 
 def run_single(config_name: str, n_threads: int, prompt: str, corpus_text: str) -> dict:
     set_thread_count(n_threads)
@@ -339,22 +358,30 @@ def run_single(config_name: str, n_threads: int, prompt: str, corpus_text: str) 
         "notes": notes,
     }
 
+
 def _mean(vals):
     clean = [v for v in vals if v is not None]
     return sum(clean) / len(clean) if clean else None
+
 
 def main():
     prompt = "Pythia-70M is a small language model that can still be profiled on CPU."
     dataset = "wikitext"
 
     local_path = DATA_DIR / f"{dataset}_corpus.txt"
-    if not local_path.exists():
-        print(f"[ERROR] Local corpus not found at {local_path}")
-        print("Run cpu_all_optimized.py first to download and cache the data.")
-        sys.exit(1)
-
-    corpus_text = local_path.read_text(encoding="utf-8").strip()
-    print(f"[OK] Loaded local corpus ({len(corpus_text)} chars)")
+    if local_path.exists():
+        corpus_text = local_path.read_text(encoding="utf-8").strip()
+        print(f"[OK] Loaded local corpus ({len(corpus_text)} chars)")
+    else:
+        print(f"[INFO] Local corpus not found, downloading from HuggingFace ...")
+        try:
+            ds = load_dataset("wikitext", "wikitext-2-raw-v1", split="test[:5%]")
+            texts = [row["text"] for row in ds if row.get("text")]
+            corpus_text = "\n\n".join(texts).strip()[:4000]
+            print(f"[OK] Downloaded corpus ({len(corpus_text)} chars)")
+        except Exception as exc:
+            print(f"[ERROR] Failed to download corpus: {exc}")
+            sys.exit(1)
 
     results: dict = {
         "model_name": MODEL_NAME,
@@ -423,7 +450,6 @@ def main():
 
     for cfg in SINGLE_CONFIGS:
         peak = optimal_p1[cfg]["optimal_cores"]
-
         fine = sorted({
             max(1, min(max(PHASE1_CORES), peak + d))
             for d in range(-2, 3)
@@ -475,7 +501,6 @@ def main():
 
     summary_rows = []
     for cfg in SINGLE_CONFIGS:
-
         p2 = final_optimal.get(cfg, {})
         opt_cores = p2.get("optimal_cores", optimal_p1[cfg]["optimal_cores"])
         peak = p2.get("peak_thpt_tok_s", optimal_p1[cfg]["peak_thpt_tok_s"])
@@ -509,6 +534,7 @@ def main():
     print(f"\n  Results saved to {output_path}")
     print(f"  Estimated runtime: Phase 1 ~ 30-60 min, Phase 2 ~ 90-180 min")
     print("=" * 70)
+
 
 if __name__ == "__main__":
     main()

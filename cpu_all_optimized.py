@@ -21,6 +21,10 @@ from typing import Any
 import psutil
 import torch
 import tqdm
+
+os.environ.setdefault("HF_ENDPOINT", "https://hf-mirror.com")
+os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
+
 from datasets import load_dataset
 from datasets import load_dataset
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -39,6 +43,7 @@ urllib3.disable_warnings()
 
 warnings.filterwarnings("ignore", category=DeprecationWarning, module="torch\\.ao")
 warnings.filterwarnings("ignore", message="Profiler clears events")
+
 
 MODEL_NAME = "EleutherAI/pythia-70m"
 RESULT_PATH = Path("cpu_all_opt_results.json")
@@ -61,6 +66,7 @@ class AblationConfig:
     use_compile: bool = False
     n_threads: int = 8
 
+
 @dataclass
 class RunMetrics:
     ppl: float | None
@@ -74,18 +80,26 @@ class RunMetrics:
     generated_tokens: int
     notes: list[str]
 
+
 def set_thread_count(n: int) -> None:
     os.environ["OMP_NUM_THREADS"] = str(n)
     os.environ["MKL_NUM_THREADS"] = str(n)
     torch.set_num_threads(n)
 
+
 def load_model_and_tokenizer() -> tuple[torch.nn.Module, Any]:
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, local_files_only=True)
+    try:
+        tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, local_files_only=True)
+    except Exception:
+        tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, local_files_only=False)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "left"
 
-    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, local_files_only=True, dtype=torch.float32)
+    try:
+        model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, local_files_only=True, dtype=torch.float32)
+    except Exception:
+        model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, local_files_only=False, dtype=torch.float32)
     model.eval()
     model.config.use_cache = True
     if getattr(model.config, "pad_token_id", None) is None:
@@ -93,6 +107,7 @@ def load_model_and_tokenizer() -> tuple[torch.nn.Module, Any]:
     if hasattr(model.config, "_attn_implementation"):
         model.config._attn_implementation = "eager"
     return model, tokenizer
+
 
 def apply_dynamic_quantization(model: torch.nn.Module) -> torch.nn.Module:
     try:
@@ -104,6 +119,7 @@ def apply_dynamic_quantization(model: torch.nn.Module) -> torch.nn.Module:
         print(f"  [WARN] Quantization failed: {exc}")
         return model
 
+
 def apply_fp16(model: torch.nn.Module) -> torch.nn.Module:
     try:
         model = model.half()
@@ -111,6 +127,7 @@ def apply_fp16(model: torch.nn.Module) -> torch.nn.Module:
     except Exception as exc:
         print(f"  [WARN] FP16 conversion failed: {exc}")
         return model
+
 
 def _get_attention_modules(model: torch.nn.Module) -> list[torch.nn.Module]:
     layers = getattr(model.gpt_neox, "layers", [])
@@ -126,6 +143,7 @@ def _get_attention_modules(model: torch.nn.Module) -> list[torch.nn.Module]:
             attn.config.num_key_value_heads = attn.config.num_attention_heads
         modules.append(attn)
     return modules
+
 
 def attach_snapkv_hooks(
     model: torch.nn.Module,
@@ -184,6 +202,7 @@ def attach_snapkv_hooks(
         handles.append(attn.register_forward_hook(_hook, with_kwargs=True))
     return handles, stats, press
 
+
 def share_kv_cache_across_layer_groups(cache: Any, groups: list[list[int]]) -> int:
     shared = 0
     for group in groups:
@@ -200,6 +219,7 @@ def share_kv_cache_across_layer_groups(cache: Any, groups: list[list[int]]) -> i
         except Exception:
             continue
     return shared
+
 
 def maybe_optimize_runtime(model: torch.nn.Module, ablation: AblationConfig) -> tuple[torch.nn.Module, list[str]]:
     notes: list[str] = []
@@ -221,10 +241,11 @@ def maybe_optimize_runtime(model: torch.nn.Module, ablation: AblationConfig) -> 
 
     return model, notes
 
+
 DATA_DIR = Path(__file__).parent / "data"
 
-def load_corpus_text(dataset_type: str) -> str:
 
+def load_corpus_text(dataset_type: str) -> str:
     local_path = DATA_DIR / f"{dataset_type}_corpus.txt"
     if local_path.exists():
         text = local_path.read_text(encoding="utf-8").strip()
@@ -249,6 +270,7 @@ def load_corpus_text(dataset_type: str) -> str:
         "The benchmark pipeline is preserved; fallback is flagged in results."
     )
 
+
 def compute_perplexity(
     model: torch.nn.Module, tokenizer: Any, text: str, max_length: int = 512
 ) -> float | None:
@@ -258,7 +280,6 @@ def compute_perplexity(
         if input_ids.shape[1] > max_length:
             offset = torch.randint(0, input_ids.shape[1] - max_length, (1,)).item()
             input_ids = input_ids[:, offset : offset + max_length]
-
         was_fp16 = next(model.parameters()).dtype == torch.float16
         if was_fp16:
             model = model.float()
@@ -275,6 +296,7 @@ def compute_perplexity(
         print(f"  [WARN] PPL failed: {exc}")
         return None
 
+
 def measure_model_size_mb(model: torch.nn.Module) -> float:
     try:
         param_bytes = sum(p.numel() * p.element_size() for p in model.parameters())
@@ -282,6 +304,7 @@ def measure_model_size_mb(model: torch.nn.Module) -> float:
         return (param_bytes + buf_bytes) / (1024.0 * 1024.0)
     except Exception:
         return 0.0
+
 
 def measure_generation(
     model: torch.nn.Module,
@@ -295,7 +318,6 @@ def measure_generation(
     step_times: list[float] = []
 
     with torch.inference_mode(), torch.amp.autocast("cpu", enabled=False):
-
         start = time.perf_counter()
         outputs = model(input_ids=generated, use_cache=True)
 
@@ -333,6 +355,7 @@ def measure_generation(
         "decoded_text": tokenizer.decode(generated[0], skip_special_tokens=True),
     }, shared_layers
 
+
 def measure_flops(
     model: torch.nn.Module, tokenizer: Any, prompt: str, max_new_tokens: int = 4
 ) -> float | None:
@@ -360,14 +383,17 @@ def measure_flops(
         print(f"  [WARN] FLOPs measurement skipped: {exc}")
         return None
 
+
 def rss_mb() -> float:
     return psutil.Process().memory_info().rss / (1024.0 * 1024.0)
+
 
 def _mean(values: list[float | None]) -> float | None:
     clean = [v for v in values if v is not None]
     if not clean:
         return None
     return sum(clean) / len(clean)
+
 
 def _stdev(values: list[float | None]) -> float | None:
     clean = [v for v in values if v is not None]
@@ -377,9 +403,8 @@ def _stdev(values: list[float | None]) -> float | None:
     var = sum((v - m) ** 2 for v in clean) / len(clean)
     return math.sqrt(var)
 
+
 def aggregate_runs(runs: list[dict[str, Any]]) -> dict[str, Any]:
-
-
     numeric_keys = [
         "ppl", "ttft_s", "tpot_s", "throughput_tok_s",
         "ram_rss_mb", "flops", "model_size_mb", "quantized_size_mb", "generated_tokens",
@@ -398,6 +423,7 @@ def aggregate_runs(runs: list[dict[str, Any]]) -> dict[str, Any]:
     aggregated["runs"] = runs
     aggregated["num_repeats"] = len(runs)
     return aggregated
+
 
 def run_ablation(
     ablation: AblationConfig,
@@ -490,17 +516,16 @@ def run_ablation(
         notes=notes,
     )
 
+
 def run_seqlen_sweep(
     model: torch.nn.Module,
     tokenizer: Any,
     prompt: str,
     lengths: list[int] = SEQ_LENGTHS,
 ) -> dict[str, Any]:
-
     results: dict[str, Any] = {}
 
     for L in lengths:
-
         gen_base, _ = measure_generation(model, tokenizer, prompt, max_new_tokens=L)
 
         handles, _, _ = attach_snapkv_hooks(model, compression_ratio=0.2, window_size=16)
@@ -522,6 +547,7 @@ def run_seqlen_sweep(
         }
     return results
 
+
 def main() -> None:
     prompt = "Pythia-70M is a small language model that can still be profiled on CPU."
 
@@ -530,25 +556,25 @@ def main() -> None:
     ablations = [
         AblationConfig(name="Baseline", n_threads=1),
         AblationConfig(name="Baseline_opt", n_threads=8),
-        AblationConfig(name="Quant_only", use_quantization=True, n_threads=8),
+        AblationConfig(name="Quant_INT8_only", use_quantization=True, n_threads=4),
         AblationConfig(name="SnapKV_only", use_snapkv=True, snapkv_compression_ratio=0.2, n_threads=4),
         AblationConfig(name="Crosslayer_only", use_cross_layer=True, cross_layer_groups=[[4, 5]], n_threads=4),
-        AblationConfig(name="FP16_only", use_fp16=True, n_threads=8),
+        AblationConfig(name="Quant_FP16_only", use_fp16=True, n_threads=8),
         AblationConfig(name="Compile_only", use_compile=True, n_threads=4),
         AblationConfig(name="Compile_SnapKV", use_compile=True, use_snapkv=True, snapkv_compression_ratio=0.2, n_threads=4),
-        AblationConfig(name="Compile_Quantization", use_compile=True, use_quantization=True, n_threads=4),
-        AblationConfig(name="Compile_FP16", use_compile=True, use_fp16=True, n_threads=4),
+        AblationConfig(name="Compile_Quant_INT8", use_compile=True, use_quantization=True, n_threads=4),
+        AblationConfig(name="Compile_Quant_FP16", use_compile=True, use_fp16=True, n_threads=4),
         AblationConfig(name="SnapKV_CrossLayer", use_snapkv=True, use_cross_layer=True, cross_layer_groups=[[4, 5]], snapkv_compression_ratio=0.2, n_threads=4),
-        AblationConfig(name="FP16_SnapKV", use_fp16=True, use_snapkv=True, snapkv_compression_ratio=0.2, n_threads=4),
+        AblationConfig(name="Quant_FP16_SnapKV", use_fp16=True, use_snapkv=True, snapkv_compression_ratio=0.2, n_threads=4),
         AblationConfig(name="IPEX_only", use_ipex=True, n_threads=4),
         AblationConfig(name="IPEX_Compile", use_ipex=True, use_compile=True, n_threads=4),
         AblationConfig(name="IPEX_SnapKV", use_ipex=True, use_snapkv=True, snapkv_compression_ratio=0.2, n_threads=4),
         AblationConfig(name="IPEX_CrossLayer", use_ipex=True, use_cross_layer=True, cross_layer_groups=[[4, 5]], n_threads=4),
-        AblationConfig(name="IPEX_Quantization", use_ipex=True, use_quantization=True, n_threads=4),
+        AblationConfig(name="IPEX_Quant_INT8", use_ipex=True, use_quantization=True, n_threads=4),
         AblationConfig(name="Compile_SnapKV_CrossLayer", use_compile=True, use_snapkv=True, use_cross_layer=True, cross_layer_groups=[[4, 5]], snapkv_compression_ratio=0.2, n_threads=4),
-        AblationConfig(name="Compile_FP16_SnapKV", use_compile=True, use_fp16=True, use_snapkv=True, snapkv_compression_ratio=0.2, n_threads=4),
+        AblationConfig(name="Compile_Quant_FP16_SnapKV", use_compile=True, use_fp16=True, use_snapkv=True, snapkv_compression_ratio=0.2, n_threads=4),
         AblationConfig(name="IPEX_Compile_SnapKV", use_ipex=True, use_compile=True, use_snapkv=True, snapkv_compression_ratio=0.2, n_threads=4),
-        AblationConfig(name="IPEX_Quant_SnapKV", use_ipex=True, use_quantization=True, use_snapkv=True, snapkv_compression_ratio=0.2, n_threads=4),
+        AblationConfig(name="IPEX_Quant_INT8_SnapKV", use_ipex=True, use_quantization=True, use_snapkv=True, snapkv_compression_ratio=0.2, n_threads=4),
         AblationConfig(name="All_In_One", use_ipex=True, use_compile=True, use_quantization=True, use_snapkv=True, use_cross_layer=True, snapkv_compression_ratio=0.2, cross_layer_groups=[[4, 5]], n_threads=4),
     ]
     ablation_names = {a.name for a in ablations}
@@ -568,7 +594,7 @@ def main() -> None:
             "PPL computed via CrossEntropy loss on input sequence (math.exp(loss)), "
             "NOT the evaluate library."
         ),
-        "quantization_note": (
+        "quant_int8_note": (
             f"INT8 dynamic quantisation via torch.ao.quantization.quantize_dynamic "
             f"on all nn.Linear layers. REPEATS={REPEATS} per ablation."
         ),
@@ -579,7 +605,7 @@ def main() -> None:
             "FLOPs via torch.profiler (CPU). Values for quantized models are unreliable "
             "because the profiler cannot correctly count INT8 operator FLOPs."
         ),
-        "fp16_note": "FP16 half precision via model.half(). Model size halved but CPU lacks native FP16 compute, so speed may not improve.",
+        "quant_fp16_note": "FP16 half precision via model.half(). Model size halved but CPU lacks native FP16 compute, so speed may not improve.",
     }
 
     if RESULT_PATH.exists():
@@ -601,7 +627,6 @@ def main() -> None:
         )
 
     for dt in datasets:
-
         ds_done: set[str] = set()
         if "results" in all_results and dt in all_results["results"]:
             ds_done = {k for k in all_results["results"][dt] if k in ablation_names}
@@ -673,6 +698,7 @@ def main() -> None:
     print(f"\n{'=' * 60}")
     print(f"All experiments complete! Results → {RESULT_PATH}")
     print(f"{'=' * 60}")
+
 
 if __name__ == "__main__":
     main()
