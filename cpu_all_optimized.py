@@ -22,9 +22,6 @@ import psutil
 import torch
 import tqdm
 
-os.environ.setdefault("HF_ENDPOINT", "https://hf-mirror.com")
-os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
-
 from datasets import load_dataset
 from datasets import load_dataset
 from transformers import AutoModelForCausalLM, AutoTokenizer
