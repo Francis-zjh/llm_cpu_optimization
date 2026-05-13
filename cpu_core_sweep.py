@@ -1,21 +1,3 @@
-#!/usr/bin/env python3
-"""
-cpu_core_sweep.py — Optimal CPU Core Count Sweep (Trial 9)
-
-Sweeps each single optimization method across a range of CPU thread counts
-to determine the optimal degree of parallelism per configuration.
-
-Two-phase design (Plan B):
-  Phase 1 — Coarse scan: 6 configs × [1,2,4,8,16,32] cores × 1 repeat
-  Phase 2 — Fine scan:   6 configs × (peak±2) cores × 3 repeats
-
-Usage:
-    python cpu_core_sweep.py
-
-Output:
-    cpu_core_sweep_results.json
-"""
-
 from __future__ import annotations
 
 import json
@@ -46,14 +28,10 @@ os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-# ===================================================================
-# User configuration
-# ===================================================================
 MODEL_NAME = "EleutherAI/pythia-70m"
 GENERATION_TOKENS = 1024
 DATA_DIR = Path(__file__).parent / "data"
-# 70M 模型矩阵很小，多线程同步开销可能抵消收益。
-# 2-4 核通常是 Pythia-70M 的吞吐峰值区间，超过后受内存带宽限制不再线性增长。
+
 _MAX_LOGICAL_CPU = os.cpu_count() or 16
 PHASE1_CORES = [c for c in [1, 2, 4, 8, 16, 32] if c <= _MAX_LOGICAL_CPU]
 PHASE1_REPEATS = 1
@@ -69,19 +47,12 @@ SINGLE_CONFIGS = [
     "IPEX_only",
 ]
 
-# ===================================================================
-# Thread control
-# ===================================================================
 def set_thread_count(n: int) -> None:
-    """Set OMP/MKL/PyTorch thread count before model loading."""
+
     os.environ["OMP_NUM_THREADS"] = str(n)
     os.environ["MKL_NUM_THREADS"] = str(n)
     torch.set_num_threads(n)
 
-
-# ===================================================================
-# Model loading
-# ===================================================================
 def load_model_and_tokenizer():
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, local_files_only=True)
     if tokenizer.pad_token is None:
@@ -99,19 +70,11 @@ def load_model_and_tokenizer():
         model.config._attn_implementation = "eager"
     return model, tokenizer
 
-
-# ===================================================================
-# Optimisation 1 — INT8 Dynamic Quantization
-# ===================================================================
 def apply_dynamic_quantization(model: torch.nn.Module) -> torch.nn.Module:
     return torch.ao.quantization.quantize_dynamic(
         model, {torch.nn.Linear}, dtype=torch.qint8
     )
 
-
-# ===================================================================
-# Optimisation 1b — FP16 Half Precision
-# ===================================================================
 def apply_fp16(model: torch.nn.Module) -> torch.nn.Module:
     try:
         return model.half()
@@ -119,10 +82,6 @@ def apply_fp16(model: torch.nn.Module) -> torch.nn.Module:
         print(f"  [WARN] FP16 conversion failed: {exc}")
         return model
 
-
-# ===================================================================
-# Optimisation 2 — SnapKV
-# ===================================================================
 def _get_attention_modules(model: torch.nn.Module):
     layers = getattr(model.gpt_neox, "layers", [])
     modules = []
@@ -137,7 +96,6 @@ def _get_attention_modules(model: torch.nn.Module):
             attn.config.num_key_value_heads = attn.config.num_attention_heads
         modules.append(attn)
     return modules
-
 
 def attach_snapkv_hooks(
     model: torch.nn.Module,
@@ -188,10 +146,6 @@ def attach_snapkv_hooks(
         handles.append(attn.register_forward_hook(_hook, with_kwargs=True))
     return handles, stats, press
 
-
-# ===================================================================
-# Optimisation 3 — Cross-layer KV sharing
-# ===================================================================
 def share_kv_cache_across_layer_groups(cache, groups):
     shared = 0
     for group in groups:
@@ -209,10 +163,6 @@ def share_kv_cache_across_layer_groups(cache, groups):
             continue
     return shared
 
-
-# ===================================================================
-# Optimisation 4 — IPEX / torch.compile
-# ===================================================================
 def maybe_optimize_runtime(model: torch.nn.Module, use_ipex: bool, use_compile: bool):
     notes = []
     if use_ipex:
@@ -230,10 +180,6 @@ def maybe_optimize_runtime(model: torch.nn.Module, use_ipex: bool, use_compile: 
             notes.append(f"torch_compile_skipped:{type(exc).__name__}")
     return model, notes
 
-
-# ===================================================================
-# Metrics
-# ===================================================================
 def compute_perplexity(model, tokenizer, text, max_length=512):
     try:
         enc = tokenizer(text, return_tensors="pt", truncation=False)
@@ -255,7 +201,6 @@ def compute_perplexity(model, tokenizer, text, max_length=512):
     except Exception:
         return None
 
-
 def measure_model_size_mb(model):
     try:
         param_bytes = sum(p.numel() * p.element_size() for p in model.parameters())
@@ -263,7 +208,6 @@ def measure_model_size_mb(model):
         return (param_bytes + buf_bytes) / (1024.0 * 1024.0)
     except Exception:
         return 0.0
-
 
 def measure_generation(
     model, tokenizer, prompt,
@@ -304,16 +248,11 @@ def measure_generation(
         "generated_tokens": max_new_tokens,
     }
 
-
 def rss_mb() -> float:
     return psutil.Process().memory_info().rss / (1024.0 * 1024.0)
 
-
-# ===================================================================
-# Config mapping
-# ===================================================================
 def get_config_opts(name: str):
-    """Return (use_ipex, use_compile, use_quant, use_fp16, use_snapkv, use_crosslayer, cross_groups)."""
+
     m = {
         "Baseline":        (False, False, False, False, False, False, []),
         "Quant_only":      (False, False, True,  False, False, False, []),
@@ -325,10 +264,6 @@ def get_config_opts(name: str):
     }
     return m[name]
 
-
-# ===================================================================
-# Single (config × threads) run
-# ===================================================================
 def run_single(config_name: str, n_threads: int, prompt: str, corpus_text: str) -> dict:
     set_thread_count(n_threads)
     use_ipex, use_compile, use_quant, use_fp16, use_snapkv, use_crosslayer, cross_groups = \
@@ -339,31 +274,26 @@ def run_single(config_name: str, n_threads: int, prompt: str, corpus_text: str) 
     size_fp32 = measure_model_size_mb(model)
     size_int8 = None
 
-    # 1. Quantization
     if use_quant:
         model = apply_dynamic_quantization(model)
         size_int8 = measure_model_size_mb(model)
         notes.append("quantization_applied")
 
-    # 1b. FP16 half precision
     if use_fp16 and not use_quant:
         model = apply_fp16(model)
         notes.append("fp16_applied")
     elif use_fp16 and use_quant:
         notes.append("fp16_skipped:quantization_overrides")
 
-    # 2. SnapKV hooks
     handles = []
     press_stats = None
     if use_snapkv:
         handles, press_stats, _ = attach_snapkv_hooks(model)
         notes.append(f"snapkv_hooks={len(handles)}")
 
-    # 3. IPEX / Compile
     model, runtime_notes = maybe_optimize_runtime(model, use_ipex, use_compile)
     notes.extend(runtime_notes)
 
-    # 4. Warmup (for compile/ipex)
     if use_compile or use_ipex:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
@@ -372,7 +302,6 @@ def run_single(config_name: str, n_threads: int, prompt: str, corpus_text: str) 
             except Exception:
                 pass
 
-    # 5. Metrics
     ppl = compute_perplexity(model, tokenizer, corpus_text, max_length=512)
     gen = measure_generation(
         model, tokenizer, prompt, max_new_tokens=GENERATION_TOKENS,
@@ -380,14 +309,12 @@ def run_single(config_name: str, n_threads: int, prompt: str, corpus_text: str) 
     )
     ram = rss_mb()
 
-    # 6. Cleanup hooks
     for h in handles:
         try:
             h.remove()
         except Exception:
             pass
 
-    # 7. SnapKV stats
     snapkv_ratio = None
     if use_snapkv and press_stats and press_stats["calls"] > 0:
         avg_before = press_stats["tokens_before"] / press_stats["calls"]
@@ -412,23 +339,14 @@ def run_single(config_name: str, n_threads: int, prompt: str, corpus_text: str) 
         "notes": notes,
     }
 
-
-# ===================================================================
-# Helpers
-# ===================================================================
 def _mean(vals):
     clean = [v for v in vals if v is not None]
     return sum(clean) / len(clean) if clean else None
 
-
-# ===================================================================
-# Main
-# ===================================================================
 def main():
     prompt = "Pythia-70M is a small language model that can still be profiled on CPU."
     dataset = "wikitext"
 
-    # Load corpus
     local_path = DATA_DIR / f"{dataset}_corpus.txt"
     if not local_path.exists():
         print(f"[ERROR] Local corpus not found at {local_path}")
@@ -438,9 +356,6 @@ def main():
     corpus_text = local_path.read_text(encoding="utf-8").strip()
     print(f"[OK] Loaded local corpus ({len(corpus_text)} chars)")
 
-    # -----------------------------------------------------------------
-    # Results container
-    # -----------------------------------------------------------------
     results: dict = {
         "model_name": MODEL_NAME,
         "generation_tokens": GENERATION_TOKENS,
@@ -461,9 +376,6 @@ def main():
         "final_summary": {},
     }
 
-    # =================================================================
-    # Phase 1 — Coarse sweep
-    # =================================================================
     print("\n" + "=" * 70)
     print("  PHASE 1: COARSE CORE COUNT SWEEP")
     print(f"  Configs: {SINGLE_CONFIGS}")
@@ -474,7 +386,7 @@ def main():
     phase1_data: dict = {}
     optimal_p1: dict = {}
 
-    torch.manual_seed(7)  # deterministic seed for Phase 1 (1 repeat)
+    torch.manual_seed(7)
 
     for cfg in SINGLE_CONFIGS:
         print(f"\n>>> {cfg}")
@@ -490,7 +402,6 @@ def main():
 
         phase1_data[cfg] = cfg_runs
 
-        # Find optimal
         best = max(PHASE1_CORES, key=lambda c: cfg_runs[str(c)]["throughput_tok_s"] or 0)
         best_thpt = cfg_runs[str(best)]["throughput_tok_s"] or 0
         optimal_p1[cfg] = {"optimal_cores": best, "peak_thpt_tok_s": best_thpt}
@@ -503,9 +414,6 @@ def main():
         "optimal_per_config": optimal_p1,
     }
 
-    # =================================================================
-    # Phase 2 — Fine sweep around peak
-    # =================================================================
     print("\n" + "=" * 70)
     print("  PHASE 2: FINE CORE COUNT SWEEP (3 repeats)")
     print("=" * 70)
@@ -515,7 +423,7 @@ def main():
 
     for cfg in SINGLE_CONFIGS:
         peak = optimal_p1[cfg]["optimal_cores"]
-        # ±2, clamped to [1, max(PHASE1_CORES)]
+
         fine = sorted({
             max(1, min(max(PHASE1_CORES), peak + d))
             for d in range(-2, 3)
@@ -533,7 +441,6 @@ def main():
                 print(f"Thpt={rd['throughput_tok_s']:7.2f} tok/s  ({time.perf_counter()-t0:.0f}s)")
                 runs_list.append(rd)
 
-            # Aggregate
             agg = {
                 "runs": runs_list,
                 "mean_throughput_tok_s": _mean([r["throughput_tok_s"] for r in runs_list]),
@@ -546,7 +453,6 @@ def main():
 
         phase2_data[cfg] = cfg_fine
 
-        # Best in Phase 2
         best_n = max(cfg_fine.keys(), key=lambda k: cfg_fine[k]["mean_throughput_tok_s"])
         best_thpt = cfg_fine[best_n]["mean_throughput_tok_s"]
         final_optimal[cfg] = {
@@ -561,9 +467,6 @@ def main():
         "final_optimal": final_optimal,
     }
 
-    # =================================================================
-    # Summary table
-    # =================================================================
     print("\n" + "=" * 70)
     print("  FINAL SUMMARY: Optimal Core Count per Configuration")
     print("=" * 70)
@@ -572,12 +475,11 @@ def main():
 
     summary_rows = []
     for cfg in SINGLE_CONFIGS:
-        # Phase 2 optimal (preferred) or Phase 1 fallback
+
         p2 = final_optimal.get(cfg, {})
         opt_cores = p2.get("optimal_cores", optimal_p1[cfg]["optimal_cores"])
         peak = p2.get("peak_thpt_tok_s", optimal_p1[cfg]["peak_thpt_tok_s"])
 
-        # 1-core throughput from Phase 1
         thpt_1 = phase1_data[cfg].get("1", {}).get("throughput_tok_s") or 0
         speedup = peak / thpt_1 if thpt_1 > 0 else 0
         efficiency = speedup / opt_cores if opt_cores > 0 else 0
@@ -600,9 +502,6 @@ def main():
         ),
     }
 
-    # =================================================================
-    # Save
-    # =================================================================
     output_path = Path("cpu_core_sweep_results.json")
     output_path.write_text(
         json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8"
@@ -610,7 +509,6 @@ def main():
     print(f"\n  Results saved to {output_path}")
     print(f"  Estimated runtime: Phase 1 ~ 30-60 min, Phase 2 ~ 90-180 min")
     print("=" * 70)
-
 
 if __name__ == "__main__":
     main()

@@ -17,12 +17,18 @@
 
 ## 环境要求
 
+```bash
+# 一键安装所有依赖
+pip install -r requirements.txt
+```
+
+依赖清单详见同目录下的 [`requirements.txt`](requirements.txt)，核心依赖如下：
+
 - Python 3.10+
-- PyTorch 2.x (`pip install torch --index-url https://download.pytorch.org/whl/cpu`)
-- Transformers, Datasets (`pip install transformers datasets`)
-- kvpress (`pip install kvpress`)
-- psutil, tqdm (`pip install psutil tqdm`)
-- 可选: IPEX (`pip install intel_extension_for_pytorch`)
+- PyTorch 2.x（CPU 版）、Transformers、Datasets
+- kvpress（SnapKV 实现）
+- psutil、tqdm
+- 可选：IPEX（`intel_extension_for_pytorch`，本机无 AVX-512 支持时以降级模式运行）
 
 ## 快速运行
 
@@ -45,3 +51,45 @@ python -c "import torch; print(torch.__version__); import os; print(os.cpu_count
 - **配置数**: 22 种（含基线和全组合）
 - **重复**: 每配置 3 次，取均值±标准差
 - **断点续跑**: 支持中断后恢复，不丢失已有结果
+
+## 关键超参数说明
+
+以下参数位于 `cpu_all_optimized.py` 文件顶部的 **User configuration** 区域（约第 48-54 行），修改后直接运行即可：
+
+```python
+MODEL_NAME = "EleutherAI/pythia-70m"    # 模型名称（支持 HuggingFace 任意模型）
+RESULT_PATH = Path("cpu_all_opt_results.json")  # 结果输出路径
+GENERATION_TOKENS = 1024                # 固定生成长度（tokens）
+REPEATS = 3                             # 每配置重复次数
+RUN_SEQLEN_SWEEP = True                 # 是否运行序列长度扫描
+SEQ_LENGTHS = [128, 256, 512, 1024]    # 序列长度扫描点
+```
+
+各参数含义：
+
+| 参数 | 配置位置（代码变量） | 说明 |
+|------|--------------------|------|
+| 生成长度 | `GENERATION_TOKENS` = 1024 | 核心消融实验的固定生成长度，覆盖中长文本生成场景。增大可观察长文本下的内存压力，减小可加速实验迭代 |
+| 重复次数 | `REPEATS` = 3 | 每配置重复 3 次取均值±标准差。可设为 1（快速验证）或 5+（追求统计精度） |
+| 随机种子 | `torch.manual_seed(7 + rep)` | 不同重复使用不同种子（7, 8, 9），避免采样偶然性。在 `main()` 中设置 |
+| SnapKV 压缩比 | `snapkv_compression_ratio` = 0.2 | 保留 20% 的 KV 位置，窗口大小 16。在 `AblationConfig` 中针对每个配置单独设定 |
+| CrossLayer 分组 | `cross_layer_groups` = [[4, 5]] | 末两层共享 KV Cache。可修改分组策略，如增大到 [[2,3,4,5]]。在 `AblationConfig` 中设定 |
+| PPL 采样长度 | `max_length` = 512 tokens | 从语料随机截取 512-token 段计算困惑度。在 `compute_perplexity()` 函数中 |
+| 预热长度 | 4 tokens（写死在 `measure_generation` 调用中） | Compile/IPEX 配置冷启动预热，避开 JIT 编译延迟。仅在 `use_compile` 或 `use_ipex` 时生效 |
+| FLOPs 测量步数 | 4 tokens（写死在 `measure_flops` 函数中） | 短序列 profiler 测量，降低开销。INT8 配置的 FLOPs 不可靠（profiler 无法统计 INT8 算子） |
+| 线程分配 | `n_threads` = 1/4/8 | 在 `AblationConfig` 中每个配置独立设定。Baseline 用 1 核，Baseline_opt/FP16 用 8 核，其余统一用 4 核 |
+
+### 各优化方法的参数配置
+
+每种优化方法对应 `AblationConfig` 中的一个或多个开关：
+
+| 优化方法 | 配置开关 | 说明 |
+|---------|---------|------|
+| INT8 动态量化 | `use_quantization=True` | 在 `main()` 的 ablations 列表中为每个配置单独开启 |
+| FP16 半精度 | `use_fp16=True` | 与 `use_quantization` 互斥（量化优先） |
+| SnapKV | `use_snapkv=True` | 配合 `snapkv_compression_ratio` 和 `snapkv_window_size` 调节压缩强度 |
+| CrossLayer | `use_cross_layer=True` | 配合 `cross_layer_groups` 指定哪些层共享 |
+| torch.compile | `use_compile=True` | 编译模式可选 `"reduce-overhead"`，在 `maybe_optimize_runtime()` 中 |
+| IPEX | `use_ipex=True` | 自动检测是否安装，未安装则跳过 |
+
+如需增减或修改实验配置，直接在 `main()` 函数的 `ablations` 列表中添加/删除 `AblationConfig` 实例即可。

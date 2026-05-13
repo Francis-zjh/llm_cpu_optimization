@@ -37,25 +37,16 @@ from kvpress.utils import extract_keys_and_values
 ssl._create_default_https_context = ssl._create_unverified_context
 urllib3.disable_warnings()
 
-# Suppress non-critical warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning, module="torch\\.ao")
 warnings.filterwarnings("ignore", message="Profiler clears events")
 
-
-# ===================================================================
-# User configuration — change these before running
-# ===================================================================
 MODEL_NAME = "EleutherAI/pythia-70m"
 RESULT_PATH = Path("cpu_all_opt_results.json")
-GENERATION_TOKENS = 1024      # generation length for the core ablation (maximized for extreme long-context testing)
-REPEATS = 3                   # set to 3 for final runs with mean±std
-RUN_SEQLEN_SWEEP = True       # False to skip (saves time)
-SEQ_LENGTHS = [128, 256, 512, 1024] # sequence lengths for the sweep
-# ===================================================================
+GENERATION_TOKENS = 1024
+REPEATS = 3
+RUN_SEQLEN_SWEEP = True
+SEQ_LENGTHS = [128, 256, 512, 1024]
 
-# ---------------------------------------------------------------------------
-# Config & result dataclasses
-# ---------------------------------------------------------------------------
 @dataclass
 class AblationConfig:
     name: str
@@ -70,7 +61,6 @@ class AblationConfig:
     use_compile: bool = False
     n_threads: int = 8
 
-
 @dataclass
 class RunMetrics:
     ppl: float | None
@@ -84,19 +74,11 @@ class RunMetrics:
     generated_tokens: int
     notes: list[str]
 
-
-# ---------------------------------------------------------------------------
-# Thread control  (set per-ablation before model loading)
-# ---------------------------------------------------------------------------
 def set_thread_count(n: int) -> None:
     os.environ["OMP_NUM_THREADS"] = str(n)
     os.environ["MKL_NUM_THREADS"] = str(n)
     torch.set_num_threads(n)
 
-
-# ---------------------------------------------------------------------------
-# Model loading
-# ---------------------------------------------------------------------------
 def load_model_and_tokenizer() -> tuple[torch.nn.Module, Any]:
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, local_files_only=True)
     if tokenizer.pad_token is None:
@@ -112,10 +94,6 @@ def load_model_and_tokenizer() -> tuple[torch.nn.Module, Any]:
         model.config._attn_implementation = "eager"
     return model, tokenizer
 
-
-# ---------------------------------------------------------------------------
-# Optimisation 1 — INT8 Dynamic Quantization
-# ---------------------------------------------------------------------------
 def apply_dynamic_quantization(model: torch.nn.Module) -> torch.nn.Module:
     try:
         model = torch.ao.quantization.quantize_dynamic(
@@ -126,10 +104,6 @@ def apply_dynamic_quantization(model: torch.nn.Module) -> torch.nn.Module:
         print(f"  [WARN] Quantization failed: {exc}")
         return model
 
-
-# ---------------------------------------------------------------------------
-# Optimisation 1b — FP16 Half Precision
-# ---------------------------------------------------------------------------
 def apply_fp16(model: torch.nn.Module) -> torch.nn.Module:
     try:
         model = model.half()
@@ -138,10 +112,6 @@ def apply_fp16(model: torch.nn.Module) -> torch.nn.Module:
         print(f"  [WARN] FP16 conversion failed: {exc}")
         return model
 
-
-# ---------------------------------------------------------------------------
-# Optimisation 2 — SnapKV (kvpress)
-# ---------------------------------------------------------------------------
 def _get_attention_modules(model: torch.nn.Module) -> list[torch.nn.Module]:
     layers = getattr(model.gpt_neox, "layers", [])
     modules = []
@@ -156,7 +126,6 @@ def _get_attention_modules(model: torch.nn.Module) -> list[torch.nn.Module]:
             attn.config.num_key_value_heads = attn.config.num_attention_heads
         modules.append(attn)
     return modules
-
 
 def attach_snapkv_hooks(
     model: torch.nn.Module,
@@ -193,7 +162,6 @@ def attach_snapkv_hooks(
             if hidden_states is None or cache is None:
                 return output
 
-            # Compress once after the prefill (not during token-by-token generation)
             seq_len = hidden_states.shape[1]
             if seq_len <= press.window_size:
                 return output
@@ -216,10 +184,6 @@ def attach_snapkv_hooks(
         handles.append(attn.register_forward_hook(_hook, with_kwargs=True))
     return handles, stats, press
 
-
-# ---------------------------------------------------------------------------
-# Optimisation 3 — Cross-layer KV sharing
-# ---------------------------------------------------------------------------
 def share_kv_cache_across_layer_groups(cache: Any, groups: list[list[int]]) -> int:
     shared = 0
     for group in groups:
@@ -237,16 +201,12 @@ def share_kv_cache_across_layer_groups(cache: Any, groups: list[list[int]]) -> i
             continue
     return shared
 
-
-# ---------------------------------------------------------------------------
-# Runtime optimisation attempt  (IPEX / torch.compile — usually skipped on Win)
-# ---------------------------------------------------------------------------
 def maybe_optimize_runtime(model: torch.nn.Module, ablation: AblationConfig) -> tuple[torch.nn.Module, list[str]]:
     notes: list[str] = []
-    
+
     if ablation.use_ipex:
         try:
-            import intel_extension_for_pytorch as ipex  # type: ignore[import-untyped]
+            import intel_extension_for_pytorch as ipex
             model = ipex.optimize(model, dtype=torch.float32)
             notes.append("ipex_applied")
         except Exception as exc:
@@ -258,18 +218,13 @@ def maybe_optimize_runtime(model: torch.nn.Module, ablation: AblationConfig) -> 
             notes.append("torch_compile_applied")
         except Exception as exc:
             notes.append(f"torch_compile_skipped:{type(exc).__name__}")
-            
+
     return model, notes
 
-
-# ---------------------------------------------------------------------------
-# Data loading
-# ---------------------------------------------------------------------------
 DATA_DIR = Path(__file__).parent / "data"
 
-
 def load_corpus_text(dataset_type: str) -> str:
-    # Try local file first
+
     local_path = DATA_DIR / f"{dataset_type}_corpus.txt"
     if local_path.exists():
         text = local_path.read_text(encoding="utf-8").strip()
@@ -277,7 +232,6 @@ def load_corpus_text(dataset_type: str) -> str:
             print(f"  [OK] Loaded local {dataset_type}_corpus.txt ({len(text)} chars)")
             return text
 
-    # Fall back to online dataset
     try:
         if dataset_type == "wikitext":
             ds = load_dataset("wikitext", "wikitext-2-raw-v1", split="test[:5%]")
@@ -295,10 +249,6 @@ def load_corpus_text(dataset_type: str) -> str:
         "The benchmark pipeline is preserved; fallback is flagged in results."
     )
 
-
-# ---------------------------------------------------------------------------
-# Metric helpers
-# ---------------------------------------------------------------------------
 def compute_perplexity(
     model: torch.nn.Module, tokenizer: Any, text: str, max_length: int = 512
 ) -> float | None:
@@ -308,7 +258,7 @@ def compute_perplexity(
         if input_ids.shape[1] > max_length:
             offset = torch.randint(0, input_ids.shape[1] - max_length, (1,)).item()
             input_ids = input_ids[:, offset : offset + max_length]
-        # FP16 models can produce NaN loss; compute PPL in FP32
+
         was_fp16 = next(model.parameters()).dtype == torch.float16
         if was_fp16:
             model = model.float()
@@ -316,7 +266,7 @@ def compute_perplexity(
             outputs = model(input_ids=input_ids, labels=input_ids.clone(), use_cache=True)
             loss = float(outputs.loss)
         if was_fp16:
-            model = model.half()  # restore FP16 for generation benchmark
+            model = model.half()
         if math.isnan(loss) or math.isinf(loss):
             print(f"  [DEBUG] PPL skipped: loss={loss}")
             return None
@@ -325,7 +275,6 @@ def compute_perplexity(
         print(f"  [WARN] PPL failed: {exc}")
         return None
 
-
 def measure_model_size_mb(model: torch.nn.Module) -> float:
     try:
         param_bytes = sum(p.numel() * p.element_size() for p in model.parameters())
@@ -333,7 +282,6 @@ def measure_model_size_mb(model: torch.nn.Module) -> float:
         return (param_bytes + buf_bytes) / (1024.0 * 1024.0)
     except Exception:
         return 0.0
-
 
 def measure_generation(
     model: torch.nn.Module,
@@ -347,7 +295,7 @@ def measure_generation(
     step_times: list[float] = []
 
     with torch.inference_mode(), torch.amp.autocast("cpu", enabled=False):
-        # ---- prefill + first token ----
+
         start = time.perf_counter()
         outputs = model(input_ids=generated, use_cache=True)
 
@@ -362,7 +310,6 @@ def measure_generation(
         past_key_values = outputs.past_key_values
         ttft = time.perf_counter() - start
 
-        # ---- remaining tokens ----
         for _ in range(max_new_tokens - 1):
             step_start = time.perf_counter()
             outputs = model(
@@ -385,7 +332,6 @@ def measure_generation(
         "total_s": total,
         "decoded_text": tokenizer.decode(generated[0], skip_special_tokens=True),
     }, shared_layers
-
 
 def measure_flops(
     model: torch.nn.Module, tokenizer: Any, prompt: str, max_new_tokens: int = 4
@@ -414,20 +360,14 @@ def measure_flops(
         print(f"  [WARN] FLOPs measurement skipped: {exc}")
         return None
 
-
 def rss_mb() -> float:
     return psutil.Process().memory_info().rss / (1024.0 * 1024.0)
 
-
-# ---------------------------------------------------------------------------
-# Repeat aggregation helpers
-# ---------------------------------------------------------------------------
 def _mean(values: list[float | None]) -> float | None:
     clean = [v for v in values if v is not None]
     if not clean:
         return None
     return sum(clean) / len(clean)
-
 
 def _stdev(values: list[float | None]) -> float | None:
     clean = [v for v in values if v is not None]
@@ -437,10 +377,9 @@ def _stdev(values: list[float | None]) -> float | None:
     var = sum((v - m) ** 2 for v in clean) / len(clean)
     return math.sqrt(var)
 
-
 def aggregate_runs(runs: list[dict[str, Any]]) -> dict[str, Any]:
-    """Aggregate a list of RunMetrics dicts into a single entry with mean / std."""
-    # Fields to average
+
+
     numeric_keys = [
         "ppl", "ttft_s", "tpot_s", "throughput_tok_s",
         "ram_rss_mb", "flops", "model_size_mb", "quantized_size_mb", "generated_tokens",
@@ -451,21 +390,15 @@ def aggregate_runs(runs: list[dict[str, Any]]) -> dict[str, Any]:
         aggregated[k] = _mean(vals)
         aggregated[f"{k}_std"] = _stdev(vals)
 
-    # Concatenate notes
     all_notes: list[str] = []
     for r in runs:
         all_notes.extend(r.get("notes", []))
     aggregated["notes"] = all_notes
 
-    # Store raw individual runs
     aggregated["runs"] = runs
     aggregated["num_repeats"] = len(runs)
     return aggregated
 
-
-# ---------------------------------------------------------------------------
-# Ablation runner  (single run)
-# ---------------------------------------------------------------------------
 def run_ablation(
     ablation: AblationConfig,
     model: torch.nn.Module,
@@ -477,11 +410,9 @@ def run_ablation(
     handles: list[Any] = []
     press_stats: dict[str, float] | None = None
 
-    # 1. model size before any optimisation
     size_fp32 = measure_model_size_mb(model)
     notes.append(f"fp32_model_size_mb={size_fp32:.1f}")
 
-    # 2. INT8 dynamic quantisation
     if ablation.use_quantization:
         model = apply_dynamic_quantization(model)
         size_int8 = measure_model_size_mb(model)
@@ -490,7 +421,6 @@ def run_ablation(
     else:
         size_int8 = None
 
-    # 2b. FP16 half precision (only if not also quantizing — FP16 overrides)
     if ablation.use_fp16 and not ablation.use_quantization:
         model = apply_fp16(model)
         size_fp16 = measure_model_size_mb(model)
@@ -499,7 +429,6 @@ def run_ablation(
     elif ablation.use_fp16 and ablation.use_quantization:
         notes.append("fp16_skipped:quantization_overrides")
 
-    # 3. SnapKV hooks
     if ablation.use_snapkv:
         handles, press_stats, _ = attach_snapkv_hooks(
             model,
@@ -508,11 +437,9 @@ def run_ablation(
         )
         notes.append(f"kvpress_hooks={len(handles)}")
 
-    # 4. Runtime optimisation (attempt, usually skipped on Windows)
     model, runtime_notes = maybe_optimize_runtime(model, ablation)
     notes.extend(runtime_notes)
 
-    # 4.5 Warm-up to skip JIT translation/graph compiation latency
     if ablation.use_compile or ablation.use_ipex:
         print("    Warm-up to avoid cold start penalty …")
         try:
@@ -522,7 +449,6 @@ def run_ablation(
         except Exception as exc:
             print(f"    [WARN] Warmup generation failed: {exc}")
 
-    # 5. Metrics
     print("    PPL …")
     ppl = compute_perplexity(model, tokenizer, corpus_text, max_length=512)
 
@@ -534,14 +460,12 @@ def run_ablation(
 
     ram = rss_mb()
 
-    # 6. Cleanup hooks
     for h in handles:
         try:
             h.remove()
         except Exception:
             pass
 
-    # 7. Additional notes
     if ablation.use_cross_layer:
         notes.append(f"cross_layer_shared_layers={shared_layers}")
 
@@ -566,24 +490,19 @@ def run_ablation(
         notes=notes,
     )
 
-
-# ---------------------------------------------------------------------------
-# Sequence-length sweep  (baseline vs SnapKV at multiple generation lengths)
-# ---------------------------------------------------------------------------
 def run_seqlen_sweep(
     model: torch.nn.Module,
     tokenizer: Any,
     prompt: str,
     lengths: list[int] = SEQ_LENGTHS,
 ) -> dict[str, Any]:
-    """Returns {length_str: {baseline: ..., snapkv: ...}, ...}."""
+
     results: dict[str, Any] = {}
 
     for L in lengths:
-        # Baseline (no hooks)
+
         gen_base, _ = measure_generation(model, tokenizer, prompt, max_new_tokens=L)
 
-        # SnapKV
         handles, _, _ = attach_snapkv_hooks(model, compression_ratio=0.2, window_size=16)
         gen_skv, _ = measure_generation(model, tokenizer, prompt, max_new_tokens=L)
         for h in handles:
@@ -603,16 +522,11 @@ def run_seqlen_sweep(
         }
     return results
 
-
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
 def main() -> None:
     prompt = "Pythia-70M is a small language model that can still be profiled on CPU."
 
     datasets = ["wikitext", "pg19"]
 
-    # Ablation matrix (same as before)
     ablations = [
         AblationConfig(name="Baseline", n_threads=1),
         AblationConfig(name="Baseline_opt", n_threads=8),
@@ -668,9 +582,6 @@ def main() -> None:
         "fp16_note": "FP16 half precision via model.half(). Model size halved but CPU lacks native FP16 compute, so speed may not improve.",
     }
 
-    # ------------------------------------------------------------------
-    # Resume: load existing partial results
-    # ------------------------------------------------------------------
     if RESULT_PATH.exists():
         try:
             saved = json.loads(RESULT_PATH.read_text(encoding="utf-8"))
@@ -689,11 +600,8 @@ def main() -> None:
             json.dumps(all_results, indent=2, ensure_ascii=False), encoding="utf-8"
         )
 
-    # ==================================================================
-    # Dataset loop
-    # ==================================================================
     for dt in datasets:
-        # Check which ablation configs are already complete for this dataset
+
         ds_done: set[str] = set()
         if "results" in all_results and dt in all_results["results"]:
             ds_done = {k for k in all_results["results"][dt] if k in ablation_names}
@@ -710,7 +618,6 @@ def main() -> None:
 
         corpus_text = load_corpus_text(dt)
 
-        # Get or create the dataset result dict
         dt_results: dict[str, Any] = all_results.setdefault("results", {}).setdefault(dt, {})
         dt_results.setdefault("experiments", [])
 
@@ -719,7 +626,6 @@ def main() -> None:
         if "core_ablation" not in dt_results["experiments"]:
             dt_results["experiments"].append("core_ablation")
 
-        # ---- Core ablation with repeats ----
         core_start = time.perf_counter()
 
         for abl in tqdm.tqdm(ablations, desc=f"  [{dt}]", unit="exp", leave=False):
@@ -747,7 +653,6 @@ def main() -> None:
         core_elapsed = time.perf_counter() - core_start
         print(f"\n  [Core ablation for {dt} done in {core_elapsed:.0f}s]")
 
-        # ---- Sequence-length sweep ----
         if RUN_SEQLEN_SWEEP:
             if "seqlen_sweep" in dt_results:
                 print(f"  [Skip] SeqLen sweep already done for {dt}")
@@ -768,7 +673,6 @@ def main() -> None:
     print(f"\n{'=' * 60}")
     print(f"All experiments complete! Results → {RESULT_PATH}")
     print(f"{'=' * 60}")
-
 
 if __name__ == "__main__":
     main()
